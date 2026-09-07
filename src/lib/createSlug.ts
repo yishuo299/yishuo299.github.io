@@ -3,17 +3,16 @@
 import { GENERATE_SLUG_FROM_TITLE } from '../config'
 
 export default function (title: string, staticSlug: string) {
-  return (
-    !GENERATE_SLUG_FROM_TITLE ? staticSlug : title
-      // remove leading & trailing whitespace
-      .trim()
-      // output lowercase
-      .toLowerCase()
-      // replace spaces
-      .replace(/\s+/g, '-')
-      // remove special characters
-      .replace(/[^\w-]/g, '')
-      // remove leading & trailing separtors
-      .replace(/^-+|-+$/g, '')
-  )
+  if (!GENERATE_SLUG_FROM_TITLE) return staticSlug;
+
+  const slug = title
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    // Keep Unicode letters/numbers so Chinese titles produce valid slugs.
+    .replace(/[^\p{L}\p{N}_-]/gu, '')
+    .replace(/^-+|-+$/g, '');
+
+  // A title made only of punctuation should still have a stable route.
+  return slug || staticSlug;
 }
