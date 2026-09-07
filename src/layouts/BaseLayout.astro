@@ -18,7 +18,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" data-theme="lofi">
+<html lang="zh-CN" data-theme="lofi">
   <head>
     <BaseHead title={title} description={description} image={image} , ogType={ogType} />
     {TRANSITION_API && <ViewTransitions />}
@@ -30,6 +30,18 @@ const {
         <Header title={SITE_TITLE} />
         <div class="md:flex md:justify-center">
           <main class="p-6 pt-10 lg:max-w-[900px] max-w-[100vw]">
+            <section class="profile-glass mb-10" aria-label="个人信息">
+              <div class="profile-avatar-wrap"><img src="/profile.webp" alt="燚燿头像" class="profile-avatar" /></div>
+              <div class="profile-copy">
+                <p class="profile-kicker">你好，我是</p>
+                <h1>燚燿</h1>
+                <p class="profile-bio"><strong>Build. Learn. Repeat.</strong> 记录项目，也记录成长。</p>
+                <div class="profile-tags">
+                  <a href="https://github.com/yishuo299" target="_blank" rel="noreferrer">GitHub @yishuo299</a>
+                  <span>QQ 3441125143</span><span>微信 yy_shuo_299</span>
+                </div>
+              </div>
+            </section>
             <slot />
           </main>
         </div>
@@ -39,3 +51,12 @@ const {
     </div>
   </body>
 </html>
+
+<div class="milk-loader" id="milk-loader" aria-label="正在加载">
+  <div class="milk-scene"><div class="loader-person" aria-hidden="true"><span class="person-head">●</span><span class="person-body">◕</span></div><div class="milk-cup" aria-hidden="true"><span class="milk-fill"></span><span class="cup-straw"></span></div></div>
+  <p>正在喝奶茶，马上就好...</p><div class="milk-progress"><span id="milk-progress-bar"></span></div>
+</div>
+<script>
+  const loader = document.getElementById("milk-loader"); const bar = document.getElementById("milk-progress-bar"); const fill = document.querySelector(".milk-fill"); let progress = 0;
+  const timer = window.setInterval(() => { progress = Math.min(progress + Math.random() * 11 + 4, 100); if (bar) bar.style.width = `${progress}%`; if (fill) fill.style.height = `${Math.max(8, 100 - progress)}%`; if (progress >= 100) { window.clearInterval(timer); window.setTimeout(() => loader?.classList.add("is-done"), 180); } }, 90);
+</script>
