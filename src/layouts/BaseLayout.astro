@@ -113,12 +113,17 @@ const isHome = sideBarActiveItemID === "home";
         if (!scene || !scrim || !stars) return;
 
         stars.replaceChildren();
-        const starCount = window.matchMedia("(max-width: 600px)").matches ? 48 : 90;
+        const compactScreen = window.matchMedia("(max-width: 600px)").matches;
+        const navigatorWithMemory = navigator as Navigator & { deviceMemory?: number };
+        const lowPowerDevice = (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4) || (navigatorWithMemory.deviceMemory ?? 8) <= 4;
+        const starCount = compactScreen ? 28 : lowPowerDevice ? 42 : 64;
+        const starFragment = document.createDocumentFragment();
         for (let index = 0; index < starCount; index += 1) {
           const star = document.createElement("i");
           star.className = "star"; star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 65}%`;
-          const size = Math.random() > 0.82 ? 3 : 2; star.style.width = `${size}px`; star.style.height = `${size}px`; stars.appendChild(star);
+          const size = Math.random() > 0.82 ? 3 : 2; star.style.width = `${size}px`; star.style.height = `${size}px`; starFragment.appendChild(star);
         }
+        stars.appendChild(starFragment);
 
         const hexToRgb = (hex: string) => { const value = hex.replace("#", ""); return { r: Number.parseInt(value.slice(0, 2), 16), g: Number.parseInt(value.slice(2, 4), 16), b: Number.parseInt(value.slice(4, 6), 16) }; };
         const mixColor = (from: string, to: string, amount: number) => {
@@ -192,17 +197,21 @@ const isHome = sideBarActiveItemID === "home";
         const disperseWelcome = () => {
           if (!welcome || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
           const palette = [["#ffffff", "rgba(255,255,255,.9)"], ["#bcd4ff", "rgba(150,190,255,.85)"], ["#8fe0ff", "rgba(110,210,255,.85)"], ["#ffe7c2", "rgba(255,210,140,.85)"]];
-          const perLetter = window.innerWidth < 600 ? 18 : 38;
-          welcome.querySelectorAll<HTMLElement>(".welcome-letter").forEach((letter, letterIndex) => {
-            const rect = letter.getBoundingClientRect(); letter.classList.add("dispersing");
+          const perLetter = compactScreen ? 12 : lowPowerDevice ? 15 : 22;
+          const particleFragment = document.createDocumentFragment();
+          const newParticles: HTMLElement[] = [];
+          const letterData = Array.from(welcome.querySelectorAll<HTMLElement>(".welcome-letter"), (letter) => ({ letter, rect: letter.getBoundingClientRect() }));
+          letterData.forEach(({ letter, rect }, letterIndex) => {
+            letter.classList.add("dispersing");
             for (let index = 0; index < perLetter; index += 1) {
               const particle = document.createElement("i"), large = Math.random() < 0.12, size = large ? 3.5 + Math.random() * 3 : 1.5 + Math.random() * 2.5;
               const [color, glow] = palette[Math.floor(Math.random() * palette.length)], angle = Math.random() * Math.PI * 2, distance = large ? 70 + Math.random() * 250 : 130 + Math.random() * 430;
-              particle.className = "welcome-particle"; particle.style.left = `${rect.left + Math.random() * rect.width}px`; particle.style.top = `${rect.top + Math.random() * rect.height}px`;
+              particle.className = "welcome-particle fly"; particle.style.left = `${rect.left + Math.random() * rect.width}px`; particle.style.top = `${rect.top + Math.random() * rect.height}px`;
               particle.style.setProperty("--size", `${size.toFixed(2)}px`); particle.style.setProperty("--color", color); particle.style.setProperty("--glow", glow); particle.style.setProperty("--x", `${(Math.cos(angle) * distance).toFixed(1)}px`); particle.style.setProperty("--y", `${(Math.sin(angle) * distance * 0.8 + 60 + Math.random() * 110).toFixed(1)}px`); particle.style.setProperty("--duration", `${(1 + Math.random() * 1.15).toFixed(2)}s`); particle.style.animationDelay = `${letterIndex * 0.03 + Math.random() * 0.16}s`;
-              document.body.appendChild(particle); particles.push(particle); requestAnimationFrame(() => particle.classList.add("fly")); later(() => particle.remove(), 2800);
+              particleFragment.appendChild(particle); newParticles.push(particle);
             }
-          }); welcome.classList.add("disappear");
+          });
+          document.body.appendChild(particleFragment); particles.push(...newParticles); later(() => newParticles.forEach((particle) => particle.remove()), 2600); welcome.classList.add("disappear");
         };
         const runLoader = async () => {
           if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
