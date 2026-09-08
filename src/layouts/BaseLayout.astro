@@ -43,7 +43,7 @@ const techMeta: Record<string, { color: string; mark: string }> = {
     <div class="scrim" id="scrim" aria-hidden="true"></div>
 
     {isHome && (
-      <div id="loader" class="archive-loader loading" aria-label="正在加载项目档案" aria-live="polite">
+      <div id="loader" class="archive-loader archive-loading" aria-label="正在加载项目档案" aria-live="polite">
         <div class="loader-inner">
           <div class="loader-title">INITIALIZING PROJECT ARCHIVE</div>
           <div class="folder-container" id="folderContainer">
@@ -204,7 +204,7 @@ const techMeta: Record<string, { color: string; mark: string }> = {
         };
         const runLoader = async () => {
           if (!loader) { document.body.classList.add("archive-ready"); return; }
-          document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("loading"); renderProgress(0); await wait(180);
+          document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); renderProgress(0); await wait(180);
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
           else {
             let current = 0;
@@ -216,7 +216,7 @@ const techMeta: Record<string, { color: string; mark: string }> = {
             }
             folders.forEach((folder) => { folder.classList.remove("active"); folder.classList.add("done"); }); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await animateProgress(current, 100, 260); await wait(180); showWelcome(); await wait(1250); disperseWelcome(); await wait(1050);
           }
-          if (cancelled) return; loader.classList.remove("loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready");
+          if (cancelled) return; loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready");
         };
         void runLoader();
         archiveCleanup = () => { cancelled = true; controller.abort(); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); };
