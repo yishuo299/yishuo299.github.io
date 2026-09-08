@@ -82,28 +82,28 @@ const dataTables = [
 </BaseLayout>
 
 <style>
-  .blueprint-article { width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .blueprint-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
-  .blueprint-hero { padding: clamp(34px,6vw,72px); border: 1px solid var(--line); border-radius: 34px; background: linear-gradient(135deg, rgba(86,199,169,.2), rgba(255,255,255,.045)); }
+  .blueprint-hero { padding: clamp(34px,6vw,72px); border: 1px solid var(--article-line); border-radius: 34px; background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); }
   .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; }
   .title-row { display: flex; gap: 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-  .title-row a, .final-note a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  h1 { max-width: 820px; margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px,7vw,78px); line-height: 1.02; }
+  .title-row a, .final-note a { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { max-width: 820px; margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px,7vw,78px); line-height: 1.02; text-shadow: 0 2px 18px color-mix(in srgb, var(--bg) 35%, transparent); }
   h2, h3 { color: var(--ink); }
   p, li, span, footer { color: var(--ink-2); line-height: 1.9; }
-  .map-section, .data-first, .tech-blueprint, .build-order, .code-board, .result-section, .final-note { margin-top: 24px; padding: 28px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.045); }
+  .map-section, .data-first, .tech-blueprint, .build-order, .code-board, .result-section, .final-note { margin-top: 24px; padding: 28px; border: 1px solid var(--article-line); border-radius: 26px; background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); }
   .module-map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 18px; }
-  .module-map div { padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: rgba(86,199,169,.08); }
+  .module-map div { padding: 16px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
   .module-map b, .data-first strong, .layers span, .build-order strong { color: var(--ink); }
   .data-first > div, .layers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .data-first article, .layers div { padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.035); }
+  .data-first article, .layers div { padding: 18px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
   .build-order li { margin: 9px 0; }
   .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .code-grid article { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: rgba(0,0,0,.12); }
+  .code-grid article { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-surface-soft); }
   .code-grid header span { color: #69e6c2; font-size: 18px; }
-  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: rgba(0,0,0,.38); color: #e9fff8; font-size: 13px; line-height: 1.7; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #e9fff8; font-size: 13px; line-height: 1.7; }
   .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.035); }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
   img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
   figcaption { display: grid; gap: 5px; padding: 14px; }
   figcaption strong { color: var(--ink); }

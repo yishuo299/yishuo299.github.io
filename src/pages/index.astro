@@ -197,7 +197,21 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
     const clickLoader = document.getElementById("clickLoader"), clickLoaderName = document.getElementById("clickLoaderName"), clickLoaderFolder = document.getElementById("clickLoaderFolder"), clickProgress = document.getElementById("clickProgress") as HTMLElement | null;
     const bookLoader = document.getElementById("bookLoader");
     const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailProject = document.getElementById("detailProject") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
-    const closeDetail = () => { detailOverlay?.classList.remove("show"); detailOverlay?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
+    let articleTimer: number | undefined;
+    const resetProjectOverlays = () => {
+      window.clearTimeout(articleTimer);
+      clickLoader?.classList.remove("show");
+      clickLoader?.setAttribute("aria-hidden", "true");
+      bookLoader?.classList.remove("show");
+      bookLoader?.setAttribute("aria-hidden", "true");
+    };
+    resetProjectOverlays();
+    const closeDetail = () => {
+      resetProjectOverlays();
+      detailOverlay?.classList.remove("show");
+      detailOverlay?.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    };
     const showDetail = (card: HTMLElement) => {
       if (detailKeyword) detailKeyword.textContent = card.dataset.name ?? "PROJECT"; if (detailTitle) detailTitle.textContent = card.dataset.title ?? "Project"; if (detailDescription) detailDescription.textContent = card.dataset.description ?? ""; if (detailText) detailText.textContent = card.dataset.detail ?? "";
       const articleUrl = card.dataset.article ?? "";
@@ -212,7 +226,8 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
         document.body.classList.add("modal-open");
         bookLoader?.classList.add("show");
         bookLoader?.setAttribute("aria-hidden", "false");
-        window.setTimeout(() => { window.location.href = articleUrl; }, 780);
+        window.clearTimeout(articleTimer);
+        articleTimer = window.setTimeout(() => { window.location.href = articleUrl; }, 780);
       }
       else showDetail(card);
     };
@@ -241,13 +256,16 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       document.body.classList.add("modal-open");
       bookLoader?.classList.add("show");
       bookLoader?.setAttribute("aria-hidden", "false");
-      window.setTimeout(() => { window.location.href = href; }, 780);
+      window.clearTimeout(articleTimer);
+      articleTimer = window.setTimeout(() => { window.location.href = href; }, 780);
     }, { signal: controller.signal });
     detailClose?.addEventListener("click", closeDetail, { signal: controller.signal });
     detailOverlay?.addEventListener("click", (event) => { if (event.target === detailOverlay) closeDetail(); }, { signal: controller.signal });
     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && detailOverlay?.classList.contains("show")) closeDetail(); }, { signal: controller.signal });
 
-    homeCleanup = () => { controller.abort(); revealObserver?.disconnect(); document.body.classList.remove("modal-open"); };
+    window.addEventListener("pageshow", closeDetail, { signal: controller.signal });
+
+    homeCleanup = () => { controller.abort(); window.clearTimeout(articleTimer); revealObserver?.disconnect(); document.body.classList.remove("modal-open"); };
   };
 
   document.addEventListener("astro:page-load", initHome);

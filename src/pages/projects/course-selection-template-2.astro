@@ -81,31 +81,31 @@ const journeys = [
 </BaseLayout>
 
 <style>
-  .story-article { width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .story-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
-  .story-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px; align-items: center; padding: clamp(28px,5vw,58px); border: 1px solid var(--line); border-radius: 34px; background: radial-gradient(circle at top left, rgba(138,180,255,.24), transparent 38%), rgba(255,255,255,.055); }
+  .story-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px; align-items: center; padding: clamp(28px,5vw,58px); border: 1px solid var(--article-line); border-radius: 34px; background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); }
   .story-hero img { width: 100%; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.32); }
   .eyebrow { color: var(--accent); letter-spacing: .22em; text-transform: uppercase; }
   .title-row { display: grid; gap: 14px; }
-  .title-row a, .closing a { width: fit-content; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(36px,6vw,72px); line-height: 1.05; }
+  .title-row a, .closing a { width: fit-content; padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(36px,6vw,72px); line-height: 1.05; text-shadow: 0 2px 18px color-mix(in srgb, var(--bg) 35%, transparent); }
   h2, h3 { color: var(--ink); }
   p { color: var(--ink-2); line-height: 1.9; }
-  .journey, .tech-story, .code-story, .result-wall, .closing { margin-top: 24px; padding: 28px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.045); }
+  .journey, .tech-story, .code-story, .result-wall, .closing { margin-top: 24px; padding: 28px; border: 1px solid var(--article-line); border-radius: 26px; background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); }
   .role-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
-  .role-strip article { padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: rgba(138,180,255,.09); }
+  .role-strip article { padding: 18px; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-card); backdrop-filter: blur(14px); }
   .role-strip span { color: var(--accent); font-size: 20px; }
   .steps { display: grid; gap: 12px; }
-  .steps div { padding: 16px; border-left: 3px solid var(--accent); background: rgba(255,255,255,.035); border-radius: 0 16px 16px 0; }
+  .steps div { padding: 16px; border-left: 3px solid var(--accent); background: var(--article-card); border-radius: 0 16px 16px 0; }
   .steps b, .tech-story strong { color: var(--ink); margin-right: 8px; }
   .tech-story div { columns: 2 320px; column-gap: 34px; }
   .code-story { display: grid; gap: 18px; }
   .code-story > h2 { margin-bottom: 0; }
-  .code-story article { display: grid; grid-template-columns: 70px minmax(220px,.8fr) minmax(0,1.2fr); gap: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: rgba(0,0,0,.12); }
+  .code-story article { display: grid; grid-template-columns: 70px minmax(220px,.8fr) minmax(0,1.2fr); gap: 16px; padding: 18px; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-surface-soft); }
   .number { color: var(--accent); font-size: 30px; }
-  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: rgba(0,0,0,.38); color: #eef5ff; font-size: 13px; line-height: 1.7; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #eef5ff; font-size: 13px; line-height: 1.7; }
   .result-wall div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.035); }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
   figure img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
   figcaption { padding: 12px; color: var(--ink); }
   @media (max-width: 920px) { .story-hero, .code-story article { grid-template-columns: 1fr; } .role-strip, .result-wall div { grid-template-columns: repeat(2, 1fr); } }

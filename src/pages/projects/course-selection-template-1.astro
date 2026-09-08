@@ -73,14 +73,14 @@ import { codeSections, modules, projectUrl, screenshots, techStack } from "../..
 </BaseLayout>
 
 <style>
-  .formal-article { width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .formal-article { position: relative; z-index: 3; width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
-  .formal-hero, .overview-grid article, .chapter, .final-card { border: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); box-shadow: 0 24px 80px rgba(0,0,0,.16); }
+  .formal-hero, .overview-grid article, .chapter, .final-card { border: 1px solid var(--article-line); background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); }
   .formal-hero { padding: clamp(34px, 6vw, 68px); border-radius: 30px; }
   .eyebrow { color: var(--accent); letter-spacing: .22em; text-transform: uppercase; }
   .title-row { display: flex; gap: 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-  .title-row a, .final-card a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  h1 { max-width: 760px; margin: 10px 0 18px; color: var(--ink); font-size: clamp(42px, 8vw, 86px); line-height: .98; }
+  .title-row a, .final-card a { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { max-width: 760px; margin: 10px 0 18px; color: var(--ink); font-size: clamp(42px, 8vw, 86px); line-height: .98; text-shadow: 0 2px 18px color-mix(in srgb, var(--bg) 35%, transparent); }
   h2, h3 { color: var(--ink); }
   p, span { color: var(--ink-2); line-height: 1.9; }
   .lead { max-width: 860px; font-size: 19px; }
@@ -89,13 +89,13 @@ import { codeSections, modules, projectUrl, screenshots, techStack } from "../..
   .overview-grid span { color: var(--accent); letter-spacing: .12em; }
   .chapter, .final-card { margin-top: 22px; }
   .module-table, .tech-table, .feature-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .module-table div, .tech-table div, .feature-grid article { padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.035); }
+  .module-table div, .tech-table div, .feature-grid article { padding: 18px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
   .module-table strong, .tech-table b, .code-list strong { color: var(--ink); }
   .code-list { display: grid; gap: 18px; }
-  .code-list article { padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: rgba(0,0,0,.12); }
-  pre { overflow-x: auto; padding: 18px; border-radius: 16px; background: rgba(0,0,0,.38); color: #eef5ff; font-size: 13px; line-height: 1.7; }
+  .code-list article { padding: 20px; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-surface-soft); }
+  pre { overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #eef5ff; font-size: 13px; line-height: 1.7; }
   .screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.035); }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
   img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
   figcaption { display: grid; gap: 5px; padding: 14px; }
   figcaption strong { color: var(--ink); }
