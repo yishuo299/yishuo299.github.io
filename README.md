@@ -1,289 +1,133 @@
-# Astrofy | Personal Portfolio Website Template
+# 燚燿 | 个人项目档案
 
-![Astrofy | Personal Porfolio Website Template](public/social_img.webp)
+这是一个基于 Astro 构建的个人博客与项目展示站点，用来整理我的项目实践、技术笔记、学习资料和成长记录。网站整体风格参考了个人项目归档界面，首页会根据时间切换背景氛围，并在进入站点时展示技术栈加载动画与粒子消散效果。
 
-Astrofy is a free and open-source template for your Personal Portfolio Website built with Astro and TailwindCSS. Create in minutes a website with a Blog, CV, Project Section, Store, and RSS Feed.
+## 主页预览
 
-## Demo
+![博客主页预览](https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsX2qf7WG_6XZUul4fB7q1xOdR-YO3AALrIwACnMUBVdOMA1J4BETRPQQ.jpg)
 
-View a live demo of [Astrofy](https://astrofy-template.netlify.app/)
+## 项目说明
 
-## Installation
+本项目用于展示个人作品与学习路径，内容主要包含：
 
-Run the following command in your terminal
+- 项目档案：按技术栈整理 Python、STM32、Django、Vue、Spring Boot、Android 等方向的项目实践。
+- 技术文章：记录项目复盘、工具思考、开源学习和开发经验。
+- 个人介绍：展示学习方向、项目经历和持续构建的过程。
+- 资源整理：沉淀常用模板、效率工具、学习资料与笔记。
+- RSS 订阅：方便持续关注博客内容更新。
+
+首页支持项目搜索、技术栈筛选、项目详情弹层、时间背景切换，以及进入网站时的加载动效。整体目标是让博客既能展示作品，也能留下清晰的学习轨迹。
+
+## 功能特点
+
+- 响应式个人主页，适配桌面端与移动端浏览。
+- 根据当前时间切换背景氛围，让页面更有沉浸感。
+- 加载阶段展示技术栈图标与进度动画。
+- 主页面加载完成后展示粒子消散效果。
+- 项目卡片支持筛选、搜索和详情查看。
+- Markdown 内容驱动博客文章与资源页面。
+- 支持静态构建，适合部署到 GitHub Pages。
+
+## 技术栈
+
+- [Astro](https://astro.build/)：负责静态站点构建与页面组织。
+- [Tailwind CSS](https://tailwindcss.com/)：负责工具类样式与响应式布局。
+- [DaisyUI](https://daisyui.com/)：提供部分基础 UI 能力。
+- [TypeScript](https://www.typescriptlang.org/)：用于类型约束与项目数据维护。
+- [Markdown / MDX](https://docs.astro.build/en/guides/markdown-content/)：用于编写博客文章与资源内容。
+- [GitHub Pages](https://pages.github.com/)：用于静态站点托管。
+
+## 本地运行
+
+安装依赖：
 
 ```bash
 pnpm install
 ```
 
-Once the packages are installed you are ready to run astro. Astro comes with a built-in development server that has everything you need for project development. The astro dev command will start the local development server so that you can see your new website in action for the very first time.
+启动开发服务：
 
 ```bash
 pnpm run dev
 ```
 
-## Tech Stack
+构建生产版本：
 
-- [Astro](https://astro.build)
-- [tailwindcss](https://tailwindcss.com/)
-- [DaisyUI](https://daisyui.com/)
+```bash
+pnpm run build
+```
 
-## Project Structure
+预览构建结果：
 
-```php
+```bash
+pnpm run preview
+```
+
+## 目录结构
+
+```text
+.
+├── public/                  # 静态资源，例如头像、社交预览图等
 ├── src/
-│   ├── components/
-│   │   ├── cv/
-│   │   │   ├── TimeLine
-│   │   ├── BaseHead.astro
-│   │   ├── Card.astro
-│   │   ├── Footer.astro
-│   │   ├── Header.astro
-│   │   └── HorizontalCard.astro
-│   │   └── SideBar.astro
-│   │   └── SideBarMenu.astro
-│   │   └── SideBarFooter.astro
-│   ├── content/
-│   │   ├── blog/
-│   │   │   ├── post1.md
-│   │   │   ├── post2.md
-│   │   │   └── post3.md
-│   │   ├── store/
-│   │   │   ├── item1.md
-│   │   │   ├── item2.md
-│   ├── layouts/
-│   │   └── BaseLayout.astro
-│   │   └── PostLayout.astro
-│   └── pages/
-│   │   ├── blog/
-│   │   │   ├── [...page].astro
-│   │   │   ├── [slug].astro
-│   │   └── cv.astro
-│   │   └── index.astro
-│   │   └── projects.astro
-│   │   └── rss.xml.js
-│   ├── styles/
-│   │   └── global.css
-│   └── config.ts
-├── public/
-│   ├── favicon.svg
-│   └── profile.webp
-│   └── social_img.webp
-├── astro.config.mjs
-├── tailwind.config.cjs
-├── package.json
-└── tsconfig.json
+│   ├── components/          # 页面组件
+│   ├── content/             # Markdown 内容集合
+│   │   ├── blog/            # 博客文章
+│   │   └── store/           # 资源内容
+│   ├── data/                # 项目数据与技术栈图标配置
+│   ├── layouts/             # 页面布局
+│   ├── pages/               # 路由页面
+│   └── styles/              # 全局样式
+├── astro.config.mjs         # Astro 配置
+├── tailwind.config.cjs      # Tailwind 配置
+└── package.json             # 项目脚本与依赖
 ```
 
-### Site config
+## 内容维护
 
-You can change global site configuration on '/src/config.ts' file:
+博客文章位于 `src/content/blog/`，资源内容位于 `src/content/store/`。新增文章时，可以使用下面的格式：
 
-- **SITE_TITLE**: Default pages title.
-- **SITE_DESCRIPTION**: Default pages title.
-- **GENERATE_SLUG_FROM_TITLE**: By default Astrofy will generate the blog slug pages base on the article name. Set this var to false if you want to use the Astro file base (Compatible with Astrofy older versions).
-- **TRANSITION_API**: Enable and disable transition API
-
-### Components usage
-
-#### Layout Components
-
-The `BaseHead`, `Footer`, `Header`, and `SideBar` components are already included in the layout system. To change the website content you can edit the content of these components.
-
-##### SideBar
-
-In the Sidebar you can change your profilePicture, links to all your website pages, and your social icons.
-
-You can change your avatar shape using [mask classes](https://daisyui.com/components/mask/).
-
-The used social-icons are SVG form [BoxIcons](https://boxicons.com/) pack. You can replace the icons in the `SideBarFooter` component
-
-To add a new page in the sidebar go to the `SideBarMenu` component.
-
-```
-<li><a class="py-3 text-base" id="home" href="/">Home</a></li>
-
-```
-
-**Note**: In order to change the sidebar menu's active item, you need to setup the prop `sideBarActiveItemID` in the `BaseLayout` component of your new page and add that id to the link in the `SideBarMenu`
-
-#### TimeLine
-
-The timeline components are used to confirm the CV.
-
-```html
-<div class="time-line-container">
-  <TimeLineElement title="Element Title" subtitle="Subtitle">
-    Content that can contain
-    <div>divs</div>
-    and <span>anything else you want</span>.
-  </TimeLineElement>
-  ...
-</div>
-```
-
-#### Card & HorizontalCard
-
-The cards are primarly used for the Project and the Blog components. They include a picture, a title, and a description. 
-
-```html
-<HorizontalCard title="Card Title" img="imge_url" desc="Description" url="Link
-URL" target="Optional link target (_blank default)" badge="Optional badge"
-tags={['Array','of','tags']} />
-```
-
-#### HorizontalCard Shop Item
-
-
-This component is already included in the Store layout of the template. In case you want to use it in another place these are the props.
-
-```html
-<HorizontalShopItem
-  title="Item Title"
-  img="imge_url"
-  desc="Item description"
-  pricing="current_price"
-  oldPricing="old_price"
-  checkoutUrl="external store checkout url"
-  badge="Optional badge"
-  url="item details url"
-  custom_link="Custom link url"
-  custom_link_label="Cutom link btn label"
-  target="Optional link target (_self default)"
-/>
-```
-
-#### Adding a Custom Component
-
-To add a custom component, you can create a .astro file in the components folder under the source folder. 
-
-Components must follow this template. The ```---``` represents the code fence and uses Javascript and can be used for imports. 
-
-The HTML component is the actual style of your new component. 
-
-```html
+```md
 ---
-// Component Script (JavaScript)
+title: "文章标题"
+description: "文章简介"
+pubDate: "Sep 08 2026"
+heroImage: "/post_img.webp"
+badge: "文章标签"
+tags: ["项目复盘", "学习记录"]
 ---
-<!-- Component Template (HTML + JS Expressions) -->
+
+这里编写正文内容。
 ```
 
-For more details, see the [astro components](https://docs.astro.build/en/core-concepts/astro-components/) documentation here. 
+项目列表与技术栈展示主要由 `src/data/projects.json` 和 `src/data/techMeta.ts` 维护。
 
-### Layouts
+## 部署
 
-Include `BaseLayout` in each page you add and `PostLayout` to your post pages.
+项目支持静态构建，适合部署到 GitHub Pages。通常流程是：
 
-The BaseLayout defines a general template for each new webpage you want to add. It imports constants SITE_TITLE and SITE_DESCRIPTION which can be modified in the ```../config``` folder. Data placed there can be imported anywhere using import. 
+1. 修改内容或样式。
+2. 运行 `pnpm run build` 确认构建正常。
+3. 使用 GitHub Desktop 填写提交 Summary 并提交。
+4. 推送到 GitHub 后由 GitHub Pages 发布。
 
-### Content
+## 技术支持
 
-You can add a [content collection](https://docs.astro.build/en/guides/content-collections/) in `/content/' folder, you will need add it at config.ts.
+如果你在使用或二次修改这个项目时遇到问题，可以优先查看：
 
-#### config.ts
+- Astro 官方文档：[https://docs.astro.build/](https://docs.astro.build/)
+- Tailwind CSS 官方文档：[https://tailwindcss.com/docs](https://tailwindcss.com/docs)
+- DaisyUI 官方文档：[https://daisyui.com/](https://daisyui.com/)
+- GitHub Pages 文档：[https://docs.github.com/pages](https://docs.github.com/pages)
 
-Where you need to define your content collections, we define our content schemas too.
+也可以通过 GitHub Issues 或仓库讨论区记录问题、建议与后续优化方向。
 
-#### Blog
+## 致谢
 
-Add your `md` blog post in the `/content/blog/` folder.
-
-##### Post format
-
-Add code with this format in the top of each post file.
-
-```
----
-title: "Post Title"
-description: "Description"
-pubDate: "Post date format(Sep 10 2022)"
-heroImage: "Post Hero Image URL"
----
-```
-
-### Pages
-
-#### Blog
-
-Blog uses Astro's content collection to query post's `md`.
-
-##### [page].astro
-
-The `[page].astro` is the route to work with the paginated post list. You can change there the number of items listed for each page and the pagination button labels.
-
-##### [slug].astro
-
-The `[slug].astro` is the base route for every blog post, you can customize the page layout or behaviour, by default uses `content/blog` for content collection and `PostLayout` as layout.
-
-#### Shop
-
-Add your `md` item in the `/pages/shop/` folder.
-
-##### [page].astro
-
-The `[page].astro` is the route to work with the paginated item list. You can change there the number of items listed for each page and the pagination button labels. The shop will render all `.md` files you include inside this folder.
-
-##### Item format
-
-Add code with this format at the top of each item file.
-
-```js
----
-title: "Demo Item 1"
-description: "Item description"
-heroImage: "Item img url"
-details: true // show or hide details btn
-custom_link_label: "Custom btn link label"
-custom_link: "Custom btn link"
-pubDate: "Sep 15 2022"
-pricing: "$15"
-oldPricing: "$25.5"
-badge: "Featured"
-checkoutUrl: "https://checkouturl.com/"
----
-```
-
-#### Static pages
-
-The other pages included in the template are static pages. The `index` page belongs to the root page. You can add your pages directly in the `/pages` folder and then add a link to those pages in the `sidebar` component.
-
-Feel free to modify the content included in the pages that the template contains or add the ones you need.
-
-### Theming
-
-To change the template theme change the `data-theme` attribute of the `<html>` tag in `BaseLayout.astro` file.
-
-You can choose among 30 themes available or create your custom theme. See themes available [here](https://daisyui.com/docs/themes/).
-
-## Sitemap
-
-The Sitemap is generated automatically when you build your website in the root of the domain. Please update the `robots.txt` file in the public folder with your site name URL for the Sitemap.
-
-## Deploy
-
-You can deploy your site on your favourite static hosting service such as Vercel, Netlify, GitHub Pages, etc.
-
-The configuration for the deployment varies depending on the platform where you are going to do it. See the [official Astro information](https://docs.astro.build/en/guides/deploy/) to deploy your website.
-
-> **⚠️ CAUTION** </br>
-> The Blog pagination of this template is implemented using dynamic route parameters in its filename and for now this format is incompatible with SSR deploy configs, so please use the default static deploy options for your deployments.
-
-## Contributing
-
-Suggestions and pull requests are welcomed! Feel free to open a discussion or an issue for a new feature request or bug.
-
-One of the best ways to contribute is to grab a [bug report or feature suggestion](https://github.com/manuelernestog/astrofy/issues) that has been marked `accepted` and dig in.
-
-Please be wary of working on issues _not_ marked as `accepted`. Just because someone has created an issue doesn't mean we'll accept a pull request for it.
+- 感谢 [Astro](https://astro.build/)、[Tailwind CSS](https://tailwindcss.com/) 与 [DaisyUI](https://daisyui.com/) 提供的优秀开源能力。
+- 感谢 Astrofy 模板提供的基础项目结构，让个人站点可以更快开始搭建。
+- 感谢开源社区中持续分享经验、代码和灵感的开发者们。
+- 感谢每一次项目实践，它们共同构成了这个博客的内容来源。
 
 ## License
 
-Astrofy is licensed under the MIT license — see the [LICENSE](https://github.com/manuelernestog/astrofy/blob/main/LICENSE) file for details.
-
-## Contributors
-
-<a href="https://github.com/manuelernestog/astrofy/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=manuelernestog/astrofy" />
-</a>
-
-Made with [contrib.rocks](https://contrib.rocks).
+本项目基于 MIT License 开源，详细信息见 [LICENSE](./LICENSE)。
