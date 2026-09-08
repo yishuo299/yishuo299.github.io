@@ -10,7 +10,8 @@ const posts = (await getCollection("blog"))
   .slice(0, 3);
 
 const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
-const projectFilters = Array.from(new Set(projects.flatMap((project) => project.tags)));
+const TECH_STACK_FILTERS = ["Python", "STM32", "Django", "Vue", "Vue 3", "Spring Boot", "Android", "MySQL", "JWT", "Element Plus", "MyBatis Plus", "Pinia", "Axios"];
+const projectFilters = Array.from(new Set(projects.flatMap((project) => [project.name, ...project.tags]).filter((tag) => TECH_STACK_FILTERS.includes(tag))));
 const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s*\d+$/, "")] ?? FALLBACK_TECH_META;
 ---
 
@@ -88,7 +89,7 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       <div class="projects-list" id="projectsContainer">
         {projects.map((project, index) => (
           <div class="reveal project-item" data-project-category={`|${[project.name, ...project.tags].map((tag) => tag.toLowerCase()).join("|")}|`} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
-            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-icon={getTechMeta(project.tags[0] ?? project.name).svg}>
+            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-project-url={(project as any).projectUrl ?? ""} data-icon={getTechMeta(project.tags[0] ?? project.name).svg}>
               <span class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></span>
               <strong class="project-title">{project.title}</strong>
               <span class="project-description">{project.description}</span>
@@ -131,11 +132,23 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
 
   <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
     <section class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <a class="detail-read" id="detailRead" href="#" hidden>阅读完整文章 ↗</a>
+      <div class="detail-actions">
+        <a class="detail-project" id="detailProject" href="#" target="_blank" rel="noreferrer" hidden>前往项目 ↗</a>
+        <a class="detail-read" id="detailRead" href="#" hidden>阅读完整文章 ↗</a>
+      </div>
       <button class="detail-close" id="detailClose" type="button" aria-label="关闭项目详情">×</button>
       <div class="detail-keyword" id="detailKeyword">PROJECT</div><h2 class="detail-title" id="detailTitle">Project</h2>
       <div class="detail-content"><p id="detailDescription"></p><p id="detailText"></p></div>
     </section>
+  </div>
+
+  <div id="bookLoader" class="book-loader" aria-hidden="true">
+    <div class="book-loader-inner">
+      <div class="book">
+        <span class="book-cover"></span><span class="book-page page-one"></span><span class="book-page page-two"></span><span class="book-page page-three"></span>
+      </div>
+      <div class="book-loader-text">OPENING ARTICLE</div>
+    </div>
   </div>
 </BaseLayout>
 
@@ -182,17 +195,25 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
     document.querySelectorAll(".reveal").forEach((element) => revealObserver ? revealObserver.observe(element) : element.classList.add("in-view"));
 
     const clickLoader = document.getElementById("clickLoader"), clickLoaderName = document.getElementById("clickLoaderName"), clickLoaderFolder = document.getElementById("clickLoaderFolder"), clickProgress = document.getElementById("clickProgress") as HTMLElement | null;
-    const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
+    const bookLoader = document.getElementById("bookLoader");
+    const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailProject = document.getElementById("detailProject") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
     const closeDetail = () => { detailOverlay?.classList.remove("show"); detailOverlay?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
     const showDetail = (card: HTMLElement) => {
       if (detailKeyword) detailKeyword.textContent = card.dataset.name ?? "PROJECT"; if (detailTitle) detailTitle.textContent = card.dataset.title ?? "Project"; if (detailDescription) detailDescription.textContent = card.dataset.description ?? ""; if (detailText) detailText.textContent = card.dataset.detail ?? "";
       const articleUrl = card.dataset.article ?? "";
       if (detailRead) { detailRead.href = articleUrl || "#"; detailRead.hidden = !articleUrl; }
+      const projectUrl = card.dataset.projectUrl ?? "";
+      if (detailProject) { detailProject.href = projectUrl || "#"; detailProject.hidden = !projectUrl; }
       detailOverlay?.classList.add("show"); detailOverlay?.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); window.setTimeout(() => (detailClose as HTMLElement | null)?.focus(), 80);
     };
     const openArticle = (card: HTMLElement) => {
       const articleUrl = card.dataset.article;
-      if (articleUrl) window.location.href = articleUrl;
+      if (articleUrl) {
+        document.body.classList.add("modal-open");
+        bookLoader?.classList.add("show");
+        bookLoader?.setAttribute("aria-hidden", "false");
+        window.setTimeout(() => { window.location.href = articleUrl; }, 780);
+      }
       else showDetail(card);
     };
     const openProject = (card: HTMLElement) => {
@@ -213,6 +234,15 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
         openArticle(card);
       }, { signal: controller.signal });
     });
+    detailRead?.addEventListener("click", (event) => {
+      const href = detailRead.getAttribute("href");
+      if (!href || href === "#") return;
+      event.preventDefault();
+      document.body.classList.add("modal-open");
+      bookLoader?.classList.add("show");
+      bookLoader?.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => { window.location.href = href; }, 780);
+    }, { signal: controller.signal });
     detailClose?.addEventListener("click", closeDetail, { signal: controller.signal });
     detailOverlay?.addEventListener("click", (event) => { if (event.target === detailOverlay) closeDetail(); }, { signal: controller.signal });
     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && detailOverlay?.classList.contains("show")) closeDetail(); }, { signal: controller.signal });

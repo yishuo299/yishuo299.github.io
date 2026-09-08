@@ -5,7 +5,8 @@
     "description": "一套前后端分离的教务选课系统，覆盖登录鉴权、学生选课、教师成绩、教务审核与后台管理。",
     "detail": "这个版本偏正式项目介绍，适合放在 GitHub 或作品集中。项目使用 Spring Boot、Vue 3、MySQL、JWT 与 Element Plus，重点展示系统架构、角色权限、核心业务流程和功能完成度。",
     "tags": ["Spring Boot", "Vue 3", "MySQL", "JWT", "Element Plus", "MyBatis Plus", "选课系统", "权限管理"],
-    "articleUrl": "/projects/course-selection-template-1/"
+    "articleUrl": "/projects/course-selection-template-1/",
+    "projectUrl": "https://github.com/yishuo299/School_Course_Selection_Management_System"
   },
   {
     "name": "Vue",
@@ -13,7 +14,8 @@
     "description": "从界面体验出发整理选课系统，突出角色工作台、课程筛选、课表展示、成绩查询和日志追踪。",
     "detail": "这个版本更像博客展示稿，语言更轻快，适合突出用户路径与页面体验。项目使用 Vue 3、Element Plus、Pinia、Axios 和 Spring Boot，把学生、教师、教务、管理员四类角色串成清晰的操作流程。",
     "tags": ["Vue 3", "Element Plus", "Pinia", "Axios", "Spring Boot", "后台管理", "课表展示", "成绩查询"],
-    "articleUrl": "/projects/course-selection-template-2/"
+    "articleUrl": "/projects/course-selection-template-2/",
+    "projectUrl": "https://github.com/yishuo299/School_Course_Selection_Management_System"
   },
   {
     "name": "MySQL",
@@ -21,7 +23,8 @@
     "description": "从数据表和业务规则角度说明项目，包含用户权限、课程开设、选课校验、成绩流转和操作日志。",
     "detail": "这个版本偏业务闭环和数据库设计，适合强调项目不是单页演示，而是有完整数据关系和管理流程的系统。技术栈包含 MySQL、Spring Boot、MyBatis Plus、Vue 3 与教务业务模块。",
     "tags": ["MySQL", "Spring Boot", "MyBatis Plus", "Vue 3", "教务系统", "数据库设计", "成绩管理", "操作日志"],
-    "articleUrl": "/projects/course-selection-template-3/"
+    "articleUrl": "/projects/course-selection-template-3/",
+    "projectUrl": "https://github.com/yishuo299/School_Course_Selection_Management_System"
   },
   {
     "name": "Python",

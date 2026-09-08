@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import CourseDeepDive from "../../components/CourseDeepDive.astro";
+
+const projectUrl = "https://github.com/yishuo299/School_Course_Selection_Management_System";
 
 const images = [
   ["管理员用户管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsaGqgCRlgpxYuoA_yb8yLsMGUlkQ0AAKAJAACnMUBVYncpyXp3BnkPQQ.jpg"],
@@ -43,9 +46,11 @@ public Object recordLog(ProceedingJoinPoint joinPoint, OperationLog operationLog
     <a class="back-link" href="/#projects">← 返回项目列表</a>
     <section class="system-hero">
       <p class="eyebrow">Template 03 · 业务闭环版</p>
-      <h1>从数据表到业务流转：选课系统是怎样跑起来的</h1>
+      <div class="hero-title-row"><h1>从数据表到业务流转：选课系统是怎样跑起来的</h1><a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a></div>
       <p>这个版本从“系统如何支撑真实业务”切入，重点说明数据库设计、权限体系、选课规则、成绩流转和日志追踪。它适合用来展示项目的完整性和工程思维。</p>
     </section>
+
+    <CourseDeepDive />
 
     <section class="flow">
       <h2>一、项目构成</h2>
@@ -127,6 +132,7 @@ public Object recordLog(ProceedingJoinPoint joinPoint, OperationLog operationLog
     <section class="final-note">
       <h2>八、项目亮点</h2>
       <p>这个模板的优势是逻辑感强：它能说明项目为什么要这样拆模块、每张表服务什么业务、每个角色如何参与流程。相比只展示页面，它更容易体现后端设计、数据库建模和业务规则落地能力。</p>
+      <a class="final-project-link" href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
     </section>
   </main>
 </BaseLayout>
@@ -136,6 +142,8 @@ public Object recordLog(ProceedingJoinPoint joinPoint, OperationLog operationLog
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
   .system-hero { padding: clamp(34px, 6vw, 72px); border: 1px solid var(--line); border-radius: 32px; background: linear-gradient(135deg, rgba(86,199,169,.18), rgba(255,255,255,.045)); }
   .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; }
+  .hero-title-row { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; justify-content: space-between; }
+  .hero-title-row a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
   h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px, 7vw, 78px); line-height: 1.02; }
   h2 { color: var(--ink); }
   p, li { color: var(--ink-2); line-height: 1.9; }
@@ -146,6 +154,7 @@ public Object recordLog(ProceedingJoinPoint joinPoint, OperationLog operationLog
   .flow ol { padding-left: 22px; }
   .flow li { margin: 10px 0; }
   pre { overflow-x: auto; padding: 20px; border-radius: 18px; background: rgba(0,0,0,.36); color: #e9fff8; }
+  .final-project-link { display: inline-flex; margin-top: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
   .visuals > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   figure { margin: 0; overflow: hidden; }
   figure img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }

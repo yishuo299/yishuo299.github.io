@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import CourseDeepDive from "../../components/CourseDeepDive.astro";
+
+const projectUrl = "https://github.com/yishuo299/School_Course_Selection_Management_System";
 
 const moments = [
   ["登录", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg"],
@@ -37,11 +40,13 @@ request.interceptors.request.use((config) => {
     <section class="story-hero">
       <div>
         <p class="eyebrow">Template 02 · 交互体验版</p>
-        <h1>把一套选课系统，做成清晰可走通的后台体验</h1>
+        <div class="hero-title-row"><h1>把一套选课系统，做成清晰可走通的后台体验</h1><a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a></div>
         <p>这个版本更像一篇博客展示稿：它从用户进入系统开始讲，依次说明学生、教师、教务和管理员分别能完成什么操作，以及这些页面背后的数据如何流动。</p>
       </div>
       <img src="https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg" alt="选课系统登录页" />
     </section>
+
+    <CourseDeepDive />
 
     <section class="essay-block">
       <h2>一、文章定位：从使用体验倒推系统设计</h2>
@@ -127,6 +132,7 @@ request.interceptors.request.use((config) => {
     <section class="ending">
       <h2>九、这个模板适合什么风格？</h2>
       <p>如果你想让博客读起来更像“项目复盘”，可以保留这个版本。它比正式说明更轻盈，读者能顺着角色路径理解系统，不会一上来就被技术细节压住。</p>
+      <a class="final-project-link" href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
     </section>
   </main>
 </BaseLayout>
@@ -137,6 +143,8 @@ request.interceptors.request.use((config) => {
   .story-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px; align-items: center; padding: clamp(28px, 5vw, 58px); border: 1px solid var(--line); border-radius: 32px; background: radial-gradient(circle at top left, rgba(138,180,255,.24), transparent 38%), rgba(255,255,255,.055); }
   .story-hero img { width: 100%; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.32); }
   .eyebrow { color: var(--accent); letter-spacing: .22em; text-transform: uppercase; }
+  .hero-title-row { display: grid; gap: 14px; }
+  .hero-title-row a { width: fit-content; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
   h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(36px, 6vw, 72px); line-height: 1.05; }
   h2 { color: var(--ink); }
   p { color: var(--ink-2); line-height: 1.9; }
@@ -146,6 +154,7 @@ request.interceptors.request.use((config) => {
   .feature-wall, .essay-block, .code-card, .ending, .gallery { margin-top: 24px; }
   .feature-wall div { display: flex; flex-wrap: wrap; gap: 10px; }
   .feature-wall span { padding: 9px 12px; border-radius: 12px; background: rgba(138,180,255,.12); color: var(--ink); }
+  .final-project-link { display: inline-flex; margin-top: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
   pre { overflow-x: auto; padding: 20px; border-radius: 18px; background: rgba(0,0,0,.36); color: #edf5ff; }
   .gallery > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.045); }

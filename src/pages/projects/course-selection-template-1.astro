@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import CourseDeepDive from "../../components/CourseDeepDive.astro";
+
+const projectUrl = "https://github.com/yishuo299/School_Course_Selection_Management_System";
 
 const screenshots = [
   ["登录入口", "统一登录页负责身份识别，登录后按角色进入不同后台。", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg"],
@@ -50,12 +53,14 @@ const structureCode = `course-selection-system
     <a class="back-link" href="/#projects">← 返回项目列表</a>
     <section class="hero-card">
       <p class="eyebrow">Template 01 · 完整展示版</p>
-      <h1>选课与成绩管理系统</h1>
+      <div class="hero-title-row"><h1>选课与成绩管理系统</h1><a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a></div>
       <p class="lead">这是一个基于 Spring Boot + Vue 3 的前后端分离教务管理项目，围绕“课程开设、学生选课、教师录入成绩、教务审核、管理员维护系统”建立完整业务闭环。</p>
       <div class="tech-line">
         {["Spring Boot", "Vue 3", "MySQL", "JWT", "Element Plus", "MyBatis Plus"].map((tag) => <span>{tag}</span>)}
       </div>
     </section>
+
+    <CourseDeepDive />
 
     <section class="article-block">
       <h2>一、为什么要做这个项目</h2>
@@ -140,6 +145,7 @@ const structureCode = `course-selection-system
     <section class="summary-card">
       <h2>八、项目总结</h2>
       <p>这个版本适合作为正式项目介绍模板。它强调系统完整度、技术架构和角色职责，适合放在作品集、GitHub README 或求职项目说明中。整体语言稳重清晰，重点突出“我完成了什么功能、用了什么技术、解决了什么业务问题”。</p>
+      <a class="final-project-link" href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
     </section>
   </main>
 </BaseLayout>
@@ -150,11 +156,14 @@ const structureCode = `course-selection-system
   .hero-card, .panel, .article-block, .code-card, .summary-card, .screens figure { border: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); box-shadow: 0 24px 80px rgba(0,0,0,.18); backdrop-filter: blur(18px); }
   .hero-card { padding: clamp(34px, 6vw, 70px); border-radius: 30px; }
   .eyebrow { color: var(--accent); letter-spacing: .24em; text-transform: uppercase; }
+  .hero-title-row { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; justify-content: space-between; }
+  .hero-title-row a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
   h1 { margin: 10px 0 18px; color: var(--ink); font-size: clamp(42px, 8vw, 86px); line-height: .98; }
   h2 { margin: 0 0 16px; color: var(--ink); }
   .lead { max-width: 820px; color: var(--ink-2); font-size: 19px; line-height: 1.9; }
   .tech-line { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
   .tech-line span { padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--ink); }
+  .final-project-link { display: inline-flex; margin-top: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
   .content-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 24px; }
   .panel { padding: 28px; border-radius: 24px; }
   .panel.wide { grid-column: 1 / -1; }
