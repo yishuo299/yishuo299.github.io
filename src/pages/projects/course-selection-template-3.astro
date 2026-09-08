@@ -1,163 +1,112 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import CourseDeepDive from "../../components/CourseDeepDive.astro";
+import { codeSections, modules, projectUrl, screenshots, techStack } from "../../data/courseSelectionArticleData";
 
-const projectUrl = "https://github.com/yishuo299/School_Course_Selection_Management_System";
-
-const images = [
-  ["管理员用户管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsaGqgCRlgpxYuoA_yb8yLsMGUlkQ0AAKAJAACnMUBVYncpyXp3BnkPQQ.jpg"],
-  ["管理员权限管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsZGqgCCa2KXNPXDk5RLWkGIq3tfzwAAJrJAACnMUBVRqYb8c7WcPOPQQ.jpg"],
-  ["操作日志查询", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsZ2qgCQu4yDpjFiPF8uF_rG7rJi18AAJ_JAACnMUBVQOdG6kG4Mn8PQQ.jpg"],
-  ["学生课表", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYmqgB_HNLPZUsYxZBjdt57zf0rMvAAJpJAACnMUBVYTWe5FPwM9ePQQ.jpg"]
+const dataTables = [
+  ["user / role / permission", "保存账号、角色和权限，是系统访问控制的基础。"],
+  ["course / course_offering", "课程表示课程本身，开课表示某学期某教师开设的具体课程。"],
+  ["course_selection", "保存学生选课记录，是课表和成绩的来源。"],
+  ["grade", "保存分项成绩、总评成绩、绩点、审核状态和发布状态。"],
+  ["operation_log", "记录关键操作，支持后台审计和问题排查。"],
 ];
-
-const gradeCode = `BigDecimal total = usual.multiply(new BigDecimal("0.30"))
-  .add(midterm.multiply(new BigDecimal("0.20")))
-  .add(finalExam.multiply(new BigDecimal("0.50")));
-
-grade.setTotalScore(total);
-grade.setGpa(GpaConverter.convert(total));`;
-
-const tableCode = `user(id, username, password, role_id, status)
-role(id, code, name)
-permission(id, name, path, type)
-course(id, name, credit, course_type, college_id)
-course_offering(id, course_id, teacher_id, term_id, classroom_id, capacity, week_day, section)
-course_selection(id, student_id, offering_id, status, create_time)
-grade(id, selection_id, usual_score, midterm_score, final_score, total_score, gpa, audit_status)
-operation_log(id, user_id, method, url, ip, cost_time, status, error_msg)`;
-
-const logCode = `@Around("@annotation(operationLog)")
-public Object recordLog(ProceedingJoinPoint joinPoint, OperationLog operationLog) throws Throwable {
-  long start = System.currentTimeMillis();
-  try {
-    Object result = joinPoint.proceed();
-    logService.saveSuccess(operationLog.value(), System.currentTimeMillis() - start);
-    return result;
-  } catch (Throwable error) {
-    logService.saveFailure(operationLog.value(), error.getMessage());
-    throw error;
-  }
-}`;
 ---
 
 <BaseLayout sideBarActiveItemID="projects">
-  <main class="system-page">
+  <main class="blueprint-article">
     <a class="back-link" href="/#projects">← 返回项目列表</a>
-    <section class="system-hero">
-      <p class="eyebrow">Template 03 · 业务闭环版</p>
-      <div class="hero-title-row"><h1>从数据表到业务流转：选课系统是怎样跑起来的</h1><a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a></div>
-      <p>这个版本从“系统如何支撑真实业务”切入，重点说明数据库设计、权限体系、选课规则、成绩流转和日志追踪。它适合用来展示项目的完整性和工程思维。</p>
+
+    <section class="blueprint-hero">
+      <p class="eyebrow">Template 03 · 工程蓝图型</p>
+      <div class="title-row">
+        <h1>从数据库到接口，复现一套选课系统</h1>
+        <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p>这篇文章从工程实现角度展开：先看数据模型，再看业务流程，然后看接口和关键代码。读者可以按这个顺序复现项目，而不是只停留在页面效果。</p>
     </section>
 
-    <CourseDeepDive />
-
-    <section class="flow">
-      <h2>一、项目构成</h2>
-      <p>这个项目可以拆成四个核心部分：前端后台、后端服务、数据库、项目文档。前端负责把角色菜单、课程表格、成绩表单、日志查询这些页面组织起来；后端负责接口和规则；数据库负责保存业务状态；文档负责说明如何启动和复现。</p>
-      <pre><code>{tableCode}</code></pre>
-      <p>如果要复现，不建议一开始就把所有表都建完整。可以先围绕用户、角色、课程、开课、选课、成绩、日志这几张核心表搭出最小版本，再逐步扩展学院、专业、班级、教室、学期等基础数据。</p>
+    <section class="map-section">
+      <h2>一、项目介绍：先确定系统边界</h2>
+      <p>选课系统的边界可以概括为五句话：管理员维护用户和权限；教务维护课程资源；学生完成选课并生成课表；教师录入成绩；教务审核后发布成绩。只要这五条链路能跑通，系统就具备了基本可用性。</p>
+      <div class="module-map">{modules.map(([name, desc]) => <div><b>{name}</b><span>{desc}</span></div>)}</div>
     </section>
 
-    <section class="architecture">
-      <article>
-        <h2>数据层</h2>
-        <p>数据库围绕教务管理拆分为用户、角色、权限、学院、专业、班级、学生、教师、课程、学期、教室、开课、选课、成绩和操作日志等表。不同模块之间通过主键和外键关系建立联系，避免把所有业务堆在一张大表里。</p>
-      </article>
-      <article>
-        <h2>服务层</h2>
-        <p>后端使用 Spring Boot 组织控制器、业务服务和数据访问层。MyBatis Plus 负责常规增删改查，复杂业务则写在 Service 中，例如选课校验、成绩计算、审核发布和日志记录。</p>
-      </article>
-      <article>
-        <h2>展示层</h2>
-        <p>前端使用 Vue 3 和 Element Plus 搭建后台管理页面。表格、弹窗、标签、分页、搜索框和筛选器共同组成管理界面，让复杂数据可以被快速查看和维护。</p>
-      </article>
+    <section class="data-first">
+      <h2>二、数据表设计</h2>
+      <p>工程复现建议从数据表开始，因为选课系统的多数功能都依赖数据关系。课程和开课要拆开，选课记录要关联具体开课，成绩要关联选课记录，日志要独立保存操作信息。</p>
+      <div>{dataTables.map(([name, desc]) => <article><strong>{name}</strong><p>{desc}</p></article>)}</div>
     </section>
 
-    <section class="flow">
-      <h2>二、核心业务流程</h2>
+    <section class="tech-blueprint">
+      <h2>三、技术栈分层</h2>
+      <div class="layers">{techStack.map(([name, desc]) => <div><span>{name}</span><p>{desc}</p></div>)}</div>
+    </section>
+
+    <section class="build-order">
+      <h2>四、推荐实现顺序</h2>
       <ol>
-        <li><strong>管理员初始化账号与权限：</strong>创建学生、教师、教务人员，分配角色与菜单权限。</li>
-        <li><strong>教务维护课程与开课：</strong>设置课程名称、学分、学期、教师、教室、容量、上课时间。</li>
-        <li><strong>学生提交选课：</strong>系统校验容量、重复选择、时间冲突和业务限制，通过后生成选课记录。</li>
-        <li><strong>教师录入成绩：</strong>教师录入平时、期中、期末成绩，系统计算总评并提交审核。</li>
-        <li><strong>教务审核发布：</strong>审核通过后成绩面向学生开放，学生可在成绩查询页面查看。</li>
-        <li><strong>日志持续追踪：</strong>关键操作写入日志，便于管理员查看系统运行痕迹。</li>
+        <li><strong>基础框架：</strong>搭建 Spring Boot 后端、Vue 前端和 MySQL 数据库。</li>
+        <li><strong>登录权限：</strong>完成登录接口、JWT 拦截器、路由守卫和角色菜单。</li>
+        <li><strong>课程开设：</strong>完成课程、学期、教师、教室和开课记录管理。</li>
+        <li><strong>学生选课：</strong>完成课程列表、选课提交、退课和课表查询。</li>
+        <li><strong>成绩管理：</strong>完成成绩录入、总评计算、教务审核和学生查询。</li>
+        <li><strong>后台维护：</strong>完成用户权限管理和操作日志查询。</li>
       </ol>
     </section>
 
-    <section class="flow">
-      <h2>三、数据库设计思路</h2>
-      <p>数据库设计的关键是分清“课程”和“开课”。课程表示一门课本身，例如《Java Web 开发》；开课表示某个学期、某位老师、某间教室、某个时间段开设了这门课。学生选择的其实不是课程表中的课程，而是具体的开课记录。</p>
-      <p>成绩表也不应该直接只关联学生和课程，更推荐关联选课记录。因为学生只有完成某一次选课，后续才会产生对应成绩。这样可以避免同一门课程多次开设时成绩混乱。</p>
-      <p>日志表则用于保存系统行为，它不直接参与选课主流程，但对后台系统非常重要。出现误操作或接口异常时，管理员可以通过日志反查操作用户、请求路径、执行耗时和错误信息。</p>
-    </section>
-
-    <section class="code-card">
-      <h2>四、成绩计算示例</h2>
-      <pre><code>{gradeCode}</code></pre>
-      <p>成绩模块不仅保存分数，还要完成总评计算、绩点换算、审核状态变更和最终发布，这样学生端查询到的数据才是经过确认的结果。</p>
-    </section>
-
-    <section class="code-card">
-      <h2>五、操作日志关键代码</h2>
-      <pre><code>{logCode}</code></pre>
-      <p>AOP 日志的好处是不用在每个接口里重复写日志保存逻辑。只要给关键接口加上注解，系统就可以统一记录成功和失败情况。对于管理员后台来说，这个功能能明显提高系统可维护性。</p>
-    </section>
-
-    <section class="flow">
-      <h2>六、按步骤复现项目</h2>
-      <ol>
-        <li><strong>先建最小数据库：</strong>用户、角色、课程、开课、选课、成绩、日志。</li>
-        <li><strong>完成基础接口：</strong>登录、用户信息、课程列表、选课提交、课表查询。</li>
-        <li><strong>加入业务校验：</strong>容量校验、重复选课校验、时间冲突校验、成绩审核状态校验。</li>
-        <li><strong>接入前端页面：</strong>学生端先跑通，再补教师端、教务端和管理员端。</li>
-        <li><strong>完善日志与权限：</strong>把关键接口接入角色权限和操作日志，形成可管理系统。</li>
-      </ol>
-      <p>这个顺序的好处是每一步都有可运行结果。你可以先得到一个能登录、能选课、能看课表的小系统，再慢慢扩展成完整项目。</p>
-    </section>
-
-    <section class="visuals">
-      <h2>七、部分实现结果</h2>
-      <div>
-        {images.map(([title, src]) => (
-          <figure>
-            <img src={src} alt={title} loading="lazy" />
-            <figcaption>{title}</figcaption>
-          </figure>
+    <section class="code-board">
+      <h2>五、关键代码段</h2>
+      <p>下面的代码按工程实现顺序排列。每一段都说明使用的方法和在项目中的作用，方便读者把文章内容和项目文件对应起来。</p>
+      <div class="code-grid">
+        {codeSections.map((item) => (
+          <article>
+            <header><span>{item.title}</span><p>{item.method}</p></header>
+            <pre><code>{item.code}</code></pre>
+            <footer>{item.purpose}</footer>
+          </article>
         ))}
       </div>
     </section>
 
+    <section class="result-section">
+      <h2>六、项目运行结果</h2>
+      <p>项目运行后，核心结果可以从两个角度验证：业务流程是否能跑通，后台维护是否可用。业务流程包括登录、开课、选课、课表、成绩录入和成绩查询；后台维护包括用户管理、权限管理和操作日志。</p>
+      <div class="result-grid">{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption><strong>{shot.title}</strong><span>{shot.desc}</span></figcaption></figure>)}</div>
+    </section>
+
     <section class="final-note">
-      <h2>八、项目亮点</h2>
-      <p>这个模板的优势是逻辑感强：它能说明项目为什么要这样拆模块、每张表服务什么业务、每个角色如何参与流程。相比只展示页面，它更容易体现后端设计、数据库建模和业务规则落地能力。</p>
-      <a class="final-project-link" href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      <h2>七、总结</h2>
+      <p>这个版本适合保留为“复现导向”的模板。它不从页面开始，而是从数据关系、模块边界和实现顺序入手，更适合展示项目的工程结构。读者看完后，可以知道应该先建哪些表、先写哪些接口、再接哪些页面。</p>
+      <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
     </section>
   </main>
 </BaseLayout>
 
 <style>
-  .system-page { width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .blueprint-article { width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
-  .system-hero { padding: clamp(34px, 6vw, 72px); border: 1px solid var(--line); border-radius: 32px; background: linear-gradient(135deg, rgba(86,199,169,.18), rgba(255,255,255,.045)); }
+  .blueprint-hero { padding: clamp(34px,6vw,72px); border: 1px solid var(--line); border-radius: 34px; background: linear-gradient(135deg, rgba(86,199,169,.2), rgba(255,255,255,.045)); }
   .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; }
-  .hero-title-row { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; justify-content: space-between; }
-  .hero-title-row a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px, 7vw, 78px); line-height: 1.02; }
-  h2 { color: var(--ink); }
-  p, li { color: var(--ink-2); line-height: 1.9; }
-  .architecture { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 24px; }
-  .architecture article, .flow, .code-card, .final-note, figure { border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.045); }
-  .architecture article, .flow, .code-card, .final-note { padding: 28px; }
-  .flow, .code-card, .visuals, .final-note { margin-top: 24px; }
-  .flow ol { padding-left: 22px; }
-  .flow li { margin: 10px 0; }
-  pre { overflow-x: auto; padding: 20px; border-radius: 18px; background: rgba(0,0,0,.36); color: #e9fff8; }
-  .final-project-link { display: inline-flex; margin-top: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  .visuals > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-  figure { margin: 0; overflow: hidden; }
-  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-  figcaption { padding: 14px 16px; color: var(--ink); }
-  @media (max-width: 860px) { .architecture, .visuals > div { grid-template-columns: 1fr; } }
+  .title-row { display: flex; gap: 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .title-row a, .final-note a { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
+  h1 { max-width: 820px; margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px,7vw,78px); line-height: 1.02; }
+  h2, h3 { color: var(--ink); }
+  p, li, span, footer { color: var(--ink-2); line-height: 1.9; }
+  .map-section, .data-first, .tech-blueprint, .build-order, .code-board, .result-section, .final-note { margin-top: 24px; padding: 28px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.045); }
+  .module-map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 18px; }
+  .module-map div { padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: rgba(86,199,169,.08); }
+  .module-map b, .data-first strong, .layers span, .build-order strong { color: var(--ink); }
+  .data-first > div, .layers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .data-first article, .layers div { padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.035); }
+  .build-order li { margin: 9px 0; }
+  .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .code-grid article { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: rgba(0,0,0,.12); }
+  .code-grid header span { color: #69e6c2; font-size: 18px; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: rgba(0,0,0,.38); color: #e9fff8; font-size: 13px; line-height: 1.7; }
+  .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.035); }
+  img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  figcaption { display: grid; gap: 5px; padding: 14px; }
+  figcaption strong { color: var(--ink); }
+  @media (max-width: 1000px) { .module-map { grid-template-columns: repeat(2, 1fr); } .code-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .module-map, .data-first > div, .layers, .result-grid { grid-template-columns: 1fr; } }
 </style>

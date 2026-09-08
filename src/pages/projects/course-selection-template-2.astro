@@ -1,164 +1,113 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import CourseDeepDive from "../../components/CourseDeepDive.astro";
+import { codeSections, projectUrl, screenshots, techStack } from "../../data/courseSelectionArticleData";
 
-const projectUrl = "https://github.com/yishuo299/School_Course_Selection_Management_System";
-
-const moments = [
-  ["登录", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg"],
-  ["教师开课", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYWqgB9er1sK1Jj1w1f1OvNIDaYdHAAJnJAACnMUBVWabRh7lWkr-PQQ.jpg"],
-  ["学生课表", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYmqgB_HNLPZUsYxZBjdt57zf0rMvAAJpJAACnMUBVYTWe5FPwM9ePQQ.jpg"],
-  ["成绩查询", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsY2qgCAVM2GpnHUawdGCBWhWhJT2XAAJqJAACnMUBVfAAATv_pJrKTz0E.jpg"],
-  ["权限管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsZGqgCCa2KXNPXDk5RLWkGIq3tfzwAAJrJAACnMUBVRqYb8c7WcPOPQQ.jpg"],
-  ["用户管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsaGqgCRlgpxYuoA_yb8yLsMGUlkQ0AAKAJAACnMUBVYncpyXp3BnkPQQ.jpg"]
+const journeys = [
+  ["学生", "筛选课程、提交选课、查看课表，成绩发布后查询学习结果。"],
+  ["教师", "查看授课课程，录入学生成绩，并提交给教务审核。"],
+  ["教务", "维护课程资源、安排开课、控制选课开放、审核成绩。"],
+  ["管理员", "维护用户、角色、权限，查询操作日志，保证系统可管理。"],
 ];
-
-const requestCode = `const submitSelection = async (courseId: number) => {
-  await request.post("/student/course-selection", { courseId });
-  ElMessage.success("选课成功，课表已更新");
-  refreshSchedule();
-};`;
-
-const routerCode = `router.beforeEach(async (to) => {
-  const userStore = useUserStore();
-  if (!userStore.token && to.path !== "/login") return "/login";
-  if (to.meta.roles && !to.meta.roles.includes(userStore.role)) return "/403";
-});`;
-
-const apiCode = `const request = axios.create({ baseURL: "/api", timeout: 10000 });
-
-request.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = \`Bearer \${token}\`;
-  return config;
-});`;
 ---
 
 <BaseLayout sideBarActiveItemID="projects">
-  <main class="story-page">
+  <main class="story-article">
     <a class="back-link" href="/#projects">← 返回项目列表</a>
+
     <section class="story-hero">
       <div>
-        <p class="eyebrow">Template 02 · 交互体验版</p>
-        <div class="hero-title-row"><h1>把一套选课系统，做成清晰可走通的后台体验</h1><a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a></div>
-        <p>这个版本更像一篇博客展示稿：它从用户进入系统开始讲，依次说明学生、教师、教务和管理员分别能完成什么操作，以及这些页面背后的数据如何流动。</p>
+        <p class="eyebrow">Template 02 · 场景导览型</p>
+        <div class="title-row">
+          <h1>从一次选课开始，理解整套教务系统</h1>
+          <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+        </div>
+        <p>这篇文章用“用户如何使用系统”的方式介绍项目。读者先看到角色怎么进入系统，再看到选课、课表、成绩、权限和日志如何串起来，适合想快速理解项目使用流程的人。</p>
       </div>
-      <img src="https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg" alt="选课系统登录页" />
+      <img src={screenshots[0].src} alt="选课系统登录入口" />
     </section>
 
-    <CourseDeepDive />
-
-    <section class="essay-block">
-      <h2>一、文章定位：从使用体验倒推系统设计</h2>
-      <p>这篇文章适合做博客展示，也适合后续生成 AI 视频讲解。讲解顺序不是从数据库开始，而是从用户第一次进入系统开始：登录后看到什么、不同角色能做什么、一次操作如何反馈到页面、数据又如何回到用户眼前。</p>
-      <p>如果读者有 Vue 和 Spring Boot 基础，可以根据本文先复现主流程，再逐步补齐权限、日志、成绩审核等模块。这样学习曲线更平滑，不会刚开始就陷入复杂表结构。</p>
+    <section class="journey">
+      <h2>一、项目介绍：系统解决什么问题</h2>
+      <p>在教务管理中，课程从开设到学生选择，再到成绩录入和发布，需要多个角色配合。如果只做课程列表，就无法体现系统完整性；如果只做后台管理，又缺少学生选课这个核心场景。因此本项目把“选课”作为主线，把教师、教务和管理员的功能放在主线周围，形成一套完整的课程管理系统。</p>
     </section>
 
-    <section class="feature-wall">
-      <h2>二、前端项目构成</h2>
-      <div>
-        {["views 页面目录", "router 路由守卫", "stores 用户状态", "api 请求封装", "components 复用组件", "utils 工具函数", "permission 权限菜单", "assets 静态资源"].map((item) => <span>{item}</span>)}
-      </div>
-      <p>前端重点是把复杂业务拆成可理解的页面。登录页负责拿到身份；路由守卫负责拦截未登录用户；状态管理保存用户信息和权限；API 层统一处理 Token、错误提示和接口返回。</p>
+    <section class="role-strip">
+      {journeys.map(([role, desc]) => <article><span>{role}</span><p>{desc}</p></article>)}
     </section>
 
-    <section class="code-card">
-      <h2>三、路由权限设计</h2>
-      <pre><code>{routerCode}</code></pre>
-      <p>角色权限不要只靠菜单隐藏。菜单隐藏只是用户体验，路由守卫和后端接口权限才是安全边界。学生访问教师页面、普通管理员访问系统配置，都应该被拦截。</p>
-    </section>
-
-    <section class="timeline">
-      <article>
-        <span>01</span>
-        <h2>先解决“谁在使用系统”</h2>
-        <p>系统入口是登录页。用户登录后，后端通过 JWT 返回身份信息，前端根据角色加载对应菜单。学生不需要看到权限维护，教师不需要进入用户管理，管理员则可以管理系统配置与日志。这样的权限拆分让页面更干净，也让业务边界更清楚。</p>
-      </article>
-      <article>
-        <span>02</span>
-        <h2>学生端：选课、课表、成绩一条线</h2>
-        <p>学生最关心的是课程是否能选、选完之后在哪里看、成绩发布后能不能查。项目完成了课程列表、条件筛选、选课提交、退课确认、个人课表和成绩查询，让学生从“找课”到“看结果”可以闭环完成。</p>
-      </article>
-      <article>
-        <span>03</span>
-        <h2>教师端：围绕教学任务展开</h2>
-        <p>教师端重点放在授课课程和成绩录入。教师可以查看自己负责的课程，进入课程后维护成绩数据，并将成绩提交给教务审核。这里的设计重点是减少重复操作，让教师更快完成教学管理任务。</p>
-      </article>
-      <article>
-        <span>04</span>
-        <h2>管理员端：让系统可以被维护</h2>
-        <p>管理员负责用户、角色、权限和操作日志。项目中保留了操作日志查询页面，方便追踪谁在什么时候执行了什么操作，也便于后期排查异常。</p>
-      </article>
-    </section>
-
-    <section class="feature-wall">
-      <h2>四、完成的主要功能</h2>
-      <div>
-        {["登录鉴权", "角色菜单", "课程筛选", "学生选课", "时间冲突校验", "课程容量校验", "教师成绩录入", "成绩审核发布", "学生课表", "操作日志", "用户管理", "权限管理"].map((item) => <span>{item}</span>)}
+    <section class="journey">
+      <h2>二、功能介绍：按一次完整使用流程展开</h2>
+      <div class="steps">
+        <div><b>Step 1</b><p>管理员创建用户和角色，配置学生、教师、教务管理员可以访问的菜单。</p></div>
+        <div><b>Step 2</b><p>教务管理员维护课程基础信息，并为某个学期开设课程，设置教师、教室、时间和容量。</p></div>
+        <div><b>Step 3</b><p>学生在选课页面筛选课程并提交选课，系统自动检查容量、重复选择和时间冲突。</p></div>
+        <div><b>Step 4</b><p>选课完成后系统生成学生课表，教师后续录入成绩并提交审核。</p></div>
+        <div><b>Step 5</b><p>教务审核成绩后发布，学生可以在成绩查询页面看到最终结果。</p></div>
       </div>
     </section>
 
-    <section class="essay-block">
-      <h2>五、页面设计思路</h2>
-      <p>后台系统最重要的不是炫，而是让信息能被快速理解。课程列表使用表格承载大量字段，课程类型、学期、教师、容量、上课时间等信息适合放在同一行；课程状态、审核状态、角色类型适合用标签显示；新增、编辑、确认退课这类操作适合用弹窗完成。</p>
-      <p>学生端页面应该降低操作成本。比如课程搜索和筛选要放在列表上方，选课按钮要靠近课程信息，成功后要立刻刷新课表。教师端要减少跳转，让成绩录入、保存、提交审核尽可能在同一页面完成。管理员端则更强调筛选、分页和日志查询。</p>
+    <section class="tech-story">
+      <h2>三、技术栈介绍：页面和数据如何配合</h2>
+      <div>{techStack.map(([name, desc]) => <p><strong>{name}</strong>{desc}</p>)}</div>
     </section>
 
-    <section class="code-card">
-      <h2>六、请求封装与选课提交</h2>
-      <pre><code>{apiCode}</code></pre>
-      <pre><code>{requestCode}</code></pre>
-      <p>交互体验版更关注页面反馈：用户点击按钮后，前端给出明确提示，并刷新对应数据，让操作结果可以立刻被看见。</p>
+    <section class="code-story">
+      <h2>四、关键代码段：从用户操作到后端规则</h2>
+      {codeSections.map((item, index) => (
+        <article>
+          <div class="number">{String(index + 1).padStart(2, "0")}</div>
+          <div class="explain">
+            <h3>{item.title}</h3>
+            <p>{item.method}</p>
+            <p>{item.purpose}</p>
+          </div>
+          <pre><code>{item.code}</code></pre>
+        </article>
+      ))}
     </section>
 
-    <section class="essay-block">
-      <h2>七、如何配合后端复现</h2>
-      <p>复现时可以先准备三个接口：登录接口、课程列表接口、提交选课接口。前端先用这三个接口走通主流程。登录成功保存 Token，进入学生页面后请求课程列表，点击选课后调用提交接口，再刷新课表数据。</p>
-      <p>主流程跑通后，再加入教师成绩录入、教务审核、管理员日志查询。每加一个模块，都先确认页面操作是否有明确反馈，再确认后端数据是否被正确保存。这样不会写很多页面却不知道问题出在哪里。</p>
+    <section class="result-wall">
+      <h2>五、项目运行结果</h2>
+      <p>运行项目后，用户可以从登录页进入系统。学生端能完成选课和课表查看，教师端能完成开课与成绩录入，管理员端能完成权限、用户和日志管理。下面的页面截图展示了系统中最核心的几个结果。</p>
+      <div>{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption>{shot.title}</figcaption></figure>)}</div>
     </section>
 
-    <section class="gallery">
-      <h2>八、部分实现结果</h2>
-      <div>
-        {moments.map(([title, src]) => (
-          <figure>
-            <img src={src} alt={title} loading="lazy" />
-            <figcaption>{title}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </section>
-
-    <section class="ending">
-      <h2>九、这个模板适合什么风格？</h2>
-      <p>如果你想让博客读起来更像“项目复盘”，可以保留这个版本。它比正式说明更轻盈，读者能顺着角色路径理解系统，不会一上来就被技术细节压住。</p>
-      <a class="final-project-link" href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+    <section class="closing">
+      <h2>六、总结</h2>
+      <p>这个版本的讲解重点是“流程感”。读者不需要先理解所有数据库表，也能从一次选课过程看懂系统为什么需要登录鉴权、课程开设、选课校验、课表展示、成绩审核和操作日志。适合公开展示给想快速了解项目的人。</p>
+      <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
     </section>
   </main>
 </BaseLayout>
 
 <style>
-  .story-page { width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .story-article { width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
-  .story-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px; align-items: center; padding: clamp(28px, 5vw, 58px); border: 1px solid var(--line); border-radius: 32px; background: radial-gradient(circle at top left, rgba(138,180,255,.24), transparent 38%), rgba(255,255,255,.055); }
+  .story-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px; align-items: center; padding: clamp(28px,5vw,58px); border: 1px solid var(--line); border-radius: 34px; background: radial-gradient(circle at top left, rgba(138,180,255,.24), transparent 38%), rgba(255,255,255,.055); }
   .story-hero img { width: 100%; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.32); }
   .eyebrow { color: var(--accent); letter-spacing: .22em; text-transform: uppercase; }
-  .hero-title-row { display: grid; gap: 14px; }
-  .hero-title-row a { width: fit-content; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(36px, 6vw, 72px); line-height: 1.05; }
-  h2 { color: var(--ink); }
+  .title-row { display: grid; gap: 14px; }
+  .title-row a, .closing a { width: fit-content; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
+  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(36px,6vw,72px); line-height: 1.05; }
+  h2, h3 { color: var(--ink); }
   p { color: var(--ink-2); line-height: 1.9; }
-  .timeline { display: grid; gap: 16px; margin-top: 26px; }
-  .timeline article, .feature-wall, .essay-block, .code-card, .ending { border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.045); padding: 28px; }
-  .timeline span { color: var(--accent); font-size: 13px; letter-spacing: .24em; }
-  .feature-wall, .essay-block, .code-card, .ending, .gallery { margin-top: 24px; }
-  .feature-wall div { display: flex; flex-wrap: wrap; gap: 10px; }
-  .feature-wall span { padding: 9px 12px; border-radius: 12px; background: rgba(138,180,255,.12); color: var(--ink); }
-  .final-project-link { display: inline-flex; margin-top: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
-  pre { overflow-x: auto; padding: 20px; border-radius: 18px; background: rgba(0,0,0,.36); color: #edf5ff; }
-  .gallery > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.045); }
-  figure img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-  figcaption { padding: 12px 14px; color: var(--ink); }
-  @media (max-width: 860px) { .story-hero, .gallery > div { grid-template-columns: 1fr; } }
+  .journey, .tech-story, .code-story, .result-wall, .closing { margin-top: 24px; padding: 28px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.045); }
+  .role-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
+  .role-strip article { padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: rgba(138,180,255,.09); }
+  .role-strip span { color: var(--accent); font-size: 20px; }
+  .steps { display: grid; gap: 12px; }
+  .steps div { padding: 16px; border-left: 3px solid var(--accent); background: rgba(255,255,255,.035); border-radius: 0 16px 16px 0; }
+  .steps b, .tech-story strong { color: var(--ink); margin-right: 8px; }
+  .tech-story div { columns: 2 320px; column-gap: 34px; }
+  .code-story { display: grid; gap: 18px; }
+  .code-story > h2 { margin-bottom: 0; }
+  .code-story article { display: grid; grid-template-columns: 70px minmax(220px,.8fr) minmax(0,1.2fr); gap: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: rgba(0,0,0,.12); }
+  .number { color: var(--accent); font-size: 30px; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: rgba(0,0,0,.38); color: #eef5ff; font-size: 13px; line-height: 1.7; }
+  .result-wall div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.035); }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  figcaption { padding: 12px; color: var(--ink); }
+  @media (max-width: 920px) { .story-hero, .code-story article { grid-template-columns: 1fr; } .role-strip, .result-wall div { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .role-strip, .result-wall div { grid-template-columns: 1fr; } }
 </style>
