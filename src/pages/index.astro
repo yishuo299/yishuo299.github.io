@@ -3,19 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import createSlug from "../lib/createSlug";
 import projects from "../data/projects.json";
+import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
 
 const posts = (await getCollection("blog"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 
-const techColors: Record<string, string> = {
-  Python: "#3776ab",
-  STM32: "#4f8cff",
-  Django: "#44b78b",
-  Vue: "#42b883",
-  "Spring Boot": "#6db33f",
-  Android: "#3ddc84",
-};
+const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
 ---
 
 <BaseLayout sideBarActiveItemID="home">
@@ -92,7 +86,7 @@ const techColors: Record<string, string> = {
       <div class="projects-list" id="projectsContainer">
         {projects.map((project, index) => (
           <div class="reveal project-item" data-project-category={project.name.toLowerCase()} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
-            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail}>
+            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-icon={(TECH_META[project.name] ?? FALLBACK_TECH_META).svg}>
               <span class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></span>
               <strong class="project-title">{project.title}</strong>
               <span class="project-description">{project.description}</span>
@@ -192,7 +186,7 @@ const techColors: Record<string, string> = {
       detailOverlay?.classList.add("show"); detailOverlay?.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); window.setTimeout(() => (detailClose as HTMLElement | null)?.focus(), 80);
     };
     const openProject = (card: HTMLElement) => {
-      clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.textContent = card.dataset.name?.slice(0, 2) ?? "<>"; if (clickProgress) clickProgress.style.width = "0%";
+      clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.innerHTML = card.dataset.icon ?? ""; if (clickProgress) clickProgress.style.width = "0%";
       const start = performance.now();
       const frame = (now: number) => { const ratio = Math.min(1, (now - start) / 720); const eased = 1 - Math.pow(1 - ratio, 3); if (clickProgress) clickProgress.style.width = `${Math.round(eased * 100)}%`; if (ratio < 1) requestAnimationFrame(frame); else window.setTimeout(() => { clickLoader?.classList.remove("show"); clickLoader?.setAttribute("aria-hidden", "true"); showDetail(card); }, 180); };
       requestAnimationFrame(frame);

@@ -3,6 +3,7 @@ import BaseHead from "../components/BaseHead.astro";
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
 import { ViewTransitions } from "astro:transitions";
 import projects from "../data/projects.json";
+import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
 
 export interface Props {
   title?: string;
@@ -15,14 +16,6 @@ export interface Props {
 
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, ogType = "website", sideBarActiveItemID } = Astro.props;
 const isHome = sideBarActiveItemID === "home";
-const techMeta: Record<string, { color: string; mark: string }> = {
-  Python: { color: "#3776ab", mark: "Py" },
-  STM32: { color: "#4f8cff", mark: "µC" },
-  Django: { color: "#44b78b", mark: "Dj" },
-  Vue: { color: "#42b883", mark: "V" },
-  "Spring Boot": { color: "#6db33f", mark: "Sp" },
-  Android: { color: "#3ddc84", mark: "An" },
-};
 ---
 
 <!doctype html>
@@ -48,8 +41,8 @@ const techMeta: Record<string, { color: string; mark: string }> = {
           <div class="loader-title">INITIALIZING PROJECT ARCHIVE</div>
           <div class="folder-container" id="folderContainer">
             {projects.map((project) => {
-              const meta = techMeta[project.name] ?? { color: "#ffffff", mark: "<>" };
-              return <div class="folder" data-folder={project.name} style={`--brand:${meta.color}`}><div class="folder-icon" aria-hidden="true">{meta.mark}</div><div class="folder-name">{project.name}</div></div>;
+              const meta = TECH_META[project.name] ?? FALLBACK_TECH_META;
+              return <div class="folder" data-folder={project.name} style={`--brand:${meta.color}`}><div class="folder-icon" aria-hidden="true" set:html={meta.svg}></div><div class="folder-name">{project.name}</div></div>;
             })}
           </div>
           <div class="loading-status" id="loadingStatus">preparing /system</div>
