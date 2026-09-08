@@ -1,62 +1,228 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import SideBar from "../components/SideBar.astro";
-import { ViewTransitions } from "astro:transitions";
-
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
+import { ViewTransitions } from "astro:transitions";
+import projects from "../data/projects.json";
 
-const {
-  image,
-  title = SITE_TITLE,
-  description = SITE_DESCRIPTION,
-  includeSidebar = true,
-  sideBarActiveItemID,
-  ogType,
-} = Astro.props;
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  ogType?: string;
+  sideBarActiveItemID?: string;
+  includeSidebar?: boolean;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, ogType = "website", sideBarActiveItemID } = Astro.props;
+const isHome = sideBarActiveItemID === "home";
+const techMeta: Record<string, { color: string; mark: string }> = {
+  Python: { color: "#3776ab", mark: "Py" },
+  STM32: { color: "#4f8cff", mark: "µC" },
+  Django: { color: "#44b78b", mark: "Dj" },
+  Vue: { color: "#42b883", mark: "V" },
+  "Spring Boot": { color: "#6db33f", mark: "Sp" },
+  Android: { color: "#3ddc84", mark: "An" },
+};
 ---
 
 <!doctype html>
 <html lang="zh-CN" data-theme="lofi">
   <head>
-    <BaseHead title={title} description={description} image={image} , ogType={ogType} />
+    <BaseHead title={title} description={description} image={image} ogType={ogType} />
     {TRANSITION_API && <ViewTransitions />}
   </head>
-  <body>
-    <div class="bg-base-100 drawer lg:drawer-open">
-      <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content bg-base-100">
-        <Header title={SITE_TITLE} />
-        <div class="md:flex md:justify-center">
-          <main class="p-6 pt-10 lg:max-w-[900px] max-w-[100vw]">
-            <section class="profile-glass mb-10" aria-label="个人信息">
-              <div class="profile-avatar-wrap"><img src="/profile.webp" alt="燚燿头像" class="profile-avatar" /></div>
-              <div class="profile-copy">
-                <p class="profile-kicker">你好，我是</p>
-                <h1>燚燿</h1>
-                <p class="profile-bio"><strong>Build. Learn. Repeat.</strong><br />记录项目，也记录成长。</p>
-                <div class="profile-tags">
-                  <a href="https://github.com/yishuo299" target="_blank" rel="noreferrer">GitHub @yishuo299</a>
-                  <span>QQ 3441125143</span><span>微信 yy_shuo_299</span>
-                </div>
-              </div>
-            </section>
-            <slot />
-          </main>
-        </div>
-        <Footer />
-      </div>
-      {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} />}
+  <body class:list={[isHome ? "home-page" : "inner-page"]}>
+    <div class="scene" id="scene" aria-hidden="true" style="--sky-top:#78b9e5;--sky-mid:#9ed2ec;--sky-bottom:#d8c7aa;--sun-x:50%;--sun-y:30%;--moon-x:75%;--moon-y:30%;--sun-opacity:1;--moon-opacity:0;--stars-opacity:0;--cloud-opacity:.8;--sky-glow:.8">
+      <div class="sky"></div>
+      <div class="stars" id="stars"></div>
+      <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div>
+      <div class="sun-glow"></div><div class="sun"></div><div class="moon"></div>
+      <div class="horizon"><div class="mountains-back"></div><div class="mountains-front"></div></div>
+      <div class="bottom-gradient"></div>
     </div>
+    <div class="scrim" id="scrim" aria-hidden="true"></div>
+
+    {isHome && (
+      <div id="loader" class="archive-loader loading" aria-label="正在加载项目档案" aria-live="polite">
+        <div class="loader-inner">
+          <div class="loader-title">INITIALIZING PROJECT ARCHIVE</div>
+          <div class="folder-container" id="folderContainer">
+            {projects.map((project) => {
+              const meta = techMeta[project.name] ?? { color: "#ffffff", mark: "<>" };
+              return <div class="folder" data-folder={project.name} style={`--brand:${meta.color}`}><div class="folder-icon" aria-hidden="true">{meta.mark}</div><div class="folder-name">{project.name}</div></div>;
+            })}
+          </div>
+          <div class="loading-status" id="loadingStatus">preparing /system</div>
+          <div class="progress-wrapper"><div id="progress"></div></div>
+          <div class="progress-bottom"><span>LOADING TECH STACK</span><span id="progressText">0%</span></div>
+        </div>
+        <div class="welcome" id="welcome" aria-hidden="true"></div>
+      </div>
+    )}
+
+    <div id="siteShell" class="site-shell">
+      <nav class="archive-nav" aria-label="主导航">
+        <a class="nav-logo" href="/" aria-label="燚燿项目档案首页">Y燚</a>
+        <div class="nav-links"><a href="/">HOME</a><a href="/#projects">PROJECTS</a><a href="/blog/">ARTICLES</a><a href="/#about">ABOUT</a></div>
+        <a class="nav-github" href="https://github.com/yishuo299" target="_blank" rel="noreferrer">GITHUB ↗</a>
+      </nav>
+      <main class:list={["archive-main", isHome ? "archive-home" : "archive-content"]}><slot /></main>
+      <footer class="archive-footer"><div class="container"><span>BUILD. LEARN. REPEAT.</span><span>© {new Date().getFullYear()} 燚燿 · PROJECT ARCHIVE</span></div></footer>
+    </div>
+
+    {isHome && (
+      <aside class="bg-panel" id="bgPanel" aria-label="背景时间设置" aria-hidden="true">
+        <div class="bg-panel-head"><div class="bg-panel-title">BACKGROUND TIME</div><button class="bg-close" id="bgClose" type="button" aria-label="关闭时间设置">×</button></div>
+        <div class="bg-panel-time" id="bgPanelTime">09:22</div><div class="bg-panel-period" id="bgPanelPeriod">MORNING</div>
+        <div class="bg-slider-labels"><span>00:00</span><span>23:59</span></div>
+        <input type="range" id="bgSlider" min="0" max="1439" value="562" aria-label="背景时间" />
+        <button class="bg-live" id="bgLive" type="button">回到实时时间</button>
+      </aside>
+    )}
+    <div class="copy-status" id="copyStatus" role="status" aria-live="polite"></div>
+
+    <script>
+      let archiveCleanup: () => void = () => {};
+
+      const initArchive = () => {
+        archiveCleanup();
+        const controller = new AbortController();
+        const timers: number[] = [];
+        const intervals: number[] = [];
+        const particles: HTMLElement[] = [];
+        let cancelled = false;
+        const later = (callback: () => void, delay: number) => { const timer = window.setTimeout(callback, delay); timers.push(timer); return timer; };
+        const wait = (delay: number) => new Promise<void>((resolve) => later(resolve, delay));
+        const pad = (value: number) => String(value).padStart(2, "0");
+        const scene = document.getElementById("scene") as HTMLElement | null;
+        const scrim = document.getElementById("scrim") as HTMLElement | null;
+        const stars = document.getElementById("stars") as HTMLElement | null;
+        const bigTime = document.getElementById("bigTime");
+        const bigDate = document.getElementById("bigDate");
+        const bigPeriod = document.getElementById("bigPeriod");
+        const bgPanel = document.getElementById("bgPanel");
+        const bgSlider = document.getElementById("bgSlider") as HTMLInputElement | null;
+        const bgPanelTime = document.getElementById("bgPanelTime");
+        const bgPanelPeriod = document.getElementById("bgPanelPeriod");
+        const bgLive = document.getElementById("bgLive");
+        const bgClose = document.getElementById("bgClose");
+        const clockAdjust = document.getElementById("clockAdjust");
+        const copyStatus = document.getElementById("copyStatus");
+        if (!scene || !scrim || !stars) return;
+
+        stars.replaceChildren();
+        const starCount = window.matchMedia("(max-width: 600px)").matches ? 48 : 90;
+        for (let index = 0; index < starCount; index += 1) {
+          const star = document.createElement("i");
+          star.className = "star"; star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 65}%`;
+          const size = Math.random() > 0.82 ? 3 : 2; star.style.width = `${size}px`; star.style.height = `${size}px`; stars.appendChild(star);
+        }
+
+        const hexToRgb = (hex: string) => { const value = hex.replace("#", ""); return { r: Number.parseInt(value.slice(0, 2), 16), g: Number.parseInt(value.slice(2, 4), 16), b: Number.parseInt(value.slice(4, 6), 16) }; };
+        const mixColor = (from: string, to: string, amount: number) => {
+          const a = hexToRgb(from); const b = hexToRgb(to); const channels = ["r", "g", "b"] as const;
+          return `#${channels.map((key) => Math.round(a[key] + (b[key] - a[key]) * amount).toString(16).padStart(2, "0")).join("")}`;
+        };
+        const calculateSky = (minutes: number) => {
+          const hour = minutes / 60;
+          const night = ["#101a35", "#1c2d52", "#29374b"], morning = ["#84c1e6", "#c5e4f5", "#f2dfb9"], day = ["#43aef2", "#a9e2ff", "#f9f0d6"], sunset = ["#314e78", "#db8160", "#e7b477"];
+          if (hour < 5) return night;
+          if (hour < 7) { const amount = (hour - 5) / 2; return night.map((color, index) => mixColor(color, morning[index], amount)); }
+          if (hour < 16) { const amount = Math.min(1, (hour - 7) / 2); return morning.map((color, index) => mixColor(color, day[index], amount)); }
+          if (hour < 20) { const amount = (hour - 16) / 4; return [mixColor(day[0], night[0], amount), mixColor(day[1], sunset[1], 1 - Math.abs(amount - 0.5) * 2), mixColor(sunset[2], night[2], amount)]; }
+          const amount = Math.min(1, (hour - 20) / 2); return sunset.map((color, index) => mixColor(color, night[index], amount));
+        };
+        const periodLabel = (hour: number) => hour < 5 ? "NIGHT" : hour < 8 ? "MORNING" : hour < 16 ? "DAYLIGHT" : hour < 20 ? "SUNSET" : "NIGHT";
+        const getScrim = (hour: number) => hour >= 7 && hour < 17 ? 0 : hour >= 17 && hour < 20 ? ((hour - 17) / 3) * 0.14 : hour >= 20 || hour < 5 ? 0.14 : 0.14 - ((hour - 5) / 2) * 0.14;
+        const updateScene = (minutes: number) => {
+          const hour = minutes / 60; const [top, middle, bottom] = calculateSky(minutes);
+          const sunProgress = Math.max(0, Math.min(1, (minutes - 300) / 840));
+          const moonProgress = Math.max(0, Math.min(1, minutes >= 1200 ? (minutes - 1200) / 240 : minutes / 300));
+          const sunOpacity = Math.max(0, Math.min(1, hour < 5 ? 0 : hour < 6 ? hour - 5 : hour > 18.5 ? 1 - (hour - 18.5) / 0.8 : 1));
+          const moonOpacity = hour >= 19.5 ? Math.min(1, (hour - 19.5) / 1.5) : hour < 5 ? Math.max(0, 1 - hour / 5) : 0;
+          const starOpacity = hour >= 19 ? Math.min(1, (hour - 19) / 2) : hour < 5 ? 0.9 : 0;
+          scene.style.setProperty("--sky-top", top); scene.style.setProperty("--sky-mid", middle); scene.style.setProperty("--sky-bottom", bottom);
+          scene.style.setProperty("--sun-x", `${8 + sunProgress * 84}%`); scene.style.setProperty("--sun-y", `${75 - Math.sin(sunProgress * Math.PI) * 58}%`); scene.style.setProperty("--sun-opacity", String(sunOpacity));
+          scene.style.setProperty("--moon-x", `${78 - moonProgress * 40}%`); scene.style.setProperty("--moon-y", `${27 + Math.sin(moonProgress * Math.PI) * 12}%`); scene.style.setProperty("--moon-opacity", String(moonOpacity));
+          scene.style.setProperty("--stars-opacity", String(starOpacity)); scene.style.setProperty("--cloud-opacity", String(hour < 6 || hour > 21 ? 0.28 : 0.8));
+          scrim.style.setProperty("--scrim", String(getScrim(hour))); document.body.classList.toggle("day", hour >= 7 && hour < 17);
+        };
+
+        const liveMinutes = () => { const now = new Date(); return now.getHours() * 60 + now.getMinutes(); };
+        const storageKey = "archive-background-time"; let backgroundMinutes = liveMinutes(); let followsLive = true;
+        try { const saved = JSON.parse(localStorage.getItem(storageKey) ?? "null"); if (saved && typeof saved.minutes === "number" && saved.minutes >= 0 && saved.minutes <= 1439) { backgroundMinutes = saved.minutes; followsLive = saved.live !== false; } } catch {}
+        const saveBackgroundState = () => { try { localStorage.setItem(storageKey, JSON.stringify({ minutes: backgroundMinutes, live: followsLive })); } catch {} };
+        const updatePanel = () => {
+          const hour = Math.floor(backgroundMinutes / 60), minute = Math.floor(backgroundMinutes % 60);
+          if (bgPanelTime) bgPanelTime.textContent = `${pad(hour)}:${pad(minute)}`; if (bgPanelPeriod) bgPanelPeriod.textContent = periodLabel(backgroundMinutes / 60); if (bgSlider) bgSlider.value = String(backgroundMinutes); bgLive?.classList.toggle("active", followsLive);
+        };
+        const weekdays = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+        let lastMinute = -1;
+        const tick = () => {
+          const now = new Date(); if (followsLive) backgroundMinutes = liveMinutes();
+          if (backgroundMinutes !== lastMinute) { lastMinute = backgroundMinutes; updateScene(backgroundMinutes); updatePanel(); }
+          if (bigTime) bigTime.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`; if (bigDate) bigDate.textContent = `${weekdays[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`; if (bigPeriod) bigPeriod.textContent = periodLabel(now.getHours());
+        };
+        tick(); intervals.push(window.setInterval(tick, 1000));
+        const openPanel = () => { updatePanel(); bgPanel?.classList.add("open"); bgPanel?.setAttribute("aria-hidden", "false"); };
+        const closePanel = () => { bgPanel?.classList.remove("open"); bgPanel?.setAttribute("aria-hidden", "true"); saveBackgroundState(); };
+        clockAdjust?.addEventListener("click", openPanel, { signal: controller.signal }); bgClose?.addEventListener("click", closePanel, { signal: controller.signal });
+        bgSlider?.addEventListener("input", () => { followsLive = false; backgroundMinutes = Number(bgSlider.value); lastMinute = -1; tick(); saveBackgroundState(); }, { signal: controller.signal });
+        bgLive?.addEventListener("click", () => { followsLive = true; backgroundMinutes = liveMinutes(); lastMinute = -1; tick(); saveBackgroundState(); }, { signal: controller.signal });
+        document.addEventListener("keydown", (event) => { if (event.key === "Escape" && bgPanel?.classList.contains("open")) closePanel(); }, { signal: controller.signal });
+
+        document.querySelectorAll<HTMLElement>("[data-copy]").forEach((button) => button.addEventListener("click", async () => {
+          const value = button.dataset.copy ?? "";
+          try { await navigator.clipboard.writeText(value); } catch { const input = document.createElement("textarea"); input.value = value; input.className = "copy-fallback"; document.body.appendChild(input); input.select(); document.execCommand("copy"); input.remove(); }
+          if (copyStatus) { copyStatus.textContent = `${button.dataset.copyLabel ?? "内容"}已复制`; copyStatus.classList.add("show"); later(() => copyStatus.classList.remove("show"), 1400); }
+        }, { signal: controller.signal }));
+
+        const loader = document.getElementById("loader"), progress = document.getElementById("progress") as HTMLElement | null, progressText = document.getElementById("progressText"), loadingStatus = document.getElementById("loadingStatus"), welcome = document.getElementById("welcome");
+        const folders = Array.from(document.querySelectorAll<HTMLElement>(".folder"));
+        const renderProgress = (value: number) => { const rounded = Math.max(0, Math.min(100, Math.round(value))); if (progress) progress.style.width = `${rounded}%`; if (progressText) progressText.textContent = `${rounded}%`; };
+        const animateProgress = (from: number, to: number, duration: number) => new Promise<void>((resolve) => {
+          const start = performance.now(); const frame = (now: number) => { if (cancelled) return resolve(); const ratio = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - ratio, 3); renderProgress(from + (to - from) * eased); if (ratio < 1) requestAnimationFrame(frame); else resolve(); }; requestAnimationFrame(frame);
+        });
+        const showWelcome = () => {
+          if (!welcome) return; welcome.replaceChildren();
+          Array.from("WELCOME").forEach((letter, index) => { const span = document.createElement("span"); span.className = "welcome-letter"; span.style.setProperty("--i", `${index * 0.07}s`); span.textContent = letter; welcome.appendChild(span); }); welcome.classList.add("show");
+        };
+        const disperseWelcome = () => {
+          if (!welcome || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          const palette = [["#ffffff", "rgba(255,255,255,.9)"], ["#bcd4ff", "rgba(150,190,255,.85)"], ["#8fe0ff", "rgba(110,210,255,.85)"], ["#ffe7c2", "rgba(255,210,140,.85)"]];
+          const perLetter = window.innerWidth < 600 ? 18 : 38;
+          welcome.querySelectorAll<HTMLElement>(".welcome-letter").forEach((letter, letterIndex) => {
+            const rect = letter.getBoundingClientRect(); letter.classList.add("dispersing");
+            for (let index = 0; index < perLetter; index += 1) {
+              const particle = document.createElement("i"), large = Math.random() < 0.12, size = large ? 3.5 + Math.random() * 3 : 1.5 + Math.random() * 2.5;
+              const [color, glow] = palette[Math.floor(Math.random() * palette.length)], angle = Math.random() * Math.PI * 2, distance = large ? 70 + Math.random() * 250 : 130 + Math.random() * 430;
+              particle.className = "welcome-particle"; particle.style.left = `${rect.left + Math.random() * rect.width}px`; particle.style.top = `${rect.top + Math.random() * rect.height}px`;
+              particle.style.setProperty("--size", `${size.toFixed(2)}px`); particle.style.setProperty("--color", color); particle.style.setProperty("--glow", glow); particle.style.setProperty("--x", `${(Math.cos(angle) * distance).toFixed(1)}px`); particle.style.setProperty("--y", `${(Math.sin(angle) * distance * 0.8 + 60 + Math.random() * 110).toFixed(1)}px`); particle.style.setProperty("--duration", `${(1 + Math.random() * 1.15).toFixed(2)}s`); particle.style.animationDelay = `${letterIndex * 0.03 + Math.random() * 0.16}s`;
+              document.body.appendChild(particle); particles.push(particle); requestAnimationFrame(() => particle.classList.add("fly")); later(() => particle.remove(), 2800);
+            }
+          }); welcome.classList.add("disappear");
+        };
+        const runLoader = async () => {
+          if (!loader) { document.body.classList.add("archive-ready"); return; }
+          document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("loading"); renderProgress(0); await wait(180);
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
+          else {
+            let current = 0;
+            for (let index = 0; index < folders.length; index += 1) {
+              if (cancelled) return;
+              folders.forEach((folder, folderIndex) => { folder.classList.toggle("active", folderIndex === index); folder.classList.toggle("done", folderIndex < index); }); folders[index].classList.add("open");
+              if (loadingStatus) loadingStatus.textContent = `opening /${folders[index].dataset.folder?.toLowerCase()}`;
+              const target = 8 + ((index + 1) / folders.length) * 84; await animateProgress(current, target, 210); current = target; await wait(70);
+            }
+            folders.forEach((folder) => { folder.classList.remove("active"); folder.classList.add("done"); }); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await animateProgress(current, 100, 260); await wait(180); showWelcome(); await wait(1250); disperseWelcome(); await wait(1050);
+          }
+          if (cancelled) return; loader.classList.remove("loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready");
+        };
+        void runLoader();
+        archiveCleanup = () => { cancelled = true; controller.abort(); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); };
+      };
+      document.addEventListener("astro:page-load", initArchive);
+      if (document.readyState === "complete") initArchive();
+    </script>
   </body>
 </html>
-
-<div class="milk-loader" id="milk-loader" aria-label="正在加载">
-  <div class="milk-scene"><div class="loader-person" aria-hidden="true"><span class="person-head">●</span><span class="person-body">◕</span></div><div class="milk-cup" aria-hidden="true"><span class="milk-fill"></span><span class="cup-straw"></span></div></div>
-  <p>正在喝奶茶，马上就好...</p><div class="milk-progress"><span id="milk-progress-bar"></span></div>
-</div>
-<script>
-  const loader = document.getElementById("milk-loader"); const bar = document.getElementById("milk-progress-bar"); const fill = document.querySelector(".milk-fill"); let progress = 0;
-  const timer = window.setInterval(() => { progress = Math.min(progress + Math.random() * 11 + 4, 100); if (bar) bar.style.width = `${progress}%`; if (fill) fill.style.height = `${Math.max(8, 100 - progress)}%`; if (progress >= 100) { window.clearInterval(timer); window.setTimeout(() => loader?.classList.add("is-done"), 180); } }, 90);
-</script>

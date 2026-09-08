@@ -1,51 +1,35 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/HorizontalCard.astro";
+import projects from "../data/projects.json";
+
+const techColors: Record<string, string> = {
+  Python: "#3776ab",
+  STM32: "#4f8cff",
+  Django: "#44b78b",
+  Vue: "#42b883",
+  "Spring Boot": "#6db33f",
+  Android: "#3ddc84",
+};
 ---
 
-<BaseLayout title = "项目" sideBarActiveItemID="projects">
-  <div>
-    <div class="text-3xl w-full font-bold mb-5">项目归档</div>
-  </div>
+<BaseLayout title="项目" sideBarActiveItemID="projects">
+  <section class="standalone-section">
+    <header class="page-heading">
+      <div class="section-label">PROJECT ARCHIVE</div>
+      <h1>Projects</h1>
+      <p>按技术栈整理的项目实践与学习记录。</p>
+    </header>
 
-  <HorizontalCard
-    title="智能工具 · 工作流自动化"
-    img="/post_img.webp"
-    desc="用代码把重复工作变得简单高效。"
-    url="#"
-    badge="精选"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="数据看板 · 可视化实践"
-    img="/post_img.webp"
-    desc="关注数据，也关注数据背后的故事。"
-    url="#"
-  />
-
-  <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">更多实验</div>
-  </div>
-
-  <HorizontalCard
-    title="开源实验 · 组件与工具"
-    img="/post_img.webp"
-    desc="记录学习过程，分享可复用的解决方案。"
-    url="#"
-    badge="开源"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="个人网站 · Astro 作品集"
-    img="/post_img.webp"
-    desc="一个持续更新的个人项目与成长档案。"
-    url="#"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="下一件作品 · 敬请期待"
-    img="/post_img.webp"
-    desc="保持好奇，持续构建。"
-    url="#"
-  />
+    <div class="standalone-projects">
+      {projects.map((project, index) => (
+        <article class="standalone-card" style={`--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
+          <div class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></div>
+          <h2>{project.title}</h2>
+          <p>{project.description}</p>
+          <p class="project-detail">{project.detail}</p>
+          <div class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</div>
+        </article>
+      ))}
+    </div>
+  </section>
 </BaseLayout>

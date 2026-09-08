@@ -1,76 +1,210 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/HorizontalCard.astro";
 import { getCollection } from "astro:content";
-import createSlug from "../lib/createSlug"
+import createSlug from "../lib/createSlug";
+import projects from "../data/projects.json";
 
-const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
 
-const last_posts = posts.slice(0, 3);
+const techColors: Record<string, string> = {
+  Python: "#3776ab",
+  STM32: "#4f8cff",
+  Django: "#44b78b",
+  Vue: "#42b883",
+  "Spring Boot": "#6db33f",
+  Android: "#3ddc84",
+};
 ---
 
 <BaseLayout sideBarActiveItemID="home">
-  <div class="pb-12 mt-5">
-    <div class="text-xl py-1">欢迎来到我的项目空间</div>
-    <div class="text-5xl font-bold">燚燿的作品集</div>
-    <div class="text-3xl py-3 font-bold">把想法做成可用的作品</div>
-    <div class="py-2">
-      <text class="text-lg">
-        这里记录我完成的项目、遇到的问题和持续积累的技术实践。
-      </text>
+  <section id="home" class="hero-section">
+    <div class="container">
+      <div class="hero">
+        <div class="hero-profile">
+          <div class="avatar-frame"><img class="avatar" src="/profile.webp" alt="燚燿头像" /></div>
+          <div class="profile-name">燚燿</div>
+          <div class="profile-role">DEVELOPER · BUILDER · LEARNER</div>
+          <div class="social-links">
+            <a class="social-link" href="https://github.com/yishuo299" target="_blank" rel="noreferrer" aria-label="访问 GitHub yishuo299">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.9-.39.98 0 1.98.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.41.35.78 1.04.78 2.1 0 1.52-.01 2.75-.01 3.12 0 .31.21.67.8.56A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" /></svg>
+              <span>GitHub</span><small>yishuo299</small>
+            </a>
+            <button class="social-link" type="button" data-copy="3441125143" data-copy-label="QQ 号" aria-label="复制 QQ 号 3441125143">
+              <span class="social-mark" aria-hidden="true">Q</span><span>QQ</span><small>3441125143</small>
+            </button>
+            <button class="social-link" type="button" data-copy="yy_shuo_299" data-copy-label="微信号" aria-label="复制微信号 yy_shuo_299">
+              <span class="social-mark" aria-hidden="true">微</span><span>微信</span><small>yy_shuo_299</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-message">
+          <div class="hero-small">PERSONAL PROJECT ARCHIVE</div>
+          <h1>Build.<br />Learn.<br />Repeat.</h1>
+          <p class="hero-description"><strong>记录项目，也记录成长。</strong><br />把想法变成项目，把项目变成经验。</p>
+          <div class="hero-actions">
+            <a class="archive-button" href="https://github.com/yishuo299" target="_blank" rel="noreferrer">GitHub ↗</a>
+            <a class="archive-button" href="#projects">Explore Projects</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-clock">
+        <div class="hero-clock-row">
+          <div class="big-time" id="bigTime">00:00:00</div>
+          <button class="clock-adjust" id="clockAdjust" type="button" title="调整背景时间" aria-label="调整背景时间">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+          </button>
+        </div>
+        <div class="big-date" id="bigDate">LOADING LOCAL TIME</div>
+        <div class="big-period" id="bigPeriod">DAYLIGHT</div>
+      </div>
     </div>
-    <div class="mt-8">
-      <a class="btn" href="https://github.com/yishuo299" target="_blank">访问 GitHub</a>
-      <a href="/projects" class="btn btn-outline ml-5">
-        查看全部项目
-      </a>
+  </section>
+
+  <section id="projects" class="content-section">
+    <div class="container">
+      <header class="section-heading reveal">
+        <div><div class="section-label">SELECTED WORK</div><h2 class="section-title">Projects</h2></div>
+        <div class="section-count">{String(projects.length).padStart(2, "0")} PROJECTS</div>
+      </header>
+
+      <div class="project-toolbar reveal">
+        <div class="toolbar-left" id="toolbarStatus">ALL PROJECTS</div>
+        <div class="toolbar-right">
+          <div class="search-wrapper" id="searchWrapper"><input class="search-input" id="searchInput" type="search" placeholder="Search projects..." aria-label="搜索项目" /></div>
+          <button class="icon-button" id="searchButton" type="button" title="搜索" aria-label="展开搜索">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          </button>
+          <button class="icon-button" id="filterButton" type="button" title="筛选" aria-label="展开技术栈筛选" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-panel" id="filterPanel">
+        <button class="filter-button active" type="button" data-project-filter="all">ALL</button>
+        {projects.map((project) => <button class="filter-button" type="button" data-project-filter={project.name}>{project.name}</button>)}
+      </div>
+
+      <div class="projects-list" id="projectsContainer">
+        {projects.map((project, index) => (
+          <div class="reveal project-item" data-project-category={project.name.toLowerCase()} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
+            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail}>
+              <span class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></span>
+              <strong class="project-title">{project.title}</strong>
+              <span class="project-description">{project.description}</span>
+              <span class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</span>
+            </button>
+          </div>
+        ))}
+      </div>
+      <div class="no-result" id="noResult">NO PROJECT FOUND</div>
     </div>
+  </section>
+
+  <section id="articles" class="content-section">
+    <div class="container">
+      <header class="section-heading reveal">
+        <div><div class="section-label">LATEST NOTES</div><h2 class="section-title">Articles</h2></div>
+        <a class="section-link" href="/blog/">阅读全部 →</a>
+      </header>
+      <div class="article-list">
+        {posts.map((post) => (
+          <a class="article-row reveal" href={`/blog/${createSlug(post.data.title, post.slug)}`}>
+            <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString("zh-CN")}</time>
+            <strong>{post.data.title}</strong><span>{post.data.description}</span><b aria-hidden="true">↗</b>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="content-section">
+    <div class="container">
+      <header class="section-heading reveal"><div><div class="section-label">ABOUT</div><h2 class="section-title">Build · Learn · Repeat</h2></div></header>
+      <p class="about-text reveal">这里是我的个人项目档案。我喜欢通过实际项目学习新技术，从 Python、Web 开发，到 STM32 嵌入式开发、Android 与前后端项目。每一个项目都是一次实践，也记录着不断尝试、学习和成长的过程。</p>
+    </div>
+  </section>
+
+  <div id="clickLoader" class="click-loader" aria-hidden="true">
+    <div class="click-loader-inner"><div class="click-loader-label">OPENING PROJECT</div><div class="click-loader-folder" id="clickLoaderFolder">&lt;/&gt;</div><div class="click-loader-name" id="clickLoaderName">/project</div><div class="click-progress"><div id="clickProgress"></div></div></div>
   </div>
 
-  <div>
-    <div class="text-3xl w-full font-bold mb-2">最近项目 {"</>"}</div>
+  <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
+    <section class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button class="detail-close" id="detailClose" type="button" aria-label="关闭项目详情">×</button>
+      <div class="detail-keyword" id="detailKeyword">PROJECT</div><h2 class="detail-title" id="detailTitle">Project</h2>
+      <div class="detail-content"><p id="detailDescription"></p><p id="detailText"></p></div>
+    </section>
   </div>
-
-  <HorizontalCard
-    title="项目一 · 智能工具"
-    img="/post_img.webp"
-    desc="将日常流程自动化，专注解决真实问题。"
-    url="#"
-    badge="进行中"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="项目二 · 数据看板"
-    img="/post_img.webp"
-    desc="用清晰的数据视图帮助决策和复盘。"
-    url="#"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="项目三 · 开源实验"
-    img="/post_img.webp"
-    desc="把学习过程沉淀为可以复用的开源代码。"
-    url="#"
-    badge="开源"
-  />
-
-  <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">最新文章</div>
-  </div>
-
-  {
-    last_posts.map((post) => (
-      <>
-        <HorizontalCard
-          title={post.data.title}
-          img={post.data.heroImage}
-          desc={post.data.description}
-          url={"/blog/" + createSlug(post.data.title, post.slug)}
-          target="_self"
-          badge={post.data.badge}
-        />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
 </BaseLayout>
+
+<script>
+  let homeCleanup: () => void = () => {};
+
+  const initHome = () => {
+    homeCleanup();
+    const root = document.getElementById("projectsContainer");
+    if (!root) return;
+
+    const controller = new AbortController();
+    const projectItems = Array.from(document.querySelectorAll<HTMLElement>(".project-item"));
+    const filterButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-project-filter]"));
+    const searchButton = document.getElementById("searchButton");
+    const searchWrapper = document.getElementById("searchWrapper");
+    const searchInput = document.getElementById("searchInput") as HTMLInputElement | null;
+    const filterButton = document.getElementById("filterButton");
+    const filterPanel = document.getElementById("filterPanel");
+    const toolbarStatus = document.getElementById("toolbarStatus");
+    const noResult = document.getElementById("noResult");
+    let activeFilter = "all";
+
+    const applyFilters = () => {
+      const keyword = searchInput?.value.trim().toLowerCase() ?? "";
+      let visible = 0;
+      projectItems.forEach((item) => {
+        const categoryMatches = activeFilter === "all" || item.dataset.projectCategory === activeFilter.toLowerCase();
+        const searchMatches = !keyword || (item.dataset.projectSearch ?? "").includes(keyword);
+        const matches = categoryMatches && searchMatches;
+        item.classList.toggle("hidden", !matches);
+        if (matches) visible += 1;
+      });
+      noResult?.classList.toggle("show", visible === 0);
+      if (toolbarStatus) toolbarStatus.textContent = activeFilter === "all" ? (keyword ? `SEARCH: ${keyword.toUpperCase()}` : "ALL PROJECTS") : `FILTER: ${activeFilter.toUpperCase()}`;
+    };
+
+    searchButton?.addEventListener("click", () => { searchWrapper?.classList.toggle("open"); if (searchWrapper?.classList.contains("open")) window.setTimeout(() => searchInput?.focus(), 220); }, { signal: controller.signal });
+    searchInput?.addEventListener("input", applyFilters, { signal: controller.signal });
+    filterButton?.addEventListener("click", () => { const open = !filterPanel?.classList.contains("open"); filterPanel?.classList.toggle("open", open); filterButton.setAttribute("aria-expanded", String(open)); }, { signal: controller.signal });
+    filterButtons.forEach((button) => button.addEventListener("click", () => { activeFilter = button.dataset.projectFilter ?? "all"; filterButtons.forEach((item) => item.classList.toggle("active", item === button)); applyFilters(); }, { signal: controller.signal }));
+
+    const revealObserver = "IntersectionObserver" in window ? new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("in-view"); revealObserver.unobserve(entry.target); } }), { threshold: 0.1, rootMargin: "0px 0px -36px" }) : null;
+    document.querySelectorAll(".reveal").forEach((element) => revealObserver ? revealObserver.observe(element) : element.classList.add("in-view"));
+
+    const clickLoader = document.getElementById("clickLoader"), clickLoaderName = document.getElementById("clickLoaderName"), clickLoaderFolder = document.getElementById("clickLoaderFolder"), clickProgress = document.getElementById("clickProgress") as HTMLElement | null;
+    const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
+    const closeDetail = () => { detailOverlay?.classList.remove("show"); detailOverlay?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
+    const showDetail = (card: HTMLElement) => {
+      if (detailKeyword) detailKeyword.textContent = card.dataset.name ?? "PROJECT"; if (detailTitle) detailTitle.textContent = card.dataset.title ?? "Project"; if (detailDescription) detailDescription.textContent = card.dataset.description ?? ""; if (detailText) detailText.textContent = card.dataset.detail ?? "";
+      detailOverlay?.classList.add("show"); detailOverlay?.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); window.setTimeout(() => (detailClose as HTMLElement | null)?.focus(), 80);
+    };
+    const openProject = (card: HTMLElement) => {
+      clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.textContent = card.dataset.name?.slice(0, 2) ?? "<>"; if (clickProgress) clickProgress.style.width = "0%";
+      const start = performance.now();
+      const frame = (now: number) => { const ratio = Math.min(1, (now - start) / 720); const eased = 1 - Math.pow(1 - ratio, 3); if (clickProgress) clickProgress.style.width = `${Math.round(eased * 100)}%`; if (ratio < 1) requestAnimationFrame(frame); else window.setTimeout(() => { clickLoader?.classList.remove("show"); clickLoader?.setAttribute("aria-hidden", "true"); showDetail(card); }, 180); };
+      requestAnimationFrame(frame);
+    };
+    document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => card.addEventListener("click", () => openProject(card), { signal: controller.signal }));
+    detailClose?.addEventListener("click", closeDetail, { signal: controller.signal });
+    detailOverlay?.addEventListener("click", (event) => { if (event.target === detailOverlay) closeDetail(); }, { signal: controller.signal });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && detailOverlay?.classList.contains("show")) closeDetail(); }, { signal: controller.signal });
+
+    homeCleanup = () => { controller.abort(); revealObserver?.disconnect(); document.body.classList.remove("modal-open"); };
+  };
+
+  document.addEventListener("astro:page-load", initHome);
+  if (document.readyState === "complete") initHome();
+</script>
