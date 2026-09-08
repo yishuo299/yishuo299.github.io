@@ -196,8 +196,9 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
 
     const clickLoader = document.getElementById("clickLoader"), clickLoaderName = document.getElementById("clickLoaderName"), clickLoaderFolder = document.getElementById("clickLoaderFolder"), clickProgress = document.getElementById("clickProgress") as HTMLElement | null;
     const bookLoader = document.getElementById("bookLoader");
-    const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailProject = document.getElementById("detailProject") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
+    const detailOverlay = document.getElementById("detailOverlay"), detailCard = document.querySelector<HTMLElement>(".detail-card"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailProject = document.getElementById("detailProject") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
     let articleTimer: number | undefined;
+    let activeProjectCard: HTMLElement | null = null;
     const resetProjectOverlays = () => {
       window.clearTimeout(articleTimer);
       clickLoader?.classList.remove("show");
@@ -208,11 +209,13 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
     resetProjectOverlays();
     const closeDetail = () => {
       resetProjectOverlays();
+      activeProjectCard = null;
       detailOverlay?.classList.remove("show");
       detailOverlay?.setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");
     };
     const showDetail = (card: HTMLElement) => {
+      activeProjectCard = card;
       if (detailKeyword) detailKeyword.textContent = card.dataset.name ?? "PROJECT"; if (detailTitle) detailTitle.textContent = card.dataset.title ?? "Project"; if (detailDescription) detailDescription.textContent = card.dataset.description ?? ""; if (detailText) detailText.textContent = card.dataset.detail ?? "";
       const articleUrl = card.dataset.article ?? "";
       if (detailRead) { detailRead.href = articleUrl || "#"; detailRead.hidden = !articleUrl; }
@@ -241,7 +244,10 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       let clickTimer: number | undefined;
       card.addEventListener("click", () => {
         window.clearTimeout(clickTimer);
-        clickTimer = window.setTimeout(() => openProject(card), 190);
+        clickTimer = window.setTimeout(() => {
+          if (detailOverlay?.classList.contains("show") && activeProjectCard === card) openArticle(card);
+          else openProject(card);
+        }, 190);
       }, { signal: controller.signal });
       card.addEventListener("dblclick", (event) => {
         event.preventDefault();
@@ -258,6 +264,11 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       bookLoader?.setAttribute("aria-hidden", "false");
       window.clearTimeout(articleTimer);
       articleTimer = window.setTimeout(() => { window.location.href = href; }, 780);
+    }, { signal: controller.signal });
+    detailCard?.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("a,button")) return;
+      if (activeProjectCard?.dataset.article) openArticle(activeProjectCard);
     }, { signal: controller.signal });
     detailClose?.addEventListener("click", closeDetail, { signal: controller.signal });
     detailOverlay?.addEventListener("click", (event) => { if (event.target === detailOverlay) closeDetail(); }, { signal: controller.signal });
