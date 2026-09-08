@@ -10,7 +10,8 @@ const posts = (await getCollection("blog"))
   .slice(0, 3);
 
 const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
-const projectFilters = Array.from(new Set(projects.map((project) => project.name)));
+const projectFilters = Array.from(new Set(projects.flatMap((project) => project.tags)));
+const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s*\d+$/, "")] ?? FALLBACK_TECH_META;
 ---
 
 <BaseLayout sideBarActiveItemID="home">
@@ -86,8 +87,8 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
 
       <div class="projects-list" id="projectsContainer">
         {projects.map((project, index) => (
-          <div class="reveal project-item" data-project-category={project.name.toLowerCase()} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
-            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-icon={(TECH_META[project.name] ?? FALLBACK_TECH_META).svg}>
+          <div class="reveal project-item" data-project-category={`|${[project.name, ...project.tags].map((tag) => tag.toLowerCase()).join("|")}|`} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
+            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-icon={getTechMeta(project.tags[0] ?? project.name).svg}>
               <span class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></span>
               <strong class="project-title">{project.title}</strong>
               <span class="project-description">{project.description}</span>
@@ -162,7 +163,7 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
       const keyword = searchInput?.value.trim().toLowerCase() ?? "";
       let visible = 0;
       projectItems.forEach((item) => {
-        const categoryMatches = activeFilter === "all" || item.dataset.projectCategory === activeFilter.toLowerCase();
+        const categoryMatches = activeFilter === "all" || (item.dataset.projectCategory ?? "").includes(`|${activeFilter.toLowerCase()}|`);
         const searchMatches = !keyword || (item.dataset.projectSearch ?? "").includes(keyword);
         const matches = categoryMatches && searchMatches;
         item.classList.toggle("hidden", !matches);
@@ -180,6 +181,7 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
     const revealObserver = "IntersectionObserver" in window ? new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("in-view"); revealObserver.unobserve(entry.target); } }), { threshold: 0.1, rootMargin: "0px 0px -36px" }) : null;
     document.querySelectorAll(".reveal").forEach((element) => revealObserver ? revealObserver.observe(element) : element.classList.add("in-view"));
 
+    const clickLoader = document.getElementById("clickLoader"), clickLoaderName = document.getElementById("clickLoaderName"), clickLoaderFolder = document.getElementById("clickLoaderFolder"), clickProgress = document.getElementById("clickProgress") as HTMLElement | null;
     const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
     const closeDetail = () => { detailOverlay?.classList.remove("show"); detailOverlay?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
     const showDetail = (card: HTMLElement) => {
@@ -193,11 +195,17 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
       if (articleUrl) window.location.href = articleUrl;
       else showDetail(card);
     };
+    const openProject = (card: HTMLElement) => {
+      document.body.classList.add("modal-open"); clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.innerHTML = card.dataset.icon ?? ""; if (clickProgress) clickProgress.style.width = "0%";
+      const start = performance.now();
+      const frame = (now: number) => { const ratio = Math.min(1, (now - start) / 520); const eased = 1 - Math.pow(1 - ratio, 3); if (clickProgress) clickProgress.style.width = `${Math.round(eased * 100)}%`; if (ratio < 1) requestAnimationFrame(frame); else window.setTimeout(() => { clickLoader?.classList.remove("show"); clickLoader?.setAttribute("aria-hidden", "true"); showDetail(card); }, 120); };
+      requestAnimationFrame(frame);
+    };
     document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
       let clickTimer: number | undefined;
       card.addEventListener("click", () => {
         window.clearTimeout(clickTimer);
-        clickTimer = window.setTimeout(() => showDetail(card), 190);
+        clickTimer = window.setTimeout(() => openProject(card), 190);
       }, { signal: controller.signal });
       card.addEventListener("dblclick", (event) => {
         event.preventDefault();

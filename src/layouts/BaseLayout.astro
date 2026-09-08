@@ -16,7 +16,7 @@ export interface Props {
 
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, ogType = "website", sideBarActiveItemID } = Astro.props;
 const isHome = sideBarActiveItemID === "home";
-const loaderTechs = Array.from(new Set(projects.map((project) => project.name)));
+const loaderTechs = Array.from(new Set(projects.map((project) => project.name))).filter((tech) => tech !== "MySQL");
 ---
 
 <!doctype html>
@@ -187,6 +187,29 @@ const loaderTechs = Array.from(new Set(projects.map((project) => project.name)))
 
         const loader = document.getElementById("loader"), progress = document.getElementById("progress") as HTMLElement | null, progressText = document.getElementById("progressText"), loadingStatus = document.getElementById("loadingStatus"), welcome = document.getElementById("welcome");
         const folders = Array.from(document.querySelectorAll<HTMLElement>(".folder"));
+        const loaderStorageKey = "archive-home-loader-last-run";
+        const loaderInterval = 30 * 60 * 1000;
+        const isSmoothNetwork = () => {
+          const connection = (navigator as Navigator & { connection?: { effectiveType?: string; downlink?: number; rtt?: number; saveData?: boolean } }).connection;
+          if (!connection) return true;
+          if (connection.saveData) return false;
+          if (connection.effectiveType && /(^slow-2g$|^2g$|^3g$)/i.test(connection.effectiveType)) return false;
+          if (typeof connection.downlink === "number" && connection.downlink > 0 && connection.downlink < 1.5) return false;
+          if (typeof connection.rtt === "number" && connection.rtt > 450) return false;
+          return true;
+        };
+        const shouldRunHomeLoader = () => {
+          if (!isSmoothNetwork()) return true;
+          try {
+            const lastRun = Number(localStorage.getItem(loaderStorageKey) ?? "0");
+            return !Number.isFinite(lastRun) || Date.now() - lastRun > loaderInterval;
+          } catch {
+            return true;
+          }
+        };
+        const rememberHomeLoader = () => {
+          try { localStorage.setItem(loaderStorageKey, String(Date.now())); } catch {}
+        };
         const renderProgress = (value: number) => { const rounded = Math.max(0, Math.min(100, Math.round(value))); if (progress) progress.style.transform = `scaleX(${rounded / 100})`; if (progressText) progressText.textContent = `${rounded}%`; };
         const animateProgress = (from: number, to: number, duration: number) => new Promise<void>((resolve) => {
           const start = performance.now(); const frame = (now: number) => { if (cancelled) return resolve(); const ratio = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - ratio, 3); renderProgress(from + (to - from) * eased); if (ratio < 1) requestAnimationFrame(frame); else resolve(); }; requestAnimationFrame(frame);
@@ -216,6 +239,13 @@ const loaderTechs = Array.from(new Set(projects.map((project) => project.name)))
         };
         const runLoader = async () => {
           if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
+          if (!shouldRunHomeLoader()) {
+            loader.classList.remove("archive-loading");
+            loader.classList.add("hide");
+            document.body.classList.add("archive-ready");
+            unlockPage();
+            return;
+          }
           lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); renderProgress(0); await wait(180);
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
           else {
@@ -225,7 +255,7 @@ const loaderTechs = Array.from(new Set(projects.map((project) => project.name)))
             if (loadingStatus) loadingStatus.textContent = "project archive ready";
             await wait(140); showWelcome(); await wait(900); disperseWelcome(); await wait(850);
           }
-          if (cancelled) return; loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready"); unlockPage();
+          if (cancelled) return; rememberHomeLoader(); loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready"); unlockPage();
         };
         void runLoader();
         archiveCleanup = () => { cancelled = true; controller.abort(); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); unlockPage(); };

@@ -14,6 +14,28 @@ const gradeCode = `BigDecimal total = usual.multiply(new BigDecimal("0.30"))
 
 grade.setTotalScore(total);
 grade.setGpa(GpaConverter.convert(total));`;
+
+const tableCode = `user(id, username, password, role_id, status)
+role(id, code, name)
+permission(id, name, path, type)
+course(id, name, credit, course_type, college_id)
+course_offering(id, course_id, teacher_id, term_id, classroom_id, capacity, week_day, section)
+course_selection(id, student_id, offering_id, status, create_time)
+grade(id, selection_id, usual_score, midterm_score, final_score, total_score, gpa, audit_status)
+operation_log(id, user_id, method, url, ip, cost_time, status, error_msg)`;
+
+const logCode = `@Around("@annotation(operationLog)")
+public Object recordLog(ProceedingJoinPoint joinPoint, OperationLog operationLog) throws Throwable {
+  long start = System.currentTimeMillis();
+  try {
+    Object result = joinPoint.proceed();
+    logService.saveSuccess(operationLog.value(), System.currentTimeMillis() - start);
+    return result;
+  } catch (Throwable error) {
+    logService.saveFailure(operationLog.value(), error.getMessage());
+    throw error;
+  }
+}`;
 ---
 
 <BaseLayout sideBarActiveItemID="projects">
@@ -23,6 +45,13 @@ grade.setGpa(GpaConverter.convert(total));`;
       <p class="eyebrow">Template 03 · 业务闭环版</p>
       <h1>从数据表到业务流转：选课系统是怎样跑起来的</h1>
       <p>这个版本从“系统如何支撑真实业务”切入，重点说明数据库设计、权限体系、选课规则、成绩流转和日志追踪。它适合用来展示项目的完整性和工程思维。</p>
+    </section>
+
+    <section class="flow">
+      <h2>一、项目构成</h2>
+      <p>这个项目可以拆成四个核心部分：前端后台、后端服务、数据库、项目文档。前端负责把角色菜单、课程表格、成绩表单、日志查询这些页面组织起来；后端负责接口和规则；数据库负责保存业务状态；文档负责说明如何启动和复现。</p>
+      <pre><code>{tableCode}</code></pre>
+      <p>如果要复现，不建议一开始就把所有表都建完整。可以先围绕用户、角色、课程、开课、选课、成绩、日志这几张核心表搭出最小版本，再逐步扩展学院、专业、班级、教室、学期等基础数据。</p>
     </section>
 
     <section class="architecture">
@@ -41,7 +70,7 @@ grade.setGpa(GpaConverter.convert(total));`;
     </section>
 
     <section class="flow">
-      <h2>核心业务流程</h2>
+      <h2>二、核心业务流程</h2>
       <ol>
         <li><strong>管理员初始化账号与权限：</strong>创建学生、教师、教务人员，分配角色与菜单权限。</li>
         <li><strong>教务维护课程与开课：</strong>设置课程名称、学分、学期、教师、教室、容量、上课时间。</li>
@@ -52,14 +81,39 @@ grade.setGpa(GpaConverter.convert(total));`;
       </ol>
     </section>
 
+    <section class="flow">
+      <h2>三、数据库设计思路</h2>
+      <p>数据库设计的关键是分清“课程”和“开课”。课程表示一门课本身，例如《Java Web 开发》；开课表示某个学期、某位老师、某间教室、某个时间段开设了这门课。学生选择的其实不是课程表中的课程，而是具体的开课记录。</p>
+      <p>成绩表也不应该直接只关联学生和课程，更推荐关联选课记录。因为学生只有完成某一次选课，后续才会产生对应成绩。这样可以避免同一门课程多次开设时成绩混乱。</p>
+      <p>日志表则用于保存系统行为，它不直接参与选课主流程，但对后台系统非常重要。出现误操作或接口异常时，管理员可以通过日志反查操作用户、请求路径、执行耗时和错误信息。</p>
+    </section>
+
     <section class="code-card">
-      <h2>成绩计算示例</h2>
+      <h2>四、成绩计算示例</h2>
       <pre><code>{gradeCode}</code></pre>
       <p>成绩模块不仅保存分数，还要完成总评计算、绩点换算、审核状态变更和最终发布，这样学生端查询到的数据才是经过确认的结果。</p>
     </section>
 
+    <section class="code-card">
+      <h2>五、操作日志关键代码</h2>
+      <pre><code>{logCode}</code></pre>
+      <p>AOP 日志的好处是不用在每个接口里重复写日志保存逻辑。只要给关键接口加上注解，系统就可以统一记录成功和失败情况。对于管理员后台来说，这个功能能明显提高系统可维护性。</p>
+    </section>
+
+    <section class="flow">
+      <h2>六、按步骤复现项目</h2>
+      <ol>
+        <li><strong>先建最小数据库：</strong>用户、角色、课程、开课、选课、成绩、日志。</li>
+        <li><strong>完成基础接口：</strong>登录、用户信息、课程列表、选课提交、课表查询。</li>
+        <li><strong>加入业务校验：</strong>容量校验、重复选课校验、时间冲突校验、成绩审核状态校验。</li>
+        <li><strong>接入前端页面：</strong>学生端先跑通，再补教师端、教务端和管理员端。</li>
+        <li><strong>完善日志与权限：</strong>把关键接口接入角色权限和操作日志，形成可管理系统。</li>
+      </ol>
+      <p>这个顺序的好处是每一步都有可运行结果。你可以先得到一个能登录、能选课、能看课表的小系统，再慢慢扩展成完整项目。</p>
+    </section>
+
     <section class="visuals">
-      <h2>管理侧与数据侧预览</h2>
+      <h2>七、部分实现结果</h2>
       <div>
         {images.map(([title, src]) => (
           <figure>
@@ -71,7 +125,7 @@ grade.setGpa(GpaConverter.convert(total));`;
     </section>
 
     <section class="final-note">
-      <h2>项目亮点</h2>
+      <h2>八、项目亮点</h2>
       <p>这个模板的优势是逻辑感强：它能说明项目为什么要这样拆模块、每张表服务什么业务、每个角色如何参与流程。相比只展示页面，它更容易体现后端设计、数据库建模和业务规则落地能力。</p>
     </section>
   </main>

@@ -15,6 +15,20 @@ const requestCode = `const submitSelection = async (courseId: number) => {
   ElMessage.success("选课成功，课表已更新");
   refreshSchedule();
 };`;
+
+const routerCode = `router.beforeEach(async (to) => {
+  const userStore = useUserStore();
+  if (!userStore.token && to.path !== "/login") return "/login";
+  if (to.meta.roles && !to.meta.roles.includes(userStore.role)) return "/403";
+});`;
+
+const apiCode = `const request = axios.create({ baseURL: "/api", timeout: 10000 });
+
+request.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = \`Bearer \${token}\`;
+  return config;
+});`;
 ---
 
 <BaseLayout sideBarActiveItemID="projects">
@@ -27,6 +41,26 @@ const requestCode = `const submitSelection = async (courseId: number) => {
         <p>这个版本更像一篇博客展示稿：它从用户进入系统开始讲，依次说明学生、教师、教务和管理员分别能完成什么操作，以及这些页面背后的数据如何流动。</p>
       </div>
       <img src="https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg" alt="选课系统登录页" />
+    </section>
+
+    <section class="essay-block">
+      <h2>一、文章定位：从使用体验倒推系统设计</h2>
+      <p>这篇文章适合做博客展示，也适合后续生成 AI 视频讲解。讲解顺序不是从数据库开始，而是从用户第一次进入系统开始：登录后看到什么、不同角色能做什么、一次操作如何反馈到页面、数据又如何回到用户眼前。</p>
+      <p>如果读者有 Vue 和 Spring Boot 基础，可以根据本文先复现主流程，再逐步补齐权限、日志、成绩审核等模块。这样学习曲线更平滑，不会刚开始就陷入复杂表结构。</p>
+    </section>
+
+    <section class="feature-wall">
+      <h2>二、前端项目构成</h2>
+      <div>
+        {["views 页面目录", "router 路由守卫", "stores 用户状态", "api 请求封装", "components 复用组件", "utils 工具函数", "permission 权限菜单", "assets 静态资源"].map((item) => <span>{item}</span>)}
+      </div>
+      <p>前端重点是把复杂业务拆成可理解的页面。登录页负责拿到身份；路由守卫负责拦截未登录用户；状态管理保存用户信息和权限；API 层统一处理 Token、错误提示和接口返回。</p>
+    </section>
+
+    <section class="code-card">
+      <h2>三、路由权限设计</h2>
+      <pre><code>{routerCode}</code></pre>
+      <p>角色权限不要只靠菜单隐藏。菜单隐藏只是用户体验，路由守卫和后端接口权限才是安全边界。学生访问教师页面、普通管理员访问系统配置，都应该被拦截。</p>
     </section>
 
     <section class="timeline">
@@ -53,20 +87,33 @@ const requestCode = `const submitSelection = async (courseId: number) => {
     </section>
 
     <section class="feature-wall">
-      <h2>完成的主要功能</h2>
+      <h2>四、完成的主要功能</h2>
       <div>
         {["登录鉴权", "角色菜单", "课程筛选", "学生选课", "时间冲突校验", "课程容量校验", "教师成绩录入", "成绩审核发布", "学生课表", "操作日志", "用户管理", "权限管理"].map((item) => <span>{item}</span>)}
       </div>
     </section>
 
+    <section class="essay-block">
+      <h2>五、页面设计思路</h2>
+      <p>后台系统最重要的不是炫，而是让信息能被快速理解。课程列表使用表格承载大量字段，课程类型、学期、教师、容量、上课时间等信息适合放在同一行；课程状态、审核状态、角色类型适合用标签显示；新增、编辑、确认退课这类操作适合用弹窗完成。</p>
+      <p>学生端页面应该降低操作成本。比如课程搜索和筛选要放在列表上方，选课按钮要靠近课程信息，成功后要立刻刷新课表。教师端要减少跳转，让成绩录入、保存、提交审核尽可能在同一页面完成。管理员端则更强调筛选、分页和日志查询。</p>
+    </section>
+
     <section class="code-card">
-      <h2>前端请求示例</h2>
+      <h2>六、请求封装与选课提交</h2>
+      <pre><code>{apiCode}</code></pre>
       <pre><code>{requestCode}</code></pre>
       <p>交互体验版更关注页面反馈：用户点击按钮后，前端给出明确提示，并刷新对应数据，让操作结果可以立刻被看见。</p>
     </section>
 
+    <section class="essay-block">
+      <h2>七、如何配合后端复现</h2>
+      <p>复现时可以先准备三个接口：登录接口、课程列表接口、提交选课接口。前端先用这三个接口走通主流程。登录成功保存 Token，进入学生页面后请求课程列表，点击选课后调用提交接口，再刷新课表数据。</p>
+      <p>主流程跑通后，再加入教师成绩录入、教务审核、管理员日志查询。每加一个模块，都先确认页面操作是否有明确反馈，再确认后端数据是否被正确保存。这样不会写很多页面却不知道问题出在哪里。</p>
+    </section>
+
     <section class="gallery">
-      <h2>界面片段</h2>
+      <h2>八、部分实现结果</h2>
       <div>
         {moments.map(([title, src]) => (
           <figure>
@@ -78,7 +125,7 @@ const requestCode = `const submitSelection = async (courseId: number) => {
     </section>
 
     <section class="ending">
-      <h2>这个模板适合什么风格？</h2>
+      <h2>九、这个模板适合什么风格？</h2>
       <p>如果你想让博客读起来更像“项目复盘”，可以保留这个版本。它比正式说明更轻盈，读者能顺着角色路径理解系统，不会一上来就被技术细节压住。</p>
     </section>
   </main>
@@ -94,9 +141,9 @@ const requestCode = `const submitSelection = async (courseId: number) => {
   h2 { color: var(--ink); }
   p { color: var(--ink-2); line-height: 1.9; }
   .timeline { display: grid; gap: 16px; margin-top: 26px; }
-  .timeline article, .feature-wall, .code-card, .ending { border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.045); padding: 28px; }
+  .timeline article, .feature-wall, .essay-block, .code-card, .ending { border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.045); padding: 28px; }
   .timeline span { color: var(--accent); font-size: 13px; letter-spacing: .24em; }
-  .feature-wall, .code-card, .ending, .gallery { margin-top: 24px; }
+  .feature-wall, .essay-block, .code-card, .ending, .gallery { margin-top: 24px; }
   .feature-wall div { display: flex; flex-wrap: wrap; gap: 10px; }
   .feature-wall span { padding: 9px 12px; border-radius: 12px; background: rgba(138,180,255,.12); color: var(--ink); }
   pre { overflow-x: auto; padding: 20px; border-radius: 18px; background: rgba(0,0,0,.36); color: #edf5ff; }

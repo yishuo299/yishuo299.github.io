@@ -19,6 +19,30 @@ if (selectionMapper.exists(studentId, courseId)) {
 if (selectionMapper.hasTimeConflict(studentId, course.getWeekDay(), course.getSection())) {
   throw new BusinessException("课程时间冲突");
 }`;
+
+const jwtCode = `@PostMapping("/login")
+public Result<LoginVO> login(@RequestBody LoginDTO dto) {
+  User user = userService.checkPassword(dto.getUsername(), dto.getPassword());
+  String token = jwtService.createToken(user.getId(), user.getRoleCode());
+  return Result.success(new LoginVO(token, user.getRoleCode(), user.getNickname()));
+}`;
+
+const structureCode = `course-selection-system
+├─ backend
+│  ├─ controller       # 接收前端请求，返回统一接口结果
+│  ├─ service          # 编写选课、成绩、权限等业务规则
+│  ├─ mapper           # MyBatis Plus 数据访问层
+│  ├─ entity / dto / vo # 数据表实体、请求参数、页面返回对象
+│  ├─ security         # JWT 鉴权与角色权限控制
+│  └─ aspect           # 操作日志切面
+├─ frontend
+│  ├─ views            # 登录、学生、教师、管理员页面
+│  ├─ router           # 路由守卫与角色菜单
+│  ├─ stores           # 用户状态与权限信息
+│  ├─ api              # Axios 请求封装
+│  └─ components       # 表格、弹窗、筛选器等复用组件
+└─ database
+   └─ sql              # 表结构、初始化角色、测试数据`;
 ---
 
 <BaseLayout sideBarActiveItemID="projects">
@@ -31,6 +55,18 @@ if (selectionMapper.hasTimeConflict(studentId, course.getWeekDay(), course.getSe
       <div class="tech-line">
         {["Spring Boot", "Vue 3", "MySQL", "JWT", "Element Plus", "MyBatis Plus"].map((tag) => <span>{tag}</span>)}
       </div>
+    </section>
+
+    <section class="article-block">
+      <h2>一、为什么要做这个项目</h2>
+      <p>选课系统看起来只是“学生点一下课程”，但真正落到项目里，会牵涉到身份认证、角色权限、课程资源、上课时间、选课容量、成绩录入、审核发布和日志追踪。它很适合作为一个综合练习项目：前端能练后台管理页面，后端能练接口设计和业务校验，数据库能练实体关系和数据流转。</p>
+      <p>因此这个项目的设计目标是：让学生、教师、教务管理员、系统管理员都能在同一套系统里完成自己的任务，并且所有关键数据都能被保存、校验和追踪。</p>
+    </section>
+
+    <section class="code-card">
+      <h2>二、推荐项目结构</h2>
+      <pre><code>{structureCode}</code></pre>
+      <p>复现项目时，可以先搭后端接口和数据库，再搭前端页面。不要一开始就追求页面完整，建议先走通“登录 → 获取角色 → 查看课程 → 提交选课 → 查看课表”这一条主链路。</p>
     </section>
 
     <section class="content-grid">
@@ -61,14 +97,36 @@ if (selectionMapper.hasTimeConflict(studentId, course.getWeekDay(), course.getSe
       </article>
     </section>
 
+    <section class="article-block">
+      <h2>三、整体设计思路</h2>
+      <p>系统采用前后端分离结构。前端负责页面展示、表单校验、筛选搜索、状态提示和路由跳转；后端负责身份认证、权限判断、业务校验、数据保存和统一异常处理。这样做的好处是职责清楚：页面可以独立优化，接口也可以独立测试。</p>
+      <p>角色权限是这个项目的第一条主线。用户登录后，系统根据角色返回可访问菜单，前端只渲染对应页面，后端接口也继续进行权限校验，避免用户通过手动输入地址访问不属于自己的功能。</p>
+      <p>选课业务是第二条主线。课程开设后，学生选课时需要检查课程容量、是否重复选择、时间是否冲突，以及是否符合课程限制。只有这些规则都通过，系统才会生成选课记录，并在课表中展示。</p>
+      <p>成绩业务是第三条主线。教师录入成绩后，成绩不应该立刻展示给学生，而是先进入待审核状态。教务审核通过后，成绩才发布给学生查询。这样可以避免错误成绩直接进入学生端。</p>
+    </section>
+
     <section class="code-card">
-      <h2>核心业务示例：选课校验</h2>
+      <h2>四、登录鉴权关键代码</h2>
+      <pre><code>{jwtCode}</code></pre>
+      <p>登录接口的核心是校验账号密码，然后生成携带用户 ID 和角色信息的 Token。前端后续请求会把 Token 放入请求头，后端通过拦截器解析 Token，确认用户身份和权限。</p>
+    </section>
+
+    <section class="code-card">
+      <h2>五、核心业务示例：选课校验</h2>
       <pre><code>{selectionCode}</code></pre>
       <p>选课不是简单新增一条记录，而是需要在提交前完成业务判断。这样可以保证学生课表、课程容量和后续成绩录入都处于一致状态。</p>
     </section>
 
+    <section class="article-block">
+      <h2>六、如何根据文章复现项目</h2>
+      <p>第一步，建立数据库表：用户表、角色表、权限表、课程表、开课表、选课表、成绩表、日志表是最小核心。可以先不做全部字段，只保证主键、外键和业务状态字段完整。</p>
+      <p>第二步，完成后端基础能力：统一返回结构、统一异常处理、登录接口、JWT 拦截器、用户角色查询接口。这个阶段完成后，前端就可以开始根据角色渲染菜单。</p>
+      <p>第三步，完成课程与选课接口：课程列表、课程详情、提交选课、退课、学生课表。这里要把容量校验、重复选择和时间冲突写在 Service 层，而不是只依赖前端判断。</p>
+      <p>第四步，补齐教师和管理员功能：教师录入成绩，教务审核发布，管理员维护用户和权限，操作日志自动记录。做到这一步，项目就从“页面展示”变成了一套能跑通业务的系统。</p>
+    </section>
+
     <section class="screens">
-      <h2>项目界面预览</h2>
+      <h2>七、部分实现结果</h2>
       <div class="shot-grid">
         {screenshots.map(([title, desc, src]) => (
           <figure>
@@ -80,7 +138,7 @@ if (selectionMapper.hasTimeConflict(studentId, course.getWeekDay(), course.getSe
     </section>
 
     <section class="summary-card">
-      <h2>项目总结</h2>
+      <h2>八、项目总结</h2>
       <p>这个版本适合作为正式项目介绍模板。它强调系统完整度、技术架构和角色职责，适合放在作品集、GitHub README 或求职项目说明中。整体语言稳重清晰，重点突出“我完成了什么功能、用了什么技术、解决了什么业务问题”。</p>
     </section>
   </main>
@@ -89,7 +147,7 @@ if (selectionMapper.hasTimeConflict(studentId, course.getWeekDay(), course.getSe
 <style>
   .course-article { width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
   .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
-  .hero-card, .panel, .code-card, .summary-card, .screens figure { border: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); box-shadow: 0 24px 80px rgba(0,0,0,.18); backdrop-filter: blur(18px); }
+  .hero-card, .panel, .article-block, .code-card, .summary-card, .screens figure { border: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); box-shadow: 0 24px 80px rgba(0,0,0,.18); backdrop-filter: blur(18px); }
   .hero-card { padding: clamp(34px, 6vw, 70px); border-radius: 30px; }
   .eyebrow { color: var(--accent); letter-spacing: .24em; text-transform: uppercase; }
   h1 { margin: 10px 0 18px; color: var(--ink); font-size: clamp(42px, 8vw, 86px); line-height: .98; }
@@ -100,6 +158,7 @@ if (selectionMapper.hasTimeConflict(studentId, course.getWeekDay(), course.getSe
   .content-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 24px; }
   .panel { padding: 28px; border-radius: 24px; }
   .panel.wide { grid-column: 1 / -1; }
+  .article-block { margin-top: 24px; padding: 30px; border-radius: 24px; }
   p { color: var(--ink-2); line-height: 1.9; }
   .code-card, .summary-card, .screens { margin-top: 24px; }
   .code-card, .summary-card { padding: 30px; border-radius: 24px; }
