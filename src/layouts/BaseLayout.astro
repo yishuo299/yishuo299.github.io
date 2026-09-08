@@ -16,6 +16,7 @@ export interface Props {
 
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, ogType = "website", sideBarActiveItemID } = Astro.props;
 const isHome = sideBarActiveItemID === "home";
+const loaderTechs = Array.from(new Set(projects.map((project) => project.name)));
 ---
 
 <!doctype html>
@@ -40,9 +41,9 @@ const isHome = sideBarActiveItemID === "home";
         <div class="loader-inner">
           <div class="loader-title">INITIALIZING PROJECT ARCHIVE</div>
           <div class="folder-container" id="folderContainer">
-            {projects.map((project) => {
-              const meta = TECH_META[project.name] ?? FALLBACK_TECH_META;
-              return <div class="folder" data-folder={project.name} style={`--brand:${meta.color}`}><div class="folder-icon" aria-hidden="true" set:html={meta.svg}></div><div class="folder-name">{project.name}</div></div>;
+            {loaderTechs.map((tech) => {
+              const meta = TECH_META[tech] ?? FALLBACK_TECH_META;
+              return <div class="folder" data-folder={tech} style={`--brand:${meta.color}`}><div class="folder-icon" aria-hidden="true" set:html={meta.svg}></div><div class="folder-name">{tech}</div></div>;
             })}
           </div>
           <div class="loading-status" id="loadingStatus">preparing /system</div>

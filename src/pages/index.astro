@@ -10,6 +10,7 @@ const posts = (await getCollection("blog"))
   .slice(0, 3);
 
 const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
+const projectFilters = Array.from(new Set(projects.map((project) => project.name)));
 ---
 
 <BaseLayout sideBarActiveItemID="home">
@@ -80,7 +81,7 @@ const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta
 
       <div class="filter-panel" id="filterPanel">
         <button class="filter-button active" type="button" data-project-filter="all">ALL</button>
-        {projects.map((project) => <button class="filter-button" type="button" data-project-filter={project.name}>{project.name}</button>)}
+        {projectFilters.map((name) => <button class="filter-button" type="button" data-project-filter={name}>{name}</button>)}
       </div>
 
       <div class="projects-list" id="projectsContainer">
