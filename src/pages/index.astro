@@ -87,7 +87,7 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
       <div class="projects-list" id="projectsContainer">
         {projects.map((project, index) => (
           <div class="reveal project-item" data-project-category={project.name.toLowerCase()} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
-            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-icon={(TECH_META[project.name] ?? FALLBACK_TECH_META).svg}>
+            <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-icon={(TECH_META[project.name] ?? FALLBACK_TECH_META).svg}>
               <span class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></span>
               <strong class="project-title">{project.title}</strong>
               <span class="project-description">{project.description}</span>
@@ -130,6 +130,7 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
 
   <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
     <section class="detail-card" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <a class="detail-read" id="detailRead" href="#" hidden>阅读完整文章 ↗</a>
       <button class="detail-close" id="detailClose" type="button" aria-label="关闭项目详情">×</button>
       <div class="detail-keyword" id="detailKeyword">PROJECT</div><h2 class="detail-title" id="detailTitle">Project</h2>
       <div class="detail-content"><p id="detailDescription"></p><p id="detailText"></p></div>
@@ -179,20 +180,31 @@ const projectFilters = Array.from(new Set(projects.map((project) => project.name
     const revealObserver = "IntersectionObserver" in window ? new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("in-view"); revealObserver.unobserve(entry.target); } }), { threshold: 0.1, rootMargin: "0px 0px -36px" }) : null;
     document.querySelectorAll(".reveal").forEach((element) => revealObserver ? revealObserver.observe(element) : element.classList.add("in-view"));
 
-    const clickLoader = document.getElementById("clickLoader"), clickLoaderName = document.getElementById("clickLoaderName"), clickLoaderFolder = document.getElementById("clickLoaderFolder"), clickProgress = document.getElementById("clickProgress") as HTMLElement | null;
-    const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
+    const detailOverlay = document.getElementById("detailOverlay"), detailClose = document.getElementById("detailClose"), detailRead = document.getElementById("detailRead") as HTMLAnchorElement | null, detailKeyword = document.getElementById("detailKeyword"), detailTitle = document.getElementById("detailTitle"), detailDescription = document.getElementById("detailDescription"), detailText = document.getElementById("detailText");
     const closeDetail = () => { detailOverlay?.classList.remove("show"); detailOverlay?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
     const showDetail = (card: HTMLElement) => {
       if (detailKeyword) detailKeyword.textContent = card.dataset.name ?? "PROJECT"; if (detailTitle) detailTitle.textContent = card.dataset.title ?? "Project"; if (detailDescription) detailDescription.textContent = card.dataset.description ?? ""; if (detailText) detailText.textContent = card.dataset.detail ?? "";
+      const articleUrl = card.dataset.article ?? "";
+      if (detailRead) { detailRead.href = articleUrl || "#"; detailRead.hidden = !articleUrl; }
       detailOverlay?.classList.add("show"); detailOverlay?.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); window.setTimeout(() => (detailClose as HTMLElement | null)?.focus(), 80);
     };
-    const openProject = (card: HTMLElement) => {
-      document.body.classList.add("modal-open"); clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.innerHTML = card.dataset.icon ?? ""; if (clickProgress) clickProgress.style.width = "0%";
-      const start = performance.now();
-      const frame = (now: number) => { const ratio = Math.min(1, (now - start) / 720); const eased = 1 - Math.pow(1 - ratio, 3); if (clickProgress) clickProgress.style.width = `${Math.round(eased * 100)}%`; if (ratio < 1) requestAnimationFrame(frame); else window.setTimeout(() => { clickLoader?.classList.remove("show"); clickLoader?.setAttribute("aria-hidden", "true"); showDetail(card); }, 180); };
-      requestAnimationFrame(frame);
+    const openArticle = (card: HTMLElement) => {
+      const articleUrl = card.dataset.article;
+      if (articleUrl) window.location.href = articleUrl;
+      else showDetail(card);
     };
-    document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => card.addEventListener("click", () => openProject(card), { signal: controller.signal }));
+    document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
+      let clickTimer: number | undefined;
+      card.addEventListener("click", () => {
+        window.clearTimeout(clickTimer);
+        clickTimer = window.setTimeout(() => showDetail(card), 190);
+      }, { signal: controller.signal });
+      card.addEventListener("dblclick", (event) => {
+        event.preventDefault();
+        window.clearTimeout(clickTimer);
+        openArticle(card);
+      }, { signal: controller.signal });
+    });
     detailClose?.addEventListener("click", closeDetail, { signal: controller.signal });
     detailOverlay?.addEventListener("click", (event) => { if (event.target === detailOverlay) closeDetail(); }, { signal: controller.signal });
     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && detailOverlay?.classList.contains("show")) closeDetail(); }, { signal: controller.signal });

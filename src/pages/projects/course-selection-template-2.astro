@@ -1,0 +1,108 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const moments = [
+  ["登录", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg"],
+  ["教师开课", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYWqgB9er1sK1Jj1w1f1OvNIDaYdHAAJnJAACnMUBVWabRh7lWkr-PQQ.jpg"],
+  ["学生课表", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYmqgB_HNLPZUsYxZBjdt57zf0rMvAAJpJAACnMUBVYTWe5FPwM9ePQQ.jpg"],
+  ["成绩查询", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsY2qgCAVM2GpnHUawdGCBWhWhJT2XAAJqJAACnMUBVfAAATv_pJrKTz0E.jpg"],
+  ["权限管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsZGqgCCa2KXNPXDk5RLWkGIq3tfzwAAJrJAACnMUBVRqYb8c7WcPOPQQ.jpg"],
+  ["用户管理", "https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsaGqgCRlgpxYuoA_yb8yLsMGUlkQ0AAKAJAACnMUBVYncpyXp3BnkPQQ.jpg"]
+];
+
+const requestCode = `const submitSelection = async (courseId: number) => {
+  await request.post("/student/course-selection", { courseId });
+  ElMessage.success("选课成功，课表已更新");
+  refreshSchedule();
+};`;
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="story-page">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+    <section class="story-hero">
+      <div>
+        <p class="eyebrow">Template 02 · 交互体验版</p>
+        <h1>把一套选课系统，做成清晰可走通的后台体验</h1>
+        <p>这个版本更像一篇博客展示稿：它从用户进入系统开始讲，依次说明学生、教师、教务和管理员分别能完成什么操作，以及这些页面背后的数据如何流动。</p>
+      </div>
+      <img src="https://piv.cc.cd/file/BQACAgUAAyEGAASLVN5eAAJsYGqgB5P-NZ4Y4NCCkap6SHbpYjqrAAJjJAACnMUBVZYskB7sMyBMPQQ.jpg" alt="选课系统登录页" />
+    </section>
+
+    <section class="timeline">
+      <article>
+        <span>01</span>
+        <h2>先解决“谁在使用系统”</h2>
+        <p>系统入口是登录页。用户登录后，后端通过 JWT 返回身份信息，前端根据角色加载对应菜单。学生不需要看到权限维护，教师不需要进入用户管理，管理员则可以管理系统配置与日志。这样的权限拆分让页面更干净，也让业务边界更清楚。</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h2>学生端：选课、课表、成绩一条线</h2>
+        <p>学生最关心的是课程是否能选、选完之后在哪里看、成绩发布后能不能查。项目完成了课程列表、条件筛选、选课提交、退课确认、个人课表和成绩查询，让学生从“找课”到“看结果”可以闭环完成。</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h2>教师端：围绕教学任务展开</h2>
+        <p>教师端重点放在授课课程和成绩录入。教师可以查看自己负责的课程，进入课程后维护成绩数据，并将成绩提交给教务审核。这里的设计重点是减少重复操作，让教师更快完成教学管理任务。</p>
+      </article>
+      <article>
+        <span>04</span>
+        <h2>管理员端：让系统可以被维护</h2>
+        <p>管理员负责用户、角色、权限和操作日志。项目中保留了操作日志查询页面，方便追踪谁在什么时候执行了什么操作，也便于后期排查异常。</p>
+      </article>
+    </section>
+
+    <section class="feature-wall">
+      <h2>完成的主要功能</h2>
+      <div>
+        {["登录鉴权", "角色菜单", "课程筛选", "学生选课", "时间冲突校验", "课程容量校验", "教师成绩录入", "成绩审核发布", "学生课表", "操作日志", "用户管理", "权限管理"].map((item) => <span>{item}</span>)}
+      </div>
+    </section>
+
+    <section class="code-card">
+      <h2>前端请求示例</h2>
+      <pre><code>{requestCode}</code></pre>
+      <p>交互体验版更关注页面反馈：用户点击按钮后，前端给出明确提示，并刷新对应数据，让操作结果可以立刻被看见。</p>
+    </section>
+
+    <section class="gallery">
+      <h2>界面片段</h2>
+      <div>
+        {moments.map(([title, src]) => (
+          <figure>
+            <img src={src} alt={title} loading="lazy" />
+            <figcaption>{title}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="ending">
+      <h2>这个模板适合什么风格？</h2>
+      <p>如果你想让博客读起来更像“项目复盘”，可以保留这个版本。它比正式说明更轻盈，读者能顺着角色路径理解系统，不会一上来就被技术细节压住。</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .story-page { width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
+  .story-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px; align-items: center; padding: clamp(28px, 5vw, 58px); border: 1px solid var(--line); border-radius: 32px; background: radial-gradient(circle at top left, rgba(138,180,255,.24), transparent 38%), rgba(255,255,255,.055); }
+  .story-hero img { width: 100%; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.32); }
+  .eyebrow { color: var(--accent); letter-spacing: .22em; text-transform: uppercase; }
+  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(36px, 6vw, 72px); line-height: 1.05; }
+  h2 { color: var(--ink); }
+  p { color: var(--ink-2); line-height: 1.9; }
+  .timeline { display: grid; gap: 16px; margin-top: 26px; }
+  .timeline article, .feature-wall, .code-card, .ending { border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.045); padding: 28px; }
+  .timeline span { color: var(--accent); font-size: 13px; letter-spacing: .24em; }
+  .feature-wall, .code-card, .ending, .gallery { margin-top: 24px; }
+  .feature-wall div { display: flex; flex-wrap: wrap; gap: 10px; }
+  .feature-wall span { padding: 9px 12px; border-radius: 12px; background: rgba(138,180,255,.12); color: var(--ink); }
+  pre { overflow-x: auto; padding: 20px; border-radius: 18px; background: rgba(0,0,0,.36); color: #edf5ff; }
+  .gallery > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.045); }
+  figure img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+  figcaption { padding: 12px 14px; color: var(--ink); }
+  @media (max-width: 860px) { .story-hero, .gallery > div { grid-template-columns: 1fr; } }
+</style>

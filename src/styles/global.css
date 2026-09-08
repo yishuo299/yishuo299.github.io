@@ -393,8 +393,10 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
 .detail-card { position: relative; width: min(850px,95vw); max-height: 85vh; padding: 40px; overflow-y: auto; border: 1px solid rgba(255,255,255,.12); border-radius: 24px; background: linear-gradient(135deg,rgba(25,27,36,.96),rgba(10,11,16,.96)); color: #fff; box-shadow: 0 40px 120px rgba(0,0,0,.5); transform: translateY(30px) scale(.97); transition: transform .5s ease; }
 .detail-overlay.show .detail-card { transform: translateY(0) scale(1); }
 .detail-close { position: absolute; top: 24px; right: 28px; color: #fff; }
+.detail-read { position: absolute; top: 24px; right: 72px; display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,.07); color: #fff; font-size: 12px; letter-spacing: .08em; text-decoration: none; transition: background .25s ease, border-color .25s ease, transform .25s ease; }
+.detail-read:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); transform: translateY(-1px); }
 .detail-keyword { display: inline-block; margin-bottom: 20px; padding: 6px 10px; border-radius: 20px; background: rgba(255,255,255,.06); color: #cdd2de; font-size: 12px; }
-.detail-title { margin: 0 50px 20px 0; color: #fff; font-size: clamp(30px,5vw,48px); }
+.detail-title { margin: 0 180px 20px 0; color: #fff; font-size: clamp(30px,5vw,48px); }
 .detail-content { color: #b4bac8; font-size: 16px; line-height: 2; }
 .detail-content p { margin: 0 0 18px; }
 .copy-status { position: fixed; right: 24px; bottom: 24px; z-index: 6000; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-strong); color: var(--ink); font-size: 13px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .25s ease, transform .25s ease; }
@@ -417,6 +419,8 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
 .standalone-card h2 { margin: 12px 0; font-size: 24px; }
 .standalone-card p { font-size: 15px; line-height: 1.8; }
 .standalone-card .project-detail { color: var(--ink-3); }
+.project-read-link { display: inline-flex; margin: 8px 0 2px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.045); color: var(--ink); font-size: 13px; text-decoration: none; transition: background .25s ease, transform .25s ease; }
+.project-read-link:hover { background: var(--panel-hover); transform: translateY(-1px); }
 .time-line-container > div:last-child .education__time > .education__line { display: none; }
 .archive-footer { padding: 55px 0 45px; border-top: 1px solid var(--line); color: var(--ink-4); font-size: 12px; letter-spacing: 1px; }
 .archive-footer .container { display: flex; justify-content: space-between; gap: 20px; }
@@ -454,6 +458,8 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
   .folder-name { font-size: 11px; }
   .welcome { font-size: 38px; letter-spacing: 7px; }
   .detail-card { padding: 30px 22px; }
+  .detail-read { position: static; margin: 0 46px 18px 0; }
+  .detail-title { margin-right: 0; }
   .archive-footer .container { flex-direction: column; }
 }
 

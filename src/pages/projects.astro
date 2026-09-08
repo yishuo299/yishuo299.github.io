@@ -27,6 +27,7 @@ const techColors: Record<string, string> = {
           <h2>{project.title}</h2>
           <p>{project.description}</p>
           <p class="project-detail">{project.detail}</p>
+          {(project as any).articleUrl && <a class="project-read-link" href={(project as any).articleUrl}>阅读完整文章 ↗</a>}
           <div class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</div>
         </article>
       ))}
