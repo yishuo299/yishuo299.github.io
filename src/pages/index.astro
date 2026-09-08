@@ -186,7 +186,7 @@ const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta
       detailOverlay?.classList.add("show"); detailOverlay?.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); window.setTimeout(() => (detailClose as HTMLElement | null)?.focus(), 80);
     };
     const openProject = (card: HTMLElement) => {
-      clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.innerHTML = card.dataset.icon ?? ""; if (clickProgress) clickProgress.style.width = "0%";
+      document.body.classList.add("modal-open"); clickLoader?.classList.add("show"); clickLoader?.setAttribute("aria-hidden", "false"); if (clickLoaderName) clickLoaderName.textContent = `opening /${card.dataset.name?.toLowerCase()}`; if (clickLoaderFolder) clickLoaderFolder.innerHTML = card.dataset.icon ?? ""; if (clickProgress) clickProgress.style.width = "0%";
       const start = performance.now();
       const frame = (now: number) => { const ratio = Math.min(1, (now - start) / 720); const eased = 1 - Math.pow(1 - ratio, 3); if (clickProgress) clickProgress.style.width = `${Math.round(eased * 100)}%`; if (ratio < 1) requestAnimationFrame(frame); else window.setTimeout(() => { clickLoader?.classList.remove("show"); clickLoader?.setAttribute("aria-hidden", "true"); showDetail(card); }, 180); };
       requestAnimationFrame(frame);

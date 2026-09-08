@@ -19,12 +19,12 @@ const isHome = sideBarActiveItemID === "home";
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-theme="lofi">
+<html lang="zh-CN" data-theme="lofi" class:list={{ "archive-loading-active": isHome }}>
   <head>
     <BaseHead title={title} description={description} image={image} ogType={ogType} />
     {TRANSITION_API && <ViewTransitions />}
   </head>
-  <body class:list={[isHome ? "home-page" : "inner-page"]}>
+  <body class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
     <div class="scene" id="scene" aria-hidden="true" style="--sky-top:#78b9e5;--sky-mid:#9ed2ec;--sky-bottom:#d8c7aa;--sun-x:50%;--sun-y:30%;--moon-x:75%;--moon-y:30%;--sun-opacity:1;--moon-opacity:0;--stars-opacity:0;--cloud-opacity:.8;--sky-glow:.8">
       <div class="sky"></div>
       <div class="stars" id="stars"></div>
@@ -84,6 +84,15 @@ const isHome = sideBarActiveItemID === "home";
         const intervals: number[] = [];
         const particles: HTMLElement[] = [];
         let cancelled = false;
+        const lockPage = () => {
+          document.documentElement.classList.add("archive-loading-active");
+          document.body.classList.add("archive-loading-active");
+          window.scrollTo(0, 0);
+        };
+        const unlockPage = () => {
+          document.documentElement.classList.remove("archive-loading-active");
+          document.body.classList.remove("archive-loading-active");
+        };
         const later = (callback: () => void, delay: number) => { const timer = window.setTimeout(callback, delay); timers.push(timer); return timer; };
         const wait = (delay: number) => new Promise<void>((resolve) => later(resolve, delay));
         const pad = (value: number) => String(value).padStart(2, "0");
@@ -196,8 +205,8 @@ const isHome = sideBarActiveItemID === "home";
           }); welcome.classList.add("disappear");
         };
         const runLoader = async () => {
-          if (!loader) { document.body.classList.add("archive-ready"); return; }
-          document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); renderProgress(0); await wait(180);
+          if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
+          lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); renderProgress(0); await wait(180);
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
           else {
             let current = 0;
@@ -209,10 +218,10 @@ const isHome = sideBarActiveItemID === "home";
             }
             folders.forEach((folder) => { folder.classList.remove("active"); folder.classList.add("done"); }); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await animateProgress(current, 100, 260); await wait(180); showWelcome(); await wait(1250); disperseWelcome(); await wait(1050);
           }
-          if (cancelled) return; loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready");
+          if (cancelled) return; loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready"); unlockPage();
         };
         void runLoader();
-        archiveCleanup = () => { cancelled = true; controller.abort(); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); };
+        archiveCleanup = () => { cancelled = true; controller.abort(); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); unlockPage(); };
       };
       document.addEventListener("astro:page-load", initArchive);
       if (document.readyState === "complete") initArchive();
