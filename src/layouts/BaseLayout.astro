@@ -186,7 +186,7 @@ const isHome = sideBarActiveItemID === "home";
 
         const loader = document.getElementById("loader"), progress = document.getElementById("progress") as HTMLElement | null, progressText = document.getElementById("progressText"), loadingStatus = document.getElementById("loadingStatus"), welcome = document.getElementById("welcome");
         const folders = Array.from(document.querySelectorAll<HTMLElement>(".folder"));
-        const renderProgress = (value: number) => { const rounded = Math.max(0, Math.min(100, Math.round(value))); if (progress) progress.style.width = `${rounded}%`; if (progressText) progressText.textContent = `${rounded}%`; };
+        const renderProgress = (value: number) => { const rounded = Math.max(0, Math.min(100, Math.round(value))); if (progress) progress.style.transform = `scaleX(${rounded / 100})`; if (progressText) progressText.textContent = `${rounded}%`; };
         const animateProgress = (from: number, to: number, duration: number) => new Promise<void>((resolve) => {
           const start = performance.now(); const frame = (now: number) => { if (cancelled) return resolve(); const ratio = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - ratio, 3); renderProgress(from + (to - from) * eased); if (ratio < 1) requestAnimationFrame(frame); else resolve(); }; requestAnimationFrame(frame);
         });
@@ -218,14 +218,11 @@ const isHome = sideBarActiveItemID === "home";
           lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); renderProgress(0); await wait(180);
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
           else {
-            let current = 0;
-            for (let index = 0; index < folders.length; index += 1) {
-              if (cancelled) return;
-              folders.forEach((folder, folderIndex) => { folder.classList.toggle("active", folderIndex === index); folder.classList.toggle("done", folderIndex < index); }); folders[index].classList.add("open");
-              if (loadingStatus) loadingStatus.textContent = `opening /${folders[index].dataset.folder?.toLowerCase()}`;
-              const target = 8 + ((index + 1) / folders.length) * 84; await animateProgress(current, target, 210); current = target; await wait(70);
-            }
-            folders.forEach((folder) => { folder.classList.remove("active"); folder.classList.add("done"); }); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await animateProgress(current, 100, 260); await wait(180); showWelcome(); await wait(1250); disperseWelcome(); await wait(1050);
+            if (loadingStatus) loadingStatus.textContent = "loading tech stack";
+            await animateProgress(0, 100, lowPowerDevice ? 680 : 820);
+            folders.forEach((folder) => folder.classList.add("done"));
+            if (loadingStatus) loadingStatus.textContent = "project archive ready";
+            await wait(140); showWelcome(); await wait(900); disperseWelcome(); await wait(850);
           }
           if (cancelled) return; loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready"); unlockPage();
         };
