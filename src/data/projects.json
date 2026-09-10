@@ -4,7 +4,7 @@
     "title": "智能健康手环 · 系统总览版",
     "description": "基于 STM32 的健康监测手环，完成心率、血氧、体温、心电、跌倒检测、蓝牙传输和报警提醒。",
     "detail": "这个版本按项目说明文档的逻辑展开，从硬件组成、固件调度、传感器采集、报警逻辑到 Android App 联动逐层说明。技术栈包含 STM32、C、Keil、USART 蓝牙、Android Kotlin 与 Jetpack Compose。",
-    "tags": ["STM32", "C", "Keil", "Android", "Kotlin", "Bluetooth", "Jetpack Compose", "传感器"],
+    "tags": ["STM32", "Android"],
     "articleUrl": "/projects/smart-bracelet-template-1/",
     "projectUrl": "https://github.com/yishuo299/smart_bracelet"
   },
@@ -13,7 +13,7 @@
     "title": "智能健康手环 · 交互联动版",
     "description": "从用户使用路径出发，说明手环如何把本地采集、LCD 显示、异常报警和手机 App 串成完整体验。",
     "detail": "这个版本更偏交互体验与数据流，先讲用户看到的界面，再反推 STM32 固件和 App 如何协作。技术栈包含 Android、Kotlin、Bluetooth、STM32、C、MAX30102、DS18B20 与 AD8232。",
-    "tags": ["Android", "Kotlin", "Bluetooth", "STM32", "C", "MAX30102", "DS18B20", "AD8232"],
+    "tags": ["Android", "STM32"],
     "articleUrl": "/projects/smart-bracelet-template-2/",
     "projectUrl": "https://github.com/yishuo299/smart_bracelet"
   },
@@ -22,7 +22,7 @@
     "title": "智能健康手环 · 工程复现版",
     "description": "面向复现和二次开发，详细拆解工程结构、关键代码、蓝牙协议、阈值设置和运行检查。",
     "detail": "这个版本更像开发笔记，按工程目录、配置步骤、模块调用和关键代码推进。适合想根据项目文件复现 STM32 健康手环的人阅读。",
-    "tags": ["C", "STM32", "Keil", "USART", "ADC", "I2C", "Android", "Bluetooth"],
+    "tags": ["STM32", "Android"],
     "articleUrl": "/projects/smart-bracelet-template-3/",
     "projectUrl": "https://github.com/yishuo299/smart_bracelet"
   },

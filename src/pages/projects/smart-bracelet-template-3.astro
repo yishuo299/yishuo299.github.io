@@ -29,6 +29,7 @@ const appCodes = codeSections.slice(10);
 ├─ mobile_app/      Android Kotlin 蓝牙 App
 └─ docs/            电路原理图`}</code></pre>
       <p>这个结构把硬件固件、移动端和文档拆开，上传 GitHub 后更容易说明项目边界，也方便后续分别维护固件和 App。</p>
+      <figure class="inline-shot"><img src={screenshots[0].src} alt={screenshots[0].title} loading="lazy" /><figcaption><strong>{screenshots[0].title}</strong><span>{screenshots[0].desc}</span></figcaption></figure>
     </section>
 
     <section class="chapter">
@@ -58,6 +59,7 @@ const appCodes = codeSections.slice(10);
         <li>在 App 中刷新已配对设备并连接，观察实时数据、报警横幅和历史记录。</li>
         <li>修改 App 阈值并发送到 MCU，观察 STM32 是否根据新阈值进行报警判断。</li>
       </ol>
+      <figure class="inline-shot"><img src={screenshots[2].src} alt={screenshots[2].title} loading="lazy" /><figcaption><strong>{screenshots[2].title}</strong><span>{screenshots[2].desc}</span></figcaption></figure>
     </section>
 
     <section class="chapter">
@@ -74,13 +76,13 @@ const appCodes = codeSections.slice(10);
     <section class="chapter">
       <h2>七、App 关键代码</h2>
       <p>App 端重点是蓝牙连接、接收缓冲、正则解析、状态更新和阈值下发。它不需要复杂后端，直接通过蓝牙与 STM32 形成闭环。</p>
+      <figure class="inline-shot"><img src={screenshots[1].src} alt={screenshots[1].title} loading="lazy" /><figcaption><strong>{screenshots[1].title}</strong><span>{screenshots[1].desc}</span></figcaption></figure>
       <div class="code-list">{appCodes.map((item) => <article><h3>{item.title}</h3><p><strong>使用方法：</strong>{item.method}</p><p><strong>项目作用：</strong>{item.purpose}</p><pre><code>{item.code}</code></pre></article>)}</div>
     </section>
 
     <section class="chapter">
       <h2>八、项目运行结果</h2>
-      <p>运行成功后，手环端能够显示健康数据和时间信息，异常时本地报警与手机报警同步触发；App 能连接蓝牙、解析实时数据、保存历史记录并下发阈值。下方图片分别对应硬件原理、App 界面与 PCB 展示。</p>
-      <div class="screens">{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption><strong>{shot.title}</strong><span>{shot.desc}</span></figcaption></figure>)}</div>
+      <p>运行成功后，手环端能够显示健康数据和时间信息，异常时本地报警与手机报警同步触发；App 能连接蓝牙、解析实时数据、保存历史记录并下发阈值。前面的原理图、PCB 与 App 截图分别对应硬件连接、板卡实现和手机端展示效果。</p>
     </section>
 
     <section class="chapter">
@@ -113,6 +115,7 @@ const appCodes = codeSections.slice(10);
   code { color: var(--ink); }
   pre code { color: #eef5ff; }
   figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
+  .inline-shot { margin: 18px 0; }
   img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
   figcaption { display: grid; gap: 5px; padding: 14px; }
   @media (max-width: 820px) { .check-grid, .matrix, .screens { grid-template-columns: 1fr; } .protocol-list p { grid-template-columns: 1fr; } }

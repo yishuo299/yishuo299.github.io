@@ -19,6 +19,7 @@ import { codeSections, modules, projectUrl, protocolRows, screenshots, techStack
     <section class="chapter">
       <h2>一、项目介绍</h2>
       <p>智能健康手环并不是单纯读取一个传感器数值，而是一个完整嵌入式系统：硬件端负责多传感器采集和本地交互，软件端负责数据处理和显示，手机端负责远程查看和阈值配置。项目适合作为 STM32 综合实训、毕业设计或嵌入式作品集项目，因为它同时覆盖 GPIO、ADC、USART、I2C、定时器、LCD 显示、蓝牙通信和 Android App 联动。</p>
+      <figure class="inline-shot"><img src={screenshots[0].src} alt={screenshots[0].title} loading="lazy" /><figcaption><strong>{screenshots[0].title}</strong><span>{screenshots[0].desc}</span></figcaption></figure>
       <div class="module-grid">{modules.map(([name, desc]) => <article><h3>{name}</h3><p>{desc}</p></article>)}</div>
     </section>
 
@@ -30,11 +31,13 @@ import { codeSections, modules, projectUrl, protocolRows, screenshots, techStack
         <p><strong>异常报警提醒：</strong>当心率、血氧或体温超过阈值，或者跌倒检测触发时，系统会通过 LED、蜂鸣器、语音模块和蓝牙消息提醒用户。</p>
         <p><strong>手机端联动：</strong>Android App 通过蓝牙 SPP 连接手环，接收 STM32 上传的数据，同时支持阈值保存和阈值下发。</p>
       </div>
+      <figure class="inline-shot"><img src={screenshots[1].src} alt={screenshots[1].title} loading="lazy" /><figcaption><strong>{screenshots[1].title}</strong><span>{screenshots[1].desc}</span></figcaption></figure>
     </section>
 
     <section class="chapter">
       <h2>三、使用技术栈介绍</h2>
       <div class="tech-grid">{techStack.map(([name, desc]) => <article><b>{name}</b><p>{desc}</p></article>)}</div>
+      <figure class="inline-shot"><img src={screenshots[2].src} alt={screenshots[2].title} loading="lazy" /><figcaption><strong>{screenshots[2].title}</strong><span>{screenshots[2].desc}</span></figcaption></figure>
     </section>
 
     <section class="chapter">
@@ -62,7 +65,6 @@ import { codeSections, modules, projectUrl, protocolRows, screenshots, techStack
     <section class="chapter">
       <h2>六、项目运行结果</h2>
       <p>工程运行后，手环端可以在 LCD 上查看时间与各项健康指标；当数据异常时，本地声光和语音提示会同步触发；手机端连接蓝牙后可以看到实时数据、报警横幅与历史记录。整体效果体现了嵌入式硬件、固件业务和移动端界面的完整闭环。</p>
-      <div class="screens">{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption><strong>{shot.title}</strong><span>{shot.desc}</span></figcaption></figure>)}</div>
     </section>
   </main>
 </BaseLayout>
@@ -87,6 +89,7 @@ import { codeSections, modules, projectUrl, protocolRows, screenshots, techStack
   code { color: var(--ink); }
   pre { overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #eef5ff; font-size: 13px; line-height: 1.7; }
   figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
+  .inline-shot { margin: 18px 0; }
   img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
   figcaption { display: grid; gap: 5px; padding: 14px; }
   @media (max-width: 820px) { .module-grid, .tech-grid, .screens { grid-template-columns: 1fr; } .protocol-table div { grid-template-columns: 1fr; } }
