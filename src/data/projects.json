@@ -18,7 +18,7 @@
     "projectUrl": "https://github.com/yishuo299/smart_bracelet"
   },
   {
-    "name": "C",
+    "name": "STM32",
     "title": "智能健康手环 · 工程复现版",
     "description": "面向复现和二次开发，详细拆解工程结构、关键代码、蓝牙协议、阈值设置和运行检查。",
     "detail": "这个版本更像开发笔记，按工程目录、配置步骤、模块调用和关键代码推进。适合想根据项目文件复现 STM32 健康手环的人阅读。",

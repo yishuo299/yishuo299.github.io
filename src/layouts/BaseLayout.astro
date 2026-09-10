@@ -16,7 +16,7 @@ export interface Props {
 
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, ogType = "website", sideBarActiveItemID } = Astro.props;
 const isHome = sideBarActiveItemID === "home";
-const loaderTechs = Array.from(new Set(projects.map((project) => project.name))).filter((tech) => tech !== "MySQL");
+const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android"];
 ---
 
 <!doctype html>
