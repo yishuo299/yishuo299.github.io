@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codeSections, modules, projectUrl, protocolRows, screenshots, techStack } from "../../data/smartBraceletArticleData";
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="formal-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="hero">
+      <p class="eyebrow">Template 01 · 系统总览版</p>
+      <div class="title-row">
+        <h1>基于 STM32 的智能健康手环</h1>
+        <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p class="lead">本项目以 STM32F103 为核心，围绕“采集—显示—判断—报警—上传”这条主线完成智能健康监测。系统可以实时采集心率、血氧、体温与心电数据，通过 LCD 展示手环端界面，并在指标异常或跌倒风险出现时触发蜂鸣器、LED、语音和手机端报警。</p>
+    </section>
+
+    <section class="chapter">
+      <h2>一、项目介绍</h2>
+      <p>智能健康手环并不是单纯读取一个传感器数值，而是一个完整嵌入式系统：硬件端负责多传感器采集和本地交互，软件端负责数据处理和显示，手机端负责远程查看和阈值配置。项目适合作为 STM32 综合实训、毕业设计或嵌入式作品集项目，因为它同时覆盖 GPIO、ADC、USART、I2C、定时器、LCD 显示、蓝牙通信和 Android App 联动。</p>
+      <div class="module-grid">{modules.map(([name, desc]) => <article><h3>{name}</h3><p>{desc}</p></article>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>二、功能介绍</h2>
+      <div class="feature-list">
+        <p><strong>健康数据监测：</strong>MAX30102 负责心率和血氧，DS18B20 负责体温，AD8232 负责心电模拟信号采样，MPU6050 为跌倒检测提供加速度数据。</p>
+        <p><strong>本地显示交互：</strong>LCD 显示实时时钟、心率、血氧、体温、心电波形、功能菜单、秒表、闹钟、报警开关和阈值设置界面。</p>
+        <p><strong>异常报警提醒：</strong>当心率、血氧或体温超过阈值，或者跌倒检测触发时，系统会通过 LED、蜂鸣器、语音模块和蓝牙消息提醒用户。</p>
+        <p><strong>手机端联动：</strong>Android App 通过蓝牙 SPP 连接手环，接收 STM32 上传的数据，同时支持阈值保存和阈值下发。</p>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <h2>三、使用技术栈介绍</h2>
+      <div class="tech-grid">{techStack.map(([name, desc]) => <article><b>{name}</b><p>{desc}</p></article>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>四、通信协议</h2>
+      <p>项目采用易调试的文本协议。STM32 端每秒左右组合一次健康数据并通过蓝牙发送；App 端用正则解析字段，并把结果写入 StateFlow 状态。阈值修改则由 App 生成 TH 指令发回 STM32。</p>
+      <div class="protocol-table">{protocolRows.map(([cmd, type, desc]) => <div><code>{cmd}</code><strong>{type}</strong><span>{desc}</span></div>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>五、关键代码段</h2>
+      <p>下面这些代码段覆盖项目最关键的实现路径。读者看完后，可以明确知道固件怎样初始化、怎样采集数据、怎样判断报警、怎样通过蓝牙与 App 通信，以及 App 如何解析和展示数据。</p>
+      <div class="code-list">
+        {codeSections.map((item, index) => (
+          <article>
+            <span class="num">{String(index + 1).padStart(2, "0")}</span>
+            <h3>{item.title}</h3>
+            <p><strong>使用方法：</strong>{item.method}</p>
+            <p><strong>项目作用：</strong>{item.purpose}</p>
+            <pre><code>{item.code}</code></pre>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="chapter">
+      <h2>六、项目运行结果</h2>
+      <p>工程运行后，手环端可以在 LCD 上查看时间与各项健康指标；当数据异常时，本地声光和语音提示会同步触发；手机端连接蓝牙后可以看到实时数据、报警横幅与历史记录。整体效果体现了嵌入式硬件、固件业务和移动端界面的完整闭环。</p>
+      <div class="screens">{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption><strong>{shot.title}</strong><span>{shot.desc}</span></figcaption></figure>)}</div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .formal-article { position: relative; z-index: 3; width: min(1120px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
+  .hero, .chapter { border: 1px solid var(--article-line); background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px); border-radius: 28px; }
+  .hero { padding: clamp(36px, 6vw, 72px); }
+  .chapter { margin-top: 22px; padding: clamp(24px, 4vw, 34px); }
+  .eyebrow, .num { color: var(--accent); letter-spacing: .18em; text-transform: uppercase; }
+  .title-row { display: flex; gap: 18px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+  .title-row a { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; white-space: nowrap; }
+  h1 { margin: 10px 0 18px; max-width: 860px; color: var(--ink); font-size: clamp(42px, 8vw, 82px); line-height: 1; }
+  h2, h3, strong, b { color: var(--ink); }
+  p, span { color: var(--ink-2); line-height: 1.9; }
+  .lead { max-width: 900px; font-size: 19px; }
+  .module-grid, .tech-grid, .screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .module-grid article, .tech-grid article, .feature-list p, .code-list article, .protocol-table div { padding: 18px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
+  .feature-list, .code-list, .protocol-table { display: grid; gap: 14px; }
+  .protocol-table div { display: grid; gap: 6px; grid-template-columns: 1.3fr .7fr 2fr; align-items: center; }
+  code { color: var(--ink); }
+  pre { overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #eef5ff; font-size: 13px; line-height: 1.7; }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
+  img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+  figcaption { display: grid; gap: 5px; padding: 14px; }
+  @media (max-width: 820px) { .module-grid, .tech-grid, .screens { grid-template-columns: 1fr; } .protocol-table div { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codeSections, projectUrl, protocolRows, screenshots, techStack } from "../../data/smartBraceletArticleData";
+const interactionOrder = [1, 2, 3, 5, 6, 7, 10, 11, 12, 4, 8, 9].map((n) => codeSections[n - 1]);
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="experience-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="cover">
+      <div>
+        <p class="eyebrow">Template 02 · 交互联动版</p>
+        <div class="title-row">
+          <h1>从手环到手机：一套健康监测系统怎样跑起来</h1>
+          <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+        </div>
+        <p>这个版本从用户体验切入：用户先看到 LCD 上的时间和指标，再在手机 App 上连接蓝牙、查看曲线、修改阈值。沿着这条使用路径，可以反推出项目背后的固件调度、蓝牙协议、报警策略和 App 状态管理。</p>
+      </div>
+      <figure><img src={screenshots[1].src} alt="手机蓝牙 App" /></figure>
+    </section>
+
+    <section class="story-block">
+      <h2>一、项目介绍：它解决了什么问题</h2>
+      <p>智能手环的核心不是“显示几个数字”，而是把传感器采集、异常判断、用户提醒和远程查看连成一个可用流程。佩戴者可以在手环端直接查看心率、血氧、体温和心电趋势；当数据超出设定范围时，设备通过蜂鸣器、LED 与语音模块做本地提醒，同时把 Danger 信息发到手机 App，手机端再显示报警状态。</p>
+    </section>
+
+    <section class="journey">
+      <article><span>Step 1</span><h3>上电初始化</h3><p>STM32 初始化 LCD、定时器、传感器、蓝牙、语音、按键和报警模块，屏幕进入健康监测界面。</p></article>
+      <article><span>Step 2</span><h3>实时采集</h3><p>主循环不断读取体温、心率血氧、RTC 时间和心电 ADC 数据，并把结果提供给显示和上报逻辑。</p></article>
+      <article><span>Step 3</span><h3>本地显示</h3><p>用户通过按键切换表盘、心率、血氧、体温、心电、菜单、闹钟和阈值页面。</p></article>
+      <article><span>Step 4</span><h3>手机查看</h3><p>Android App 连接蓝牙模块后解析 STM32 文本数据，并以卡片和历史记录方式展示。</p></article>
+      <article><span>Step 5</span><h3>异常提醒</h3><p>心率、血氧、体温或跌倒风险触发后，本地声光语音与手机报警同步出现。</p></article>
+      <article><span>Step 6</span><h3>阈值调整</h3><p>用户在 App 修改阈值后，下发 TH 指令，STM32 更新本地报警边界。</p></article>
+    </section>
+
+    <section class="story-block">
+      <h2>二、功能介绍：按用户能感知的结果来拆</h2>
+      <p><strong>手环端：</strong>显示实时时钟、健康指标和心电波形，提供菜单、秒表、闹钟、报警开关与阈值设置。<strong>报警端：</strong>LED 和蜂鸣器负责最直接的提醒，ASRPRO 语音模块负责语音播报。<strong>手机端：</strong>App 负责蓝牙连接、数据显示、报警横幅、历史记录和阈值保存。</p>
+    </section>
+
+    <section class="story-block">
+      <h2>三、技术栈：硬件、固件、App 三层配合</h2>
+      <div class="tech-rail">{techStack.map(([name, desc]) => <article><b>{name}</b><p>{desc}</p></article>)}</div>
+    </section>
+
+    <section class="story-block">
+      <h2>四、蓝牙数据怎么流动</h2>
+      <p>STM32 发送的内容是可读文本，因此调试时可以直接用串口工具观察。App 端不要求每次收到完整数据包，而是先放入接收缓冲，再用正则逐项解析。</p>
+      <div class="protocol-cards">{protocolRows.map(([cmd, type, desc]) => <article><code>{cmd}</code><h3>{type}</h3><p>{desc}</p></article>)}</div>
+    </section>
+
+    <section class="story-block">
+      <h2>五、关键代码段：顺着用户路径看实现</h2>
+      <div class="timeline">
+        {interactionOrder.map((item, index) => (
+          <article>
+            <span>{index + 1}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p><strong>使用方法：</strong>{item.method}</p>
+              <p><strong>项目作用：</strong>{item.purpose}</p>
+              <pre><code>{item.code}</code></pre>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="story-block">
+      <h2>六、项目运行结果</h2>
+      <p>项目运行后，用户可以在 LCD 上看到实时数据，在手机 App 中连接设备并查看数据变化。原理图、App 页面和 PCB 共同说明这个项目不是单一软件页面，而是从硬件连接、嵌入式固件到移动端交互的一套完整作品。</p>
+      <div class="gallery">{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption>{shot.title} · {shot.desc}</figcaption></figure>)}</div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .experience-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { color: var(--ink-2); text-decoration: none; }
+  .cover { margin-top: 24px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; align-items: stretch; }
+  .cover > div, .cover figure, .story-block, .journey article { border: 1px solid var(--article-line); border-radius: 30px; background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px); }
+  .cover > div { padding: clamp(34px, 5vw, 62px); }
+  .cover figure { margin: 0; overflow: hidden; }
+  .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .eyebrow { color: var(--accent); letter-spacing: .2em; text-transform: uppercase; }
+  .title-row { display: grid; gap: 16px; }
+  .title-row a { width: fit-content; padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px, 7vw, 78px); line-height: 1.04; }
+  h2, h3, strong, b { color: var(--ink); }
+  p, figcaption { color: var(--ink-2); line-height: 1.9; }
+  .story-block { margin-top: 22px; padding: clamp(24px, 4vw, 34px); }
+  .journey { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .journey article, .tech-rail article, .protocol-cards article { padding: 20px; }
+  .journey span, .timeline > article > span { color: var(--accent); letter-spacing: .14em; text-transform: uppercase; }
+  .tech-rail, .protocol-cards, .gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .tech-rail article, .protocol-cards article { border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
+  .timeline { display: grid; gap: 18px; }
+  .timeline article { display: grid; grid-template-columns: 56px 1fr; gap: 16px; }
+  .timeline article > div { border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-card); padding: 20px; }
+  pre { overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #eef5ff; font-size: 13px; line-height: 1.7; }
+  .gallery figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-card); }
+  .gallery img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+  figcaption { padding: 14px; }
+  code { color: var(--ink); }
+  @media (max-width: 860px) { .cover, .journey, .tech-rail, .protocol-cards, .gallery { grid-template-columns: 1fr; } .timeline article { grid-template-columns: 1fr; } }
+</style>

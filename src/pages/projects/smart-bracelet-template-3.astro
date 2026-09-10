@@ -1,0 +1,119 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codeSections, modules, projectUrl, protocolRows, screenshots, techStack } from "../../data/smartBraceletArticleData";
+const firmwareCodes = codeSections.slice(0, 10);
+const appCodes = codeSections.slice(10);
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="lab-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="lab-hero">
+      <p class="eyebrow">Template 03 · 工程复现版</p>
+      <div class="title-row">
+        <h1>STM32 智能健康手环复现说明</h1>
+        <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p>这篇文章按“拿到工程后怎样看懂并跑起来”的顺序编写：先看目录结构，再看硬件模块，再看固件主流程，最后看蓝牙协议和 Android App。适合有 C 语言、STM32 外设或 Android 基础的人，配合项目文件完成复现与二次开发。</p>
+    </section>
+
+    <section class="chapter">
+      <h2>一、项目结构</h2>
+      <pre class="tree"><code>{`smart_bracelet/
+├─ firmware/        STM32 Keil 固件工程
+│  ├─ HARDWARE/     传感器、LCD、蓝牙、蜂鸣器、语音、按键驱动
+│  ├─ SYSTEM/       delay、sys、usart 等基础模块
+│  ├─ USER/         main.c 与 target.uvprojx
+│  └─ diagrams/     系统框图与通信时序
+├─ mobile_app/      Android Kotlin 蓝牙 App
+└─ docs/            电路原理图`}</code></pre>
+      <p>这个结构把硬件固件、移动端和文档拆开，上传 GitHub 后更容易说明项目边界，也方便后续分别维护固件和 App。</p>
+    </section>
+
+    <section class="chapter">
+      <h2>二、功能介绍</h2>
+      <div class="check-grid">
+        <article><b>数据采集</b><p>采集心率、血氧、体温、心电 ADC 与加速度数据。</p></article>
+        <article><b>数据显示</b><p>LCD 显示时钟、指标、波形、菜单、秒表、闹钟和阈值界面。</p></article>
+        <article><b>异常报警</b><p>超阈值或跌倒风险触发蜂鸣器、LED、蓝牙 Danger 和语音提示。</p></article>
+        <article><b>蓝牙上报</b><p>STM32 定时发送文本数据，Android App 解析后显示。</p></article>
+        <article><b>阈值配置</b><p>App 保存用户阈值，并通过 TH 指令同步到 STM32。</p></article>
+        <article><b>历史查看</b><p>App 侧保存健康记录，便于观察一段时间内的数据变化。</p></article>
+      </div>
+    </section>
+
+    <section class="chapter">
+      <h2>三、技术栈与模块对应关系</h2>
+      <div class="matrix">{techStack.map(([name, desc]) => <div><span>{name}</span><p>{desc}</p></div>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>四、复现步骤</h2>
+      <ol>
+        <li>使用 Keil uVision5 打开 <code>firmware/USER/target.uvprojx</code>，确认芯片型号、晶振频率和下载器配置。</li>
+        <li>检查原理图中蓝牙、MAX30102、DS18B20、AD8232、MPU6050、LCD、蜂鸣器、LED 和按键引脚是否与代码一致。</li>
+        <li>编译固件并烧录到 STM32，打开设备后观察 LCD 是否进入健康监测界面。</li>
+        <li>用手机系统蓝牙先配对蓝牙模块，再打开 Android Studio 运行 <code>mobile_app/</code>。</li>
+        <li>在 App 中刷新已配对设备并连接，观察实时数据、报警横幅和历史记录。</li>
+        <li>修改 App 阈值并发送到 MCU，观察 STM32 是否根据新阈值进行报警判断。</li>
+      </ol>
+    </section>
+
+    <section class="chapter">
+      <h2>五、蓝牙协议速查</h2>
+      <div class="protocol-list">{protocolRows.map(([cmd, type, desc]) => <p><code>{cmd}</code><b>{type}</b><span>{desc}</span></p>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>六、固件关键代码</h2>
+      <p>固件部分建议先阅读主循环、初始化、采集、报警和蓝牙发送。理解这几部分后，再看每个传感器驱动会轻松很多。</p>
+      <div class="code-list">{firmwareCodes.map((item) => <article><h3>{item.title}</h3><p><strong>使用方法：</strong>{item.method}</p><p><strong>项目作用：</strong>{item.purpose}</p><pre><code>{item.code}</code></pre></article>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>七、App 关键代码</h2>
+      <p>App 端重点是蓝牙连接、接收缓冲、正则解析、状态更新和阈值下发。它不需要复杂后端，直接通过蓝牙与 STM32 形成闭环。</p>
+      <div class="code-list">{appCodes.map((item) => <article><h3>{item.title}</h3><p><strong>使用方法：</strong>{item.method}</p><p><strong>项目作用：</strong>{item.purpose}</p><pre><code>{item.code}</code></pre></article>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>八、项目运行结果</h2>
+      <p>运行成功后，手环端能够显示健康数据和时间信息，异常时本地报警与手机报警同步触发；App 能连接蓝牙、解析实时数据、保存历史记录并下发阈值。下方图片分别对应硬件原理、App 界面与 PCB 展示。</p>
+      <div class="screens">{screenshots.map((shot) => <figure><img src={shot.src} alt={shot.title} loading="lazy" /><figcaption><strong>{shot.title}</strong><span>{shot.desc}</span></figcaption></figure>)}</div>
+    </section>
+
+    <section class="chapter">
+      <h2>九、总结</h2>
+      <p>这个项目的价值在于模块完整：它不仅有 STM32 传感器采集，也有本地 UI、异常报警、蓝牙协议和 Android App。复现时建议先保证单个传感器可读，再接入 LCD 显示，之后加入蓝牙协议和 App 解析，最后再完善阈值、闹钟、语音和跌倒检测等扩展功能。</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-article { position: relative; z-index: 3; width: min(1080px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { color: var(--ink-2); text-decoration: none; }
+  .lab-hero, .chapter { margin-top: 22px; border: 1px solid var(--article-line); border-radius: 24px; background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px); }
+  .lab-hero { padding: clamp(34px, 6vw, 70px); }
+  .chapter { padding: clamp(22px, 4vw, 32px); }
+  .eyebrow { color: var(--accent); letter-spacing: .2em; text-transform: uppercase; }
+  .title-row { display: grid; gap: 16px; }
+  .title-row a { width: fit-content; padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { margin: 12px 0 18px; color: var(--ink); font-size: clamp(40px, 7vw, 76px); line-height: 1.02; }
+  h2, h3, strong, b, li { color: var(--ink); }
+  p, span { color: var(--ink-2); line-height: 1.9; }
+  li { margin: 10px 0; line-height: 1.9; }
+  .check-grid, .matrix, .screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .check-grid article, .matrix div, .protocol-list p, .code-list article { border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); padding: 18px; }
+  .matrix span { color: var(--accent); font-weight: 700; }
+  .protocol-list, .code-list { display: grid; gap: 14px; }
+  .protocol-list p { display: grid; grid-template-columns: 1.2fr .8fr 2fr; gap: 12px; align-items: center; margin: 0; }
+  pre { overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #eef5ff; font-size: 13px; line-height: 1.7; }
+  .tree { background: color-mix(in srgb, var(--article-code) 92%, var(--accent) 8%); }
+  code { color: var(--ink); }
+  pre code { color: #eef5ff; }
+  figure { margin: 0; overflow: hidden; border: 1px solid var(--article-line); border-radius: 20px; background: var(--article-card); }
+  img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+  figcaption { display: grid; gap: 5px; padding: 14px; }
+  @media (max-width: 820px) { .check-grid, .matrix, .screens { grid-template-columns: 1fr; } .protocol-list p { grid-template-columns: 1fr; } }
+</style>

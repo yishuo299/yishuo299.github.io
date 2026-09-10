@@ -10,7 +10,7 @@ const posts = (await getCollection("blog"))
   .slice(0, 3);
 
 const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
-const TECH_STACK_FILTERS = ["Python", "STM32", "Django", "Vue", "Vue 3", "Spring Boot", "Android", "MySQL", "JWT", "Element Plus", "MyBatis Plus", "Pinia", "Axios"];
+const TECH_STACK_FILTERS = ["Python", "STM32", "C", "Keil", "Android", "Kotlin", "Bluetooth", "Jetpack Compose", "USART", "ADC", "I2C", "Django", "Vue", "Vue 3", "Spring Boot", "MySQL", "JWT", "Element Plus", "MyBatis Plus", "Pinia", "Axios"];
 const projectFilters = Array.from(new Set(projects.flatMap((project) => [project.name, ...project.tags]).filter((tag) => TECH_STACK_FILTERS.includes(tag))));
 const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s*\d+$/, "")] ?? FALLBACK_TECH_META;
 ---
