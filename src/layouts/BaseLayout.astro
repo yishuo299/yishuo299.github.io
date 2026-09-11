@@ -2,7 +2,6 @@
 import BaseHead from "../components/BaseHead.astro";
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
 import { ViewTransitions } from "astro:transitions";
-import projects from "../data/projects.json";
 import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
 
 export interface Props {
@@ -57,7 +56,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
     <div id="siteShell" class="site-shell">
       <nav class="archive-nav" aria-label="主导航">
         <a class="nav-logo" href="/" aria-label="燚燿项目档案首页">Y燚</a>
-        <div class="nav-links"><a href="/">HOME</a><a href="/#projects">PROJECTS</a><a href="/blog/">ARTICLES</a><a href="/#about">ABOUT</a></div>
+        <div class="nav-links"><a href="/">HOME</a><a href="/#projects">PROJECTS</a><a href="/#about">ABOUT</a></div>
         <a class="nav-github" href="https://github.com/yishuo299" target="_blank" rel="noreferrer">GITHUB ↗</a>
       </nav>
       <main class:list={["archive-main", isHome ? "archive-home" : "archive-content"]}><slot /></main>

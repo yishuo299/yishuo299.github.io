@@ -24,7 +24,7 @@ const techColors: Record<string, string> = {
     <div class="standalone-projects">
       {projects.map((project, index) => (
         <article class="standalone-card" style={`--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
-          <div class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></div>
+          <div class="project-top"><span class="project-keyword">{project.name}</span></div>
           <h2>{project.title}</h2>
           <p>{project.description}</p>
           <p class="project-detail">{project.detail}</p>

@@ -1,13 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
-import createSlug from "../lib/createSlug";
 import projects from "../data/projects.json";
 import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
-
-const posts = (await getCollection("blog"))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
 
 const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
 const TECH_STACK_FILTERS = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android"];
@@ -90,7 +84,7 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
         {projects.map((project, index) => (
           <div class="reveal project-item" data-project-category={`|${[project.name, ...project.tags].map((tag) => tag.toLowerCase()).join("|")}|`} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
             <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-project-url={(project as any).projectUrl ?? ""} data-icon={getTechMeta(project.tags[0] ?? project.name).svg}>
-              <span class="project-top"><span class="project-index">{String(index + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span><span class="project-keyword">{project.name}</span></span>
+              <span class="project-top"><span class="project-keyword">{project.name}</span></span>
               <strong class="project-title">{project.title}</strong>
               <span class="project-description">{project.description}</span>
               <span class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</span>
@@ -99,23 +93,6 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
         ))}
       </div>
       <div class="no-result" id="noResult">NO PROJECT FOUND</div>
-    </div>
-  </section>
-
-  <section id="articles" class="content-section">
-    <div class="container">
-      <header class="section-heading reveal">
-        <div><div class="section-label">LATEST NOTES</div><h2 class="section-title">Articles</h2></div>
-        <a class="section-link" href="/blog/">阅读全部 →</a>
-      </header>
-      <div class="article-list">
-        {posts.map((post) => (
-          <a class="article-row reveal" href={`/blog/${createSlug(post.data.title, post.slug)}`}>
-            <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString("zh-CN")}</time>
-            <strong>{post.data.title}</strong><span>{post.data.description}</span><b aria-hidden="true">↗</b>
-          </a>
-        ))}
-      </div>
     </div>
   </section>
 

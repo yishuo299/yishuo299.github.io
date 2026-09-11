@@ -1,24 +1,6 @@
 [
   {
     "name": "STM32",
-    "title": "智能健康手环 · 系统总览版",
-    "description": "基于 STM32 的健康监测手环，完成心率、血氧、体温、心电、跌倒检测、蓝牙传输和报警提醒。",
-    "detail": "这个版本按项目说明文档的逻辑展开，从硬件组成、固件调度、传感器采集、报警逻辑到 Android App 联动逐层说明。技术栈包含 STM32、C、Keil、USART 蓝牙、Android Kotlin 与 Jetpack Compose。",
-    "tags": ["STM32", "Android"],
-    "articleUrl": "/projects/smart-bracelet-template-1/",
-    "projectUrl": "https://github.com/yishuo299/smart_bracelet"
-  },
-  {
-    "name": "Android",
-    "title": "智能健康手环 · 交互联动版",
-    "description": "从用户使用路径出发，说明手环如何把本地采集、LCD 显示、异常报警和手机 App 串成完整体验。",
-    "detail": "这个版本更偏交互体验与数据流，先讲用户看到的界面，再反推 STM32 固件和 App 如何协作。技术栈包含 Android、Kotlin、Bluetooth、STM32、C、MAX30102、DS18B20 与 AD8232。",
-    "tags": ["Android", "STM32"],
-    "articleUrl": "/projects/smart-bracelet-template-2/",
-    "projectUrl": "https://github.com/yishuo299/smart_bracelet"
-  },
-  {
-    "name": "STM32",
     "title": "智能健康手环 · 工程复现版",
     "description": "面向复现和二次开发，详细拆解工程结构、关键代码、蓝牙协议、阈值设置和运行检查。",
     "detail": "这个版本更像开发笔记，按工程目录、配置步骤、模块调用和关键代码推进。适合想根据项目文件复现 STM32 健康手环的人阅读。",
@@ -28,71 +10,11 @@
   },
   {
     "name": "Spring Boot",
-    "title": "选课与成绩管理系统 · 完整展示版",
-    "description": "一套前后端分离的教务选课系统，覆盖登录鉴权、学生选课、教师成绩、教务审核与后台管理。",
-    "detail": "这个版本偏正式项目介绍，适合放在 GitHub 或作品集中。项目使用 Spring Boot、Vue 3、MySQL、JWT 与 Element Plus，重点展示系统架构、角色权限、核心业务流程和功能完成度。",
-    "tags": ["Spring Boot", "Vue 3", "MySQL", "JWT", "Element Plus", "MyBatis Plus", "选课系统", "权限管理"],
-    "articleUrl": "/projects/course-selection-template-1/",
-    "projectUrl": "https://github.com/yishuo299/School_Course_Selection_Management_System"
-  },
-  {
-    "name": "Vue",
-    "title": "选课与成绩管理系统 · 交互体验版",
-    "description": "从界面体验出发整理选课系统，突出角色工作台、课程筛选、课表展示、成绩查询和日志追踪。",
-    "detail": "这个版本更像博客展示稿，语言更轻快，适合突出用户路径与页面体验。项目使用 Vue 3、Element Plus、Pinia、Axios 和 Spring Boot，把学生、教师、教务、管理员四类角色串成清晰的操作流程。",
-    "tags": ["Vue 3", "Element Plus", "Pinia", "Axios", "Spring Boot", "后台管理", "课表展示", "成绩查询"],
-    "articleUrl": "/projects/course-selection-template-2/",
-    "projectUrl": "https://github.com/yishuo299/School_Course_Selection_Management_System"
-  },
-  {
-    "name": "MySQL",
     "title": "选课与成绩管理系统 · 业务闭环版",
     "description": "从数据表和业务规则角度说明项目，包含用户权限、课程开设、选课校验、成绩流转和操作日志。",
     "detail": "这个版本偏业务闭环和数据库设计，适合强调项目不是单页演示，而是有完整数据关系和管理流程的系统。技术栈包含 MySQL、Spring Boot、MyBatis Plus、Vue 3 与教务业务模块。",
-    "tags": ["MySQL", "Spring Boot", "MyBatis Plus", "Vue 3", "教务系统", "数据库设计", "成绩管理", "操作日志"],
+    "tags": ["Spring Boot", "Vue"],
     "articleUrl": "/projects/course-selection-template-3/",
     "projectUrl": "https://github.com/yishuo299/School_Course_Selection_Management_System"
-  },
-  {
-    "name": "Python",
-    "title": "Python Projects",
-    "description": "Python 开发实践，包括自动化工具、数据处理、脚本以及其他实验性项目。",
-    "detail": "使用 Python 完成各种实际项目，包括自动化、数据处理、脚本开发以及实验性程序。",
-    "tags": ["Python", "Automation", "Tools"]
-  },
-  {
-    "name": "STM32",
-    "title": "STM32 Embedded",
-    "description": "从 GPIO 到 PWM、定时器、数码管以及各种嵌入式硬件控制实验。",
-    "detail": "基于 STM32 微控制器完成嵌入式开发项目，包括 GPIO、PWM、定时器、数码管、LED、交通灯等硬件控制实践。",
-    "tags": ["STM32F103", "C", "Keil", "Proteus"]
-  },
-  {
-    "name": "Django",
-    "title": "Django Web",
-    "description": "Python Web 开发实践，从数据库到后端 API 与完整业务逻辑。",
-    "detail": "使用 Django 构建 Web 后端项目，实现数据库操作、用户系统、接口以及完整的网站后端逻辑。",
-    "tags": ["Django", "Python", "REST API"]
-  },
-  {
-    "name": "Vue",
-    "title": "Vue Frontend",
-    "description": "Vue 3 前端项目，注重组件化、交互设计与现代 Web UI。",
-    "detail": "使用 Vue 3 开发现代化前端页面，并结合组件化思想构建交互式 Web 应用。",
-    "tags": ["Vue 3", "JavaScript", "Vite"]
-  },
-  {
-    "name": "Spring Boot",
-    "title": "Spring Boot + Vue",
-    "description": "前后端分离项目，Spring Boot 负责后端，Vue 3 负责前端。",
-    "detail": "Spring Boot 与 Vue 3 前后端分离项目，实现 RESTful API、数据库以及前端交互。",
-    "tags": ["Spring Boot", "Vue 3", "MySQL"]
-  },
-  {
-    "name": "Android",
-    "title": "Android Apps",
-    "description": "移动端开发实践，从界面设计到功能实现与数据交互。",
-    "detail": "Android 移动端开发实践，探索原生 Android UI、页面交互、数据存储以及移动端应用开发。",
-    "tags": ["Android", "Java", "Kotlin"]
   }
 ]

@@ -292,7 +292,6 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
 .project-card:hover, .project-card:focus-visible { transform: translateY(-5px); background: var(--panel-hover); border-color: color-mix(in srgb,var(--ink) 18%,transparent); box-shadow: 0 25px 70px rgba(0,0,0,.22), 0 0 50px -18px var(--project-color); outline: none; }
 .project-card:hover::after, .project-card:focus-visible::after { opacity: 1; transform: scaleY(1); }
 .project-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 17px; }
-.project-index { color: var(--ink-3); font-size: 12px; letter-spacing: 2px; }
 .project-keyword { padding: 5px 10px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.025); color: var(--ink-2); font-size: 12px; }
 .project-title { display: block; margin-bottom: 10px; color: var(--ink); font-size: 22px; font-weight: 550; transition: color .35s ease, transform .35s ease; }
 .project-card:hover .project-title { color: var(--project-color); transform: translateX(3px); }
@@ -303,11 +302,6 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
 .no-result.show { display: block; }
 
 .article-list { border-top: 1px solid var(--line); }
-.article-row { display: grid; grid-template-columns: 130px minmax(180px,260px) 1fr auto; gap: 24px; align-items: center; padding: 24px 4px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: padding .3s ease, color .3s ease; }
-.article-row:hover { padding-right: 12px; padding-left: 12px; color: var(--accent); }
-.article-row time, .article-row span { color: var(--ink-3); font-size: 14px; }
-.article-row strong { font-size: 16px; }
-.article-row b { font-weight: 400; }
 .about-text { max-width: 780px; margin: 0; color: var(--ink-2); font-size: 16px; line-height: 2; }
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .85s cubic-bezier(.16,1,.3,1) var(--delay,0ms), transform .85s cubic-bezier(.16,1,.3,1) var(--delay,0ms); }
 .reveal.in-view { opacity: 1; transform: translateY(0); }
@@ -461,8 +455,6 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
   .hero-message::before { display: none; }
   .folder-container { grid-template-columns: repeat(2,1fr); }
   .content-section { padding: 72px 0; }
-  .article-row { grid-template-columns: 1fr auto; gap: 8px 16px; }
-  .article-row time, .article-row span { grid-column: 1 / -1; }
   .standalone-projects { grid-template-columns: 1fr; }
 }
 
