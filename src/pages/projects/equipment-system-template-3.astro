@@ -1,0 +1,144 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codeSections, dataTables, modules, projectUrl, resultItems, runSteps, techStack } from "../../data/equipmentSystemArticleData";
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="equipment-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="hero-card">
+      <p class="eyebrow">工程复现版 · Java Web</p>
+      <div class="title-row">
+        <h1>装备全生命周期管理系统复现说明</h1>
+        <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p>这是一套前后端分离的装备管理系统。文章会从业务边界、工程结构、运行步骤、关键代码和运行结果五个角度拆解项目，读者可以结合源码复现主要功能链路。</p>
+    </section>
+
+    <section class="section-card">
+      <h2>一、项目介绍：系统解决什么问题</h2>
+      <p>装备管理类系统最核心的问题不是“把设备放进表格”，而是把设备从入库、领用、维修到报废的状态变化记录清楚。这个项目以 Spring Boot 后端和 Vue 前端为基础，把管理员、维修人员、普通用户三个角色串成完整业务闭环。</p>
+      <div class="module-grid">
+        {modules.map(([name, desc]) => <article><strong>{name}</strong><span>{desc}</span></article>)}
+      </div>
+    </section>
+
+    <section class="split-section">
+      <div class="section-card">
+        <h2>二、功能介绍</h2>
+        <p>系统完成了三个角色的常见使用场景。管理员负责资产台账和审批，普通用户负责领用申请与个人装备查看，维修人员负责维修工单处理。</p>
+        <ul>
+          <li>管理员：新增装备、审批领用/报废申请、查看生命周期指标、查看用户档案。</li>
+          <li>普通用户：查询库存、提交领用申请、查看申请进度、查看个人持有装备、提交报废申请。</li>
+          <li>维修人员：查看维修任务、更新维修进度、提交报废审批。</li>
+        </ul>
+      </div>
+      <div class="section-card">
+        <h2>三、数据表设计</h2>
+        <p>项目数据模型保持克制，四张表就能支撑核心流程。复现时可以先建表，再按角色页面逐步对接接口。</p>
+        <div class="table-list">{dataTables.map(([name, desc]) => <article><code>{name}</code><span>{desc}</span></article>)}</div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>四、技术栈介绍</h2>
+      <div class="tech-grid">
+        {techStack.map(([name, desc]) => <article><strong>{name}</strong><p>{desc}</p></article>)}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>五、项目结构</h2>
+      <p>工程分为 `backend` 和 `frontend` 两部分。后端采用 Controller、Service、Mapper、Entity 的经典分层；前端把接口、路由和页面视图拆开，适合继续扩展更多后台功能。</p>
+      <pre><code>{`equipment-system/
+├─ backend/
+│  ├─ pom.xml
+│  └─ src/main/
+│     ├─ java/com/example/ems/
+│     │  ├─ controller/
+│     │  ├─ service/
+│     │  ├─ mapper/
+│     │  └─ entity/
+│     └─ resources/
+│        ├─ application.properties
+│        └─ schema.sql
+└─ frontend/
+   ├─ package.json
+   └─ src/
+      ├─ api/
+      ├─ router/
+      └─ views/`}</code></pre>
+    </section>
+
+    <section class="section-card">
+      <h2>六、复现与运行步骤</h2>
+      <div class="steps">
+        {runSteps.map(([title, desc], index) => <article><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{title}</strong><p>{desc}</p></div></article>)}
+      </div>
+    </section>
+
+    <section class="section-card code-section">
+      <h2>七、关键代码段</h2>
+      <p>下面代码来自项目的真实实现。每段都说明“使用方法”和“项目作用”，便于按模块定位源码。</p>
+      <div class="code-grid">
+        {codeSections.map((item) => (
+          <article>
+            <header>
+              <h3>{item.title}</h3>
+              <p><b>使用方法：</b>{item.method}</p>
+              <p><b>项目作用：</b>{item.purpose}</p>
+            </header>
+            <pre><code>{item.code}</code></pre>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>八、项目运行结果</h2>
+      <p>项目启动后，可以用三类演示账号分别验证业务链路。建议先用管理员新增装备，再用普通用户提交领用申请，最后回到管理员后台审批，观察装备状态是否从 `STOCK` 变成 `IN_USE`。</p>
+      <div class="result-grid">
+        {resultItems.map(([title, desc]) => <article><strong>{title}</strong><p>{desc}</p></article>)}
+      </div>
+    </section>
+
+    <section class="final-note">
+      <h2>九、总结</h2>
+      <p>这个项目适合用来理解一类典型管理系统的实现方式：前端负责角色页面和交互，后端负责业务规则与状态流转，数据库负责记录台账和流程数据。继续扩展时，可以优先补充登录安全、分页搜索、审批日志、维修派单和数据统计。</p>
+      <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .equipment-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
+  .hero-card, .section-card, .final-note { border: 1px solid var(--article-line); background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); border-radius: 30px; }
+  .hero-card { padding: clamp(34px, 6vw, 72px); }
+  .section-card, .final-note { margin-top: 24px; padding: 28px; }
+  .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; }
+  .title-row { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .title-row a, .final-note a { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { max-width: 860px; margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px, 7vw, 76px); line-height: 1.04; text-shadow: 0 2px 18px color-mix(in srgb, var(--bg) 35%, transparent); }
+  h2, h3, strong { color: var(--ink); }
+  p, li, span { color: var(--ink-2); line-height: 1.9; }
+  .module-grid, .tech-grid, .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+  .module-grid article, .tech-grid article, .result-grid article, .table-list article, .steps article { padding: 18px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
+  .module-grid article { display: grid; gap: 8px; }
+  .split-section { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: start; }
+  .table-list { display: grid; gap: 12px; }
+  .table-list article { display: grid; gap: 8px; }
+  .table-list code { color: #69e6c2; font-weight: 700; }
+  .tech-grid article p, .result-grid article p { margin-bottom: 0; }
+  .steps { display: grid; gap: 12px; }
+  .steps article { display: grid; grid-template-columns: 58px 1fr; gap: 14px; align-items: start; }
+  .steps article > span { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: color-mix(in srgb, #69e6c2 20%, transparent); color: #69e6c2; font-weight: 800; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #e9fff8; font-size: 13px; line-height: 1.7; }
+  .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .code-grid article { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-surface-soft); }
+  .code-grid header h3 { margin: 0; color: #69e6c2; }
+  .code-grid header p { margin: 6px 0 0; }
+  @media (max-width: 1000px) { .module-grid, .tech-grid, .result-grid, .code-grid, .split-section { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .equipment-article { padding: 72px 0; } .section-card, .final-note { padding: 22px; } .steps article { grid-template-columns: 1fr; } }
+</style>

@@ -1,5 +1,14 @@
 [
   {
+    "name": "Spring Boot",
+    "title": "装备全生命周期管理系统 · 工程复现版",
+    "description": "基于 Spring Boot、MyBatis、MySQL、Vue 3 和 Element Plus，实现装备入库、领用审批、维修进度和报废流转。",
+    "detail": "项目围绕管理员、维修人员、普通用户三类角色展开，重点说明装备台账、申请审批、维修工单和生命周期监控。文章按工程复现思路拆解项目结构、运行配置、关键代码和验证流程。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/equipment-system-template-3/",
+    "projectUrl": "https://github.com/yishuo299/equipment-system"
+  },
+  {
     "name": "STM32",
     "title": "智能健康手环 · 工程复现版",
     "description": "面向复现和二次开发，详细拆解工程结构、关键代码、蓝牙协议、阈值设置和运行检查。",
