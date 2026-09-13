@@ -1,0 +1,146 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codeSections, dataModels, modules, projectUrl, resultItems, runSteps, techStack } from "../../data/researchManagementArticleData";
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="research-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="hero-card">
+      <p class="eyebrow">工程复现版 · Django</p>
+      <div class="title-row">
+        <h1>高校科研管理系统复现说明</h1>
+        <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p>这篇文章围绕一个 Django 高校科研管理系统展开，按“业务模块 → 数据模型 → 运行配置 → 关键代码 → 运行验证”的顺序说明项目。读者可以结合源码复现人员、项目、论文、获奖、著作和用户管理等核心功能。</p>
+    </section>
+
+    <section class="section-card">
+      <h2>一、项目介绍</h2>
+      <p>高校科研管理系统的核心目标，是把分散在人员、项目、成果和账号中的数据统一维护起来。这个项目采用 Django 服务端渲染方式实现，不依赖前后端分离框架，适合展示 Django 在管理系统中的模型、表单、视图、模板和后台管理能力。</p>
+      <div class="module-grid">
+        {modules.map(([name, desc]) => <article><strong>{name}</strong><span>{desc}</span></article>)}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>二、功能介绍</h2>
+      <p>项目功能按高校科研业务拆分为六条主线：用户管理、科研人员管理、科研项目管理、期刊论文管理、科研获奖管理、科研著作管理。每条主线都提供增删改查、详情查看、搜索筛选和部分导出能力。</p>
+      <div class="feature-flow">
+        <span>登录认证</span><span>人员台账</span><span>项目立项</span><span>论文成果</span><span>获奖成果</span><span>著作成果</span><span>JSON 导出</span>
+      </div>
+    </section>
+
+    <section class="split-section">
+      <div class="section-card">
+        <h2>三、项目结构</h2>
+        <p>项目是标准 Django 结构：`research_management` 负责全局配置，`users` 负责用户认证和个人信息，`research` 负责科研业务数据，`templates` 负责页面展示。</p>
+        <pre><code>{`University_Research_Management_System/
+├─ manage.py
+├─ requirements.txt
+├─ research_management/
+│  ├─ settings.py
+│  └─ urls.py
+├─ users/
+│  ├─ models.py
+│  ├─ forms.py
+│  ├─ views.py
+│  └─ admin.py
+├─ research/
+│  ├─ models.py
+│  ├─ forms.py
+│  ├─ views.py
+│  └─ urls.py
+└─ templates/
+   ├─ base.html
+   ├─ users/
+   └─ research/`}</code></pre>
+      </div>
+      <div class="section-card">
+        <h2>四、数据模型</h2>
+        <div class="model-list">
+          {dataModels.map(([name, desc]) => <article><code>{name}</code><span>{desc}</span></article>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>五、技术栈介绍</h2>
+      <div class="tech-grid">
+        {techStack.map(([name, desc]) => <article><strong>{name}</strong><p>{desc}</p></article>)}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>六、复现与运行步骤</h2>
+      <div class="steps">
+        {runSteps.map(([title, desc], index) => <article><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{title}</strong><p>{desc}</p></div></article>)}
+      </div>
+    </section>
+
+    <section class="section-card code-section">
+      <h2>七、关键代码段</h2>
+      <p>下面代码段来自项目真实结构，覆盖配置、模型、表单、视图、查询、分页、统计和路由。每一段都说明使用方法和项目作用，便于读者按源码复现。</p>
+      <div class="code-grid">
+        {codeSections.map((item) => (
+          <article>
+            <header>
+              <h3>{item.title}</h3>
+              <p><b>使用方法：</b>{item.method}</p>
+              <p><b>项目作用：</b>{item.purpose}</p>
+            </header>
+            <pre><code>{item.code}</code></pre>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>八、项目运行结果</h2>
+      <p>项目运行后，建议按“登录 → 创建科研人员 → 创建科研项目 → 添加论文/获奖/著作 → 搜索筛选 → 导出数据”的顺序验证。这样可以覆盖模型关系、表单校验、分页查询和模板展示。</p>
+      <div class="result-grid">
+        {resultItems.map(([title, desc]) => <article><strong>{title}</strong><p>{desc}</p></article>)}
+      </div>
+    </section>
+
+    <section class="final-note">
+      <h2>九、总结</h2>
+      <p>这个项目展示了 Django 管理系统的完整开发路径：先定义模型和迁移，再通过 ModelForm 做输入校验，接着编写函数视图完成查询、分页、增删改查和导出，最后用模板页面呈现业务数据。继续扩展时，可以加入角色权限、Excel 导入导出、图表统计、操作日志和附件上传。</p>
+      <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .research-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
+  .hero-card, .section-card, .final-note { border: 1px solid var(--article-line); background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); border-radius: 30px; }
+  .hero-card { padding: clamp(34px, 6vw, 72px); }
+  .section-card, .final-note { margin-top: 24px; padding: 28px; }
+  .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; }
+  .title-row { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .title-row a, .final-note a { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { max-width: 840px; margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px, 7vw, 76px); line-height: 1.04; text-shadow: 0 2px 18px color-mix(in srgb, var(--bg) 35%, transparent); }
+  h2, h3, strong { color: var(--ink); }
+  p, li, span { color: var(--ink-2); line-height: 1.9; }
+  .module-grid, .tech-grid, .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+  .module-grid article, .tech-grid article, .result-grid article, .model-list article, .steps article { padding: 18px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
+  .module-grid article { display: grid; gap: 8px; }
+  .feature-flow { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .feature-flow span { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); }
+  .split-section { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: start; }
+  .model-list { display: grid; gap: 12px; }
+  .model-list article { display: grid; gap: 8px; }
+  .model-list code { color: #69e6c2; font-weight: 700; }
+  .steps { display: grid; gap: 12px; }
+  .steps article { display: grid; grid-template-columns: 58px 1fr; gap: 14px; align-items: start; }
+  .steps article > span { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: color-mix(in srgb, #69e6c2 20%, transparent); color: #69e6c2; font-weight: 800; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #e9fff8; font-size: 13px; line-height: 1.7; }
+  .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .code-grid article { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-surface-soft); }
+  .code-grid header h3 { margin: 0; color: #69e6c2; }
+  .code-grid header p { margin: 6px 0 0; }
+  @media (max-width: 1000px) { .module-grid, .tech-grid, .result-grid, .code-grid, .split-section { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .research-article { padding: 72px 0; } .section-card, .final-note { padding: 22px; } .steps article { grid-template-columns: 1fr; } }
+</style>

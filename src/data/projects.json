@@ -1,5 +1,14 @@
 [
   {
+    "name": "Django",
+    "title": "高校科研管理系统 · 工程复现版",
+    "description": "基于 Django、MySQL 和模板页面，实现科研人员、项目、论文、获奖、著作和用户账号管理。",
+    "detail": "项目采用 Django 服务端渲染结构，围绕高校科研业务建立人员、项目、成果和用户管理闭环。文章按工程复现思路说明项目结构、环境配置、数据模型、关键代码和运行验证。",
+    "tags": ["Python", "Django"],
+    "articleUrl": "/projects/research-management-template-3/",
+    "projectUrl": "https://github.com/yishuo299/University_Research_Management_System"
+  },
+  {
     "name": "Spring Boot",
     "title": "装备全生命周期管理系统 · 工程复现版",
     "description": "基于 Spring Boot、MyBatis、MySQL、Vue 3 和 Element Plus，实现装备入库、领用审批、维修进度和报废流转。",
