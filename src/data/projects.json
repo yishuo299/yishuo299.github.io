@@ -1,5 +1,50 @@
 [
   {
+    "name": "Spring Boot",
+    "title": "校园二手交易平台 · 工程复现版",
+    "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现校园闲置商品发布、下单、钱包支付、评价和后台管理。",
+    "detail": "项目围绕商品、订单、钱包、评价和后台看板形成交易闭环，重点展示库存防超卖、订单状态机和钱包事务。文章按工程复现方式拆解数据库、接口、关键代码和运行验证。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/campus-marketplace-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/campus-marketplace"
+  },
+  {
+    "name": "Spring Boot",
+    "title": "门诊预约挂号系统 · 工程复现版",
+    "description": "基于 Spring Boot 与 Vue 3，实现科室医生排班、在线预约、叫号、电子病历、处方收费和统计看板。",
+    "detail": "项目从医院门诊流程出发，重点说明号源防超卖、预约队列、叫号状态和病历处方关联。适合作为医疗预约类管理系统的复现案例。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/clinic-appointment-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/clinic-appointment"
+  },
+  {
+    "name": "Spring Boot",
+    "title": "图书馆管理系统 · 工程复现版",
+    "description": "基于 Spring Boot、MySQL 与 Vue 3，实现图书、读者、借阅、预约、罚款、公告和系统配置管理。",
+    "detail": "项目围绕图书库存和借阅记录联动展开，适合理解传统信息管理系统如何处理借阅、归还、续借、预约与逾期罚款。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/library-management-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/library-management"
+  },
+  {
+    "name": "Django",
+    "title": "智能电影推荐系统 · 工程复现版",
+    "description": "基于 Django、MySQL、Vue 3 与协同过滤算法，实现电影浏览、评分评论、收藏、个性化推荐和后台管理。",
+    "detail": "项目把 Python Web 与推荐算法结合，重点说明评分矩阵、相似度计算、推荐理由、电影资料维护和统计看板。",
+    "tags": ["Python", "Django", "Vue"],
+    "articleUrl": "/projects/movie-recommend-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/movie-recommend"
+  },
+  {
+    "name": "Python",
+    "title": "人脸识别考勤系统 · 工程复现版",
+    "description": "基于 Flask、OpenCV LBPH、MySQL 与 Vue 3，实现人脸录入、识别签到、请假审批和考勤统计。",
+    "detail": "项目围绕课堂考勤流程展开，重点说明 Haar 人脸检测、LBPH 模型训练、置信度阈值、时间窗签到和统计报表。",
+    "tags": ["Python", "Vue"],
+    "articleUrl": "/projects/face-attendance-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/face-attendance"
+  },
+  {
     "name": "Django",
     "title": "高校科研管理系统 · 工程复现版",
     "description": "基于 Django、MySQL 和模板页面，实现科研人员、项目、论文、获奖、著作和用户账号管理。",

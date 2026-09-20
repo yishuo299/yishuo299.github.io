@@ -1,0 +1,109 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { multiProjectArticles } from "../../data/multiProjectArticles";
+
+export function getStaticPaths() {
+  return multiProjectArticles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="project-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="hero-card">
+      <p class="eyebrow">{article.eyebrow}</p>
+      <div class="title-row">
+        <h1>{article.title}</h1>
+        <a href={article.projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p>{article.intro}</p>
+    </section>
+
+    <section class="section-card">
+      <h2>一、项目介绍与功能边界</h2>
+      <div class="module-grid">
+        {article.modules.map(([name, desc]) => <article><strong>{name}</strong><span>{desc}</span></article>)}
+      </div>
+    </section>
+
+    <section class="split-section">
+      <div class="section-card">
+        <h2>二、项目结构</h2>
+        <pre><code>{article.structure}</code></pre>
+      </div>
+      <div class="section-card">
+        <h2>三、技术栈</h2>
+        <div class="tag-grid">{article.stack.map((item) => <span>{item}</span>)}</div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>四、复现与运行步骤</h2>
+      <div class="steps">{article.run.map((item, index) => <article><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></article>)}</div>
+    </section>
+
+    <section class="section-card code-section">
+      <h2>五、关键代码段</h2>
+      <p>下面按工程复现顺序拆解关键实现。每段都说明使用方法和项目作用，方便读者结合项目文件定位源码。</p>
+      <div class="code-grid">
+        {article.snippets.map(([title, method, purpose, code]) => (
+          <article>
+            <header>
+              <h3>{title}</h3>
+              <p><b>使用方法：</b>{method}</p>
+              <p><b>项目作用：</b>{purpose}</p>
+            </header>
+            <pre><code>{code}</code></pre>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>六、项目运行结果</h2>
+      <p>{article.result}</p>
+    </section>
+
+    <section class="final-note">
+      <h2>七、总结</h2>
+      <p>这个项目适合作为对应技术栈的综合练习：先跑通数据库和后端接口，再构建前端页面，最后验证关键业务状态是否能完整流转。继续扩展时，可以补充权限细分、操作日志、文件安全校验、部署脚本和更完善的异常处理。</p>
+      <a href={article.projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .project-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; }
+  .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
+  .hero-card, .section-card, .final-note { border: 1px solid var(--article-line); background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); border-radius: 30px; }
+  .hero-card { padding: clamp(34px, 6vw, 72px); }
+  .section-card, .final-note { margin-top: 24px; padding: 28px; }
+  .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; }
+  .title-row { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .title-row a, .final-note a { padding: 10px 14px; border: 1px solid var(--article-line); border-radius: 999px; background: var(--article-card); color: var(--ink); text-decoration: none; }
+  h1 { max-width: 860px; margin: 12px 0 18px; color: var(--ink); font-size: clamp(38px, 7vw, 76px); line-height: 1.04; text-shadow: 0 2px 18px color-mix(in srgb, var(--bg) 35%, transparent); }
+  h2, h3, strong, b { color: var(--ink); }
+  p, li, span { color: var(--ink-2); line-height: 1.9; }
+  .module-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .module-grid article, .tag-grid span, .steps article { padding: 18px; border: 1px solid var(--article-line); border-radius: 18px; background: var(--article-card); }
+  .module-grid article { display: grid; gap: 8px; }
+  .split-section { display: grid; grid-template-columns: 1.15fr .85fr; gap: 24px; align-items: start; }
+  .tag-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag-grid span { color: var(--ink); }
+  .steps { display: grid; gap: 12px; }
+  .steps article { display: grid; grid-template-columns: 58px 1fr; gap: 14px; align-items: center; }
+  .steps article > span { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: color-mix(in srgb, #69e6c2 20%, transparent); color: #69e6c2; font-weight: 800; }
+  pre { margin: 0; overflow-x: auto; padding: 18px; border-radius: 16px; background: var(--article-code); color: #e9fff8; font-size: 13px; line-height: 1.7; }
+  .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .code-grid article { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--article-line); border-radius: 22px; background: var(--article-surface-soft); }
+  .code-grid header h3 { margin: 0; color: #69e6c2; }
+  .code-grid header p { margin: 6px 0 0; }
+  @media (max-width: 1000px) { .module-grid, .code-grid, .split-section { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .project-article { padding: 72px 0; } .section-card, .final-note { padding: 22px; } .steps article { grid-template-columns: 1fr; } }
+</style>
