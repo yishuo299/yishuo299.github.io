@@ -920,3 +920,8 @@ body.avatar-embed .stage {
 body.avatar-embed .stage.dragging {
   cursor: grabbing;
 }
+
+body.avatar-embed .stage canvas {
+  transform: scale(1.32);
+  transform-origin: center;
+}
