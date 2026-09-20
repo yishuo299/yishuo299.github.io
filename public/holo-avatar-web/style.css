@@ -885,6 +885,14 @@ body.avatar-embed {
   background: transparent;
 }
 
+html:has(body.avatar-embed) {
+  background: transparent;
+}
+
+body.avatar-embed canvas {
+  background: transparent !important;
+}
+
 body.avatar-embed .masthead,
 body.avatar-embed .artwork-bar,
 body.avatar-embed .footer,
@@ -922,6 +930,6 @@ body.avatar-embed .stage.dragging {
 }
 
 body.avatar-embed .stage canvas {
-  transform: scale(1.58);
+  transform: none;
   transform-origin: center;
 }

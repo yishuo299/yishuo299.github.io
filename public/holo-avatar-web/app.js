@@ -275,6 +275,7 @@ async function init() {
   const response = await fetch("./card-config.json");
   if (!response.ok) throw Error("作品配置未找到");
   config = await response.json();
+  const embedMode = document.body.classList.contains("avatar-embed");
   document.title = config.title + " · 全息闪卡";
   for (const [id, key] of [
     ["card-title", "title"],
@@ -292,7 +293,7 @@ async function init() {
   try {
     renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: false,
+      alpha: embedMode,
       preserveDrawingBuffer: true,
       powerPreference: "high-performance",
     });
@@ -302,7 +303,7 @@ async function init() {
     try {
       renderer = new THREE.WebGLRenderer({
         antialias: true,
-        alpha: false,
+        alpha: embedMode,
         preserveDrawingBuffer: true,
         powerPreference: "default",
         failIfMajorPerformanceCaveat: false,
@@ -314,8 +315,8 @@ async function init() {
       return;
     }
   }
-  renderer.setClearColor(config.appearance?.background || "#fafafa", 1);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(config.appearance?.background || "#fafafa", embedMode ? 0 : 1);
+  renderer.setPixelRatio(Math.min(devicePixelRatio * (embedMode ? 1.35 : 1), embedMode ? 2.75 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NoToneMapping;
   stage.append(renderer.domElement);
@@ -635,7 +636,8 @@ function resize() {
   const width = stage.clientWidth,
     height = stage.clientHeight;
   const aspect = width / height;
-  const halfHeight = Math.max(config.sourceMode === "relief" ? 6.25 : 5.45, 4.5 / aspect) / zoom;
+  const embedZoom = document.body.classList.contains("avatar-embed") ? 1.42 : 1;
+  const halfHeight = Math.max(config.sourceMode === "relief" ? 6.25 : 5.45, 4.5 / aspect) / zoom / embedZoom;
   camera.left = -halfHeight * aspect;
   camera.right = halfHeight * aspect;
   camera.top = halfHeight;

@@ -31337,6 +31337,7 @@ async function init() {
   const response = await fetch("./card-config.json");
   if (!response.ok) throw Error("\u4F5C\u54C1\u914D\u7F6E\u672A\u627E\u5230");
   config = await response.json();
+  const embedMode = document.body.classList.contains("avatar-embed");
   document.title = config.title + " \xB7 \u5168\u606F\u95EA\u5361";
   for (const [id, key] of [
     ["card-title", "title"],
@@ -31352,7 +31353,7 @@ async function init() {
   try {
     renderer = new WebGLRenderer({
       antialias: true,
-      alpha: false,
+      alpha: embedMode,
       preserveDrawingBuffer: true,
       powerPreference: "high-performance"
     });
@@ -31360,7 +31361,7 @@ async function init() {
     try {
       renderer = new WebGLRenderer({
         antialias: true,
-        alpha: false,
+        alpha: embedMode,
         preserveDrawingBuffer: true,
         powerPreference: "default",
         failIfMajorPerformanceCaveat: false
@@ -31370,8 +31371,8 @@ async function init() {
       return;
     }
   }
-  renderer.setClearColor(config.appearance?.background || "#fafafa", 1);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(config.appearance?.background || "#fafafa", embedMode ? 0 : 1);
+  renderer.setPixelRatio(Math.min(devicePixelRatio * (embedMode ? 1.35 : 1), embedMode ? 2.75 : 2));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping;
   stage.append(renderer.domElement);
@@ -31662,7 +31663,8 @@ function resize() {
   if (!renderer) return;
   const width = stage.clientWidth, height = stage.clientHeight;
   const aspect2 = width / height;
-  const halfHeight = Math.max(config.sourceMode === "relief" ? 6.25 : 5.45, 4.5 / aspect2) / zoom;
+  const embedZoom = document.body.classList.contains("avatar-embed") ? 1.42 : 1;
+  const halfHeight = Math.max(config.sourceMode === "relief" ? 6.25 : 5.45, 4.5 / aspect2) / zoom / embedZoom;
   camera.left = -halfHeight * aspect2;
   camera.right = halfHeight * aspect2;
   camera.top = halfHeight;
