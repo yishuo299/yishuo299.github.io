@@ -922,6 +922,6 @@ body.avatar-embed .stage.dragging {
 }
 
 body.avatar-embed .stage canvas {
-  transform: scale(1.32);
+  transform: scale(1.58);
   transform-origin: center;
 }

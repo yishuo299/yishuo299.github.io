@@ -209,14 +209,14 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
 .archive-home { width: 100%; margin-inline: auto; }
 .archive-hero { min-height: 650px; min-height: max(650px,calc(100dvh - 94px)); display: grid; grid-template-columns: minmax(300px,.82fr) minmax(0,1.18fr); align-items: center; gap: clamp(64px,9vw,126px); padding: 54px 0 24px; }
 .hero-profile { display: flex; flex-direction: column; align-items: flex-start; }
-.holo-avatar-shell { --light-x: 50%; --light-y: 42%; --foil-shift: 50%; position: relative; width: min(248px,68vw); aspect-ratio: 2 / 3; margin: 0 0 28px; perspective: 1100px; isolation: isolate; cursor: grab; touch-action: none; }
+.holo-avatar-shell { --light-x: 50%; --light-y: 42%; --foil-shift: 50%; position: relative; width: min(318px,76vw); aspect-ratio: 2 / 3; margin: 0 0 28px; perspective: 1100px; isolation: isolate; cursor: grab; touch-action: none; overflow: visible; }
 .holo-avatar-shell.is-dragging { cursor: grabbing; }
-.holo-avatar-shell::before { position: absolute; right: 8%; bottom: -9%; left: 8%; z-index: -1; height: 20%; border-radius: 50%; background: rgba(7,12,25,.46); filter: blur(20px); transform: scaleX(.92); content: ""; }
-.holo-avatar-shell::after { position: absolute; inset: 12% -10% auto auto; z-index: 8; width: 40%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle,rgba(255,255,255,.48),rgba(117,207,255,.1) 22%,transparent 65%); opacity: .46; transform: translate3d(0,0,70px); content: ""; pointer-events: none; transition: opacity var(--duration-standard) ease; }
+.holo-avatar-shell::before { display: none; }
+.holo-avatar-shell::after { display: none; }
 .holo-avatar-shell.is-active::after { opacity: .82; }
-.holo-avatar-card { --rotate-x: -2.5deg; --rotate-y: 4deg; --depth-x: 1.7px; --depth-y: 1px; --avatar-art-scale: 1.1; --avatar-subject-depth: 45px; --avatar-effects-depth: -30px; --avatar-bg-depth: -10px; --avatar-foil: .8; position: absolute; inset: 0; border: 1px solid rgba(255,255,255,.34); border-radius: 28px; background: #c5d7dd; box-shadow: inset 0 1px rgba(255,255,255,.48), 0 30px 75px rgba(4,9,20,.35); transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) translateZ(0); transform-style: preserve-3d; }
-.holo-avatar-live-card { overflow: hidden; background: transparent; transform: none; }
-.holo-avatar-frame { display: block; width: 100%; height: 100%; border: 0; border-radius: inherit; background: transparent; }
+.holo-avatar-card { --rotate-x: -2.5deg; --rotate-y: 4deg; --depth-x: 1.7px; --depth-y: 1px; --avatar-art-scale: 1.1; --avatar-subject-depth: 45px; --avatar-effects-depth: -30px; --avatar-bg-depth: -10px; --avatar-foil: .8; position: absolute; inset: -12% -18%; border: 0; border-radius: 0; background: transparent; box-shadow: none; transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) translateZ(0); transform-style: preserve-3d; }
+.holo-avatar-live-card { overflow: visible; background: transparent; transform: none; }
+.holo-avatar-frame { display: block; width: 100%; height: 100%; border: 0; border-radius: 0; background: transparent; }
 .holo-avatar-depth, .holo-avatar-foil, .holo-avatar-text, .holo-avatar-back { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 27px; pointer-events: none; }
 .holo-avatar-depth { overflow: hidden; backface-visibility: hidden; }
 .holo-avatar-depth img, .holo-avatar-text { display: block; width: 100%; height: 100%; object-fit: cover; }
