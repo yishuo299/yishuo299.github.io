@@ -27,7 +27,9 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
   <body class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
     <div class="scene" id="scene" aria-hidden="true" style="--sky-top:#78b9e5;--sky-mid:#9ed2ec;--sky-bottom:#d8c7aa;--sun-x:50%;--sun-y:30%;--moon-x:75%;--moon-y:30%;--sun-opacity:1;--moon-opacity:0;--stars-opacity:0;--cloud-opacity:.8;--sky-glow:.8">
       <div class="sky"></div>
+      <canvas class="ambient-particles" id="ambientParticles"></canvas>
       <div class="stars" id="stars"></div>
+      <div class="sky-ribbon sky-ribbon-one"></div><div class="sky-ribbon sky-ribbon-two"></div>
       <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div>
       <div class="sun-glow"></div><div class="sun"></div><div class="moon"></div>
       <div class="horizon"><div class="mountains-back"></div><div class="mountains-front"></div></div>
@@ -54,6 +56,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
     )}
 
     <div id="siteShell" class="site-shell">
+      <a class="skip-link" href="#home">跳到主要内容</a>
       <nav class="archive-nav" aria-label="主导航">
         <a class="nav-logo" href="/" aria-label="燚燿项目档案首页">Y燚</a>
         <div class="nav-links"><a href="/">HOME</a><a href="/#projects">PROJECTS</a><a href="/#about">ABOUT</a></div>
@@ -83,6 +86,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const timers: number[] = [];
         const intervals: number[] = [];
         const particles: HTMLElement[] = [];
+        let motionFrame = 0;
         let cancelled = false;
         const lockPage = () => {
           document.documentElement.classList.add("archive-loading-active");
@@ -99,6 +103,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const scene = document.getElementById("scene") as HTMLElement | null;
         const scrim = document.getElementById("scrim") as HTMLElement | null;
         const stars = document.getElementById("stars") as HTMLElement | null;
+        const ambientCanvas = document.getElementById("ambientParticles") as HTMLCanvasElement | null;
         const bigTime = document.getElementById("bigTime");
         const bigDate = document.getElementById("bigDate");
         const bigPeriod = document.getElementById("bigPeriod");
@@ -110,7 +115,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const bgClose = document.getElementById("bgClose");
         const clockAdjust = document.getElementById("clockAdjust");
         const copyStatus = document.getElementById("copyStatus");
-        if (!scene || !scrim || !stars) return;
+        if (!scene || !scrim || !stars || !ambientCanvas) return;
 
         stars.replaceChildren();
         const compactScreen = window.matchMedia("(max-width: 600px)").matches;
@@ -124,6 +129,176 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           const size = Math.random() > 0.82 ? 3 : 2; star.style.width = `${size}px`; star.style.height = `${size}px`; starFragment.appendChild(star);
         }
         stars.appendChild(starFragment);
+
+        type AmbientPoint = { x: number; y: number; vx: number; vy: number; radius: number; alpha: number; phase: number; depth: number };
+        type BurstPoint = { x: number; y: number; vx: number; vy: number; radius: number; life: number; maxLife: number; color: string };
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        const particleContext = ambientCanvas.getContext("2d", { alpha: true });
+        const ambientPoints: AmbientPoint[] = [];
+        const burstPoints: BurstPoint[] = [];
+        const holoAvatar = document.querySelector<HTMLElement>("[data-holo-avatar]");
+        const holoCard = holoAvatar?.querySelector<HTMLElement>(".holo-avatar-card") ?? null;
+        let viewportWidth = window.innerWidth;
+        let viewportHeight = window.innerHeight;
+        let pointerX = viewportWidth * 0.5;
+        let pointerY = viewportHeight * 0.45;
+        let pointerAwake = false;
+        let targetRotateX = -2.5;
+        let targetRotateY = 4;
+        let rotateX = targetRotateX;
+        let rotateY = targetRotateY;
+        let lastFrameAt = performance.now();
+        let randomState = 0x2f6e2b1;
+        const seededRandom = () => {
+          randomState = (randomState * 1664525 + 1013904223) >>> 0;
+          return randomState / 4294967296;
+        };
+        const resetAmbientPoints = () => {
+          ambientPoints.length = 0;
+          randomState = 0x2f6e2b1;
+          const count = compactScreen ? 30 : lowPowerDevice ? 42 : 68;
+          for (let index = 0; index < count; index += 1) {
+            const depth = 0.35 + seededRandom() * 0.9;
+            ambientPoints.push({
+              x: seededRandom() * viewportWidth,
+              y: seededRandom() * viewportHeight,
+              vx: (seededRandom() - 0.5) * 5.5 * depth,
+              vy: -(2.4 + seededRandom() * 8) * depth,
+              radius: 0.65 + seededRandom() * 1.85,
+              alpha: 0.16 + seededRandom() * 0.38,
+              phase: seededRandom() * Math.PI * 2,
+              depth,
+            });
+          }
+        };
+        const resizeMotionSurface = () => {
+          viewportWidth = window.innerWidth;
+          viewportHeight = window.innerHeight;
+          const pixelRatio = Math.min(window.devicePixelRatio || 1, compactScreen || lowPowerDevice ? 1.15 : 1.5);
+          ambientCanvas.width = Math.max(1, Math.round(viewportWidth * pixelRatio));
+          ambientCanvas.height = Math.max(1, Math.round(viewportHeight * pixelRatio));
+          ambientCanvas.style.width = `${viewportWidth}px`;
+          ambientCanvas.style.height = `${viewportHeight}px`;
+          particleContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+          resetAmbientPoints();
+        };
+        const emitBurst = (x: number, y: number, color = "#9bdcff") => {
+          if (reduceMotion) return;
+          const amount = compactScreen ? 9 : lowPowerDevice ? 11 : 16;
+          for (let index = 0; index < amount; index += 1) {
+            const angle = (Math.PI * 2 * index) / amount + seededRandom() * 0.3;
+            const speed = 34 + seededRandom() * 86;
+            const maxLife = 0.52 + seededRandom() * 0.42;
+            burstPoints.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 18, radius: 1 + seededRandom() * 2.3, life: maxLife, maxLife, color });
+          }
+          if (burstPoints.length > 90) burstPoints.splice(0, burstPoints.length - 90);
+        };
+        const drawMotionSurface = (now: number, dt: number, animate: boolean) => {
+          if (particleContext) {
+            particleContext.clearRect(0, 0, viewportWidth, viewportHeight);
+            const isDay = document.body.classList.contains("day");
+            particleContext.globalCompositeOperation = isDay ? "source-over" : "screen";
+            ambientPoints.forEach((point) => {
+              if (animate) {
+                const sway = Math.sin(now * 0.00042 + point.phase) * 2.1;
+                point.x += (point.vx + sway) * dt;
+                point.y += point.vy * dt;
+                if (pointerAwake) {
+                  const dx = point.x - pointerX;
+                  const dy = point.y - pointerY;
+                  const distanceSquared = dx * dx + dy * dy;
+                  if (distanceSquared > 1 && distanceSquared < 15000) {
+                    const force = (1 - distanceSquared / 15000) * 20 * dt;
+                    const distance = Math.sqrt(distanceSquared);
+                    point.x += (dx / distance) * force;
+                    point.y += (dy / distance) * force;
+                  }
+                }
+                if (point.y < -12) { point.y = viewportHeight + 12; point.x = seededRandom() * viewportWidth; }
+                if (point.x < -12) point.x = viewportWidth + 12;
+                if (point.x > viewportWidth + 12) point.x = -12;
+              }
+              const shimmer = 0.72 + Math.sin(now * 0.0012 + point.phase) * 0.28;
+              particleContext.beginPath();
+              particleContext.fillStyle = isDay
+                ? `rgba(35, 92, 132, ${point.alpha * 0.52 * shimmer})`
+                : `rgba(207, 232, 255, ${point.alpha * shimmer})`;
+              particleContext.arc(point.x, point.y, point.radius * point.depth, 0, Math.PI * 2);
+              particleContext.fill();
+            });
+            for (let index = burstPoints.length - 1; index >= 0; index -= 1) {
+              const point = burstPoints[index];
+              if (animate) {
+                point.life -= dt;
+                point.x += point.vx * dt;
+                point.y += point.vy * dt;
+                point.vx *= Math.exp(-3.4 * dt);
+                point.vy += 42 * dt;
+              }
+              if (point.life <= 0) { burstPoints.splice(index, 1); continue; }
+              const life = point.life / point.maxLife;
+              particleContext.beginPath();
+              particleContext.fillStyle = point.color;
+              particleContext.globalAlpha = Math.max(0, life * 0.72);
+              particleContext.arc(point.x, point.y, point.radius * (0.6 + life * 0.5), 0, Math.PI * 2);
+              particleContext.fill();
+              particleContext.globalAlpha = 1;
+            }
+            particleContext.globalCompositeOperation = "source-over";
+          }
+
+          if (holoCard) {
+            const idleX = pointerAwake ? 0 : Math.sin(now * 0.00045) * 1.5;
+            const idleY = pointerAwake ? 0 : Math.cos(now * 0.00038) * 2.2;
+            const follow = 1 - Math.exp(-10 * dt);
+            rotateX += (targetRotateX + idleX - rotateX) * follow;
+            rotateY += (targetRotateY + idleY - rotateY) * follow;
+            holoCard.style.setProperty("--rotate-x", `${rotateX.toFixed(3)}deg`);
+            holoCard.style.setProperty("--rotate-y", `${rotateY.toFixed(3)}deg`);
+            holoCard.style.setProperty("--depth-x", `${(rotateY * 0.42).toFixed(3)}px`);
+            holoCard.style.setProperty("--depth-y", `${(-rotateX * 0.42).toFixed(3)}px`);
+          }
+        };
+        const tickMotion = (now: number) => {
+          if (cancelled) return;
+          const dt = Math.min((now - lastFrameAt) / 1000, 1 / 30);
+          lastFrameAt = now;
+          drawMotionSurface(now, dt, true);
+          motionFrame = window.requestAnimationFrame(tickMotion);
+        };
+        resizeMotionSurface();
+        window.addEventListener("resize", resizeMotionSurface, { signal: controller.signal, passive: true });
+        window.addEventListener("pointermove", (event) => { pointerX = event.clientX; pointerY = event.clientY; pointerAwake = true; }, { signal: controller.signal, passive: true });
+        window.addEventListener("archive:burst", (event) => {
+          const detail = (event as CustomEvent<{ x?: number; y?: number; color?: string }>).detail ?? {};
+          emitBurst(detail.x ?? viewportWidth * 0.5, detail.y ?? viewportHeight * 0.5, detail.color);
+        }, { signal: controller.signal });
+        holoAvatar?.addEventListener("pointermove", (event) => {
+          if (!finePointer || reduceMotion) return;
+          const rect = holoAvatar.getBoundingClientRect();
+          const px = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+          const py = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
+          targetRotateX = (0.5 - py) * 15;
+          targetRotateY = (px - 0.5) * 18;
+          holoCard?.style.setProperty("--light-x", `${(px * 100).toFixed(2)}%`);
+          holoCard?.style.setProperty("--light-y", `${(py * 100).toFixed(2)}%`);
+          holoCard?.style.setProperty("--foil-shift", `${((px + py) * 50).toFixed(2)}%`);
+        }, { signal: controller.signal, passive: true });
+        holoAvatar?.addEventListener("pointerenter", () => { pointerAwake = true; holoAvatar.classList.add("is-active"); }, { signal: controller.signal });
+        holoAvatar?.addEventListener("pointerleave", () => {
+          pointerAwake = false;
+          targetRotateX = -2.5;
+          targetRotateY = 4;
+          holoAvatar.classList.remove("is-active");
+        }, { signal: controller.signal });
+        document.addEventListener("visibilitychange", () => {
+          if (reduceMotion) return;
+          window.cancelAnimationFrame(motionFrame);
+          if (!document.hidden) { lastFrameAt = performance.now(); motionFrame = window.requestAnimationFrame(tickMotion); }
+        }, { signal: controller.signal });
+        if (reduceMotion) drawMotionSurface(0, 0, false);
+        else motionFrame = window.requestAnimationFrame(tickMotion);
 
         const hexToRgb = (hex: string) => { const value = hex.replace("#", ""); return { r: Number.parseInt(value.slice(0, 2), 16), g: Number.parseInt(value.slice(2, 4), 16), b: Number.parseInt(value.slice(4, 6), 16) }; };
         const mixColor = (from: string, to: string, amount: number) => {
@@ -198,6 +373,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           return true;
         };
         const shouldRunHomeLoader = () => {
+          if (/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname) && new URLSearchParams(window.location.search).has("preview")) return false;
           if (!isSmoothNetwork()) return true;
           try {
             const lastRun = Number(localStorage.getItem(loaderStorageKey) ?? "0");
@@ -209,7 +385,18 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const rememberHomeLoader = () => {
           try { localStorage.setItem(loaderStorageKey, String(Date.now())); } catch {}
         };
-        const renderProgress = (value: number) => { const rounded = Math.max(0, Math.min(100, Math.round(value))); if (progress) progress.style.transform = `scaleX(${rounded / 100})`; if (progressText) progressText.textContent = `${rounded}%`; };
+        const renderProgress = (value: number) => {
+          const rounded = Math.max(0, Math.min(100, Math.round(value)));
+          if (progress) progress.style.transform = `scaleX(${rounded / 100})`;
+          if (progressText) progressText.textContent = `${rounded}%`;
+          const activeIndex = rounded >= 100 ? folders.length : Math.min(folders.length - 1, Math.floor((rounded / 100) * folders.length));
+          folders.forEach((folder, index) => {
+            folder.classList.toggle("active", rounded < 100 && index === activeIndex);
+            folder.classList.toggle("done", index < activeIndex || rounded >= 100);
+          });
+          const activeFolder = folders[activeIndex];
+          if (loadingStatus && activeFolder && rounded < 100) loadingStatus.textContent = `loading /${activeFolder.dataset.folder?.toLowerCase()}`;
+        };
         const animateProgress = (from: number, to: number, duration: number) => new Promise<void>((resolve) => {
           const start = performance.now(); const frame = (now: number) => { if (cancelled) return resolve(); const ratio = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - ratio, 3); renderProgress(from + (to - from) * eased); if (ratio < 1) requestAnimationFrame(frame); else resolve(); }; requestAnimationFrame(frame);
         });
@@ -220,7 +407,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const disperseWelcome = () => {
           if (!welcome || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
           const palette = [["#ffffff", "rgba(255,255,255,.9)"], ["#bcd4ff", "rgba(150,190,255,.85)"], ["#8fe0ff", "rgba(110,210,255,.85)"], ["#ffe7c2", "rgba(255,210,140,.85)"]];
-          const perLetter = compactScreen ? 12 : lowPowerDevice ? 15 : 22;
+          const perLetter = compactScreen ? 8 : lowPowerDevice ? 10 : 14;
           const particleFragment = document.createDocumentFragment();
           const newParticles: HTMLElement[] = [];
           const letterData = Array.from(welcome.querySelectorAll<HTMLElement>(".welcome-letter"), (letter) => ({ letter, rect: letter.getBoundingClientRect() }));
@@ -245,19 +432,19 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
             unlockPage();
             return;
           }
-          lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); renderProgress(0); await wait(180);
+          lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); folders.forEach((folder) => folder.classList.remove("active", "done")); renderProgress(0); await wait(130);
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
           else {
             if (loadingStatus) loadingStatus.textContent = "loading tech stack";
-            await animateProgress(0, 100, lowPowerDevice ? 680 : 820);
+            await animateProgress(0, 100, lowPowerDevice ? 620 : 760);
             folders.forEach((folder) => folder.classList.add("done"));
             if (loadingStatus) loadingStatus.textContent = "project archive ready";
-            await wait(140); showWelcome(); await wait(900); disperseWelcome(); await wait(850);
+            await wait(100); showWelcome(); await wait(720); disperseWelcome(); await wait(650);
           }
           if (cancelled) return; rememberHomeLoader(); loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready"); unlockPage();
         };
         void runLoader();
-        archiveCleanup = () => { cancelled = true; controller.abort(); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); unlockPage(); };
+        archiveCleanup = () => { cancelled = true; controller.abort(); window.cancelAnimationFrame(motionFrame); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); unlockPage(); };
       };
       document.addEventListener("astro:page-load", initArchive);
       if (document.readyState === "complete") initArchive();

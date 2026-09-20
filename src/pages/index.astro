@@ -14,9 +14,26 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
     <div class="container">
       <div class="archive-hero">
         <div class="hero-profile">
-          <div class="avatar-frame"><img class="avatar" src="/profile.webp" alt="燚燿头像" /></div>
+          <div class="holo-avatar-shell" data-holo-avatar aria-label="燚燿全息头像卡片">
+            <div class="holo-avatar-card">
+              <div class="holo-avatar-depth holo-avatar-background" aria-hidden="true">
+                <img src="/holo-avatar/assets/background.png" alt="" width="768" height="1152" decoding="async" />
+              </div>
+              <div class="holo-avatar-depth holo-avatar-subject">
+                <img src="/holo-avatar/assets/subject.png" alt="燚燿的插画头像" width="768" height="1152" decoding="async" />
+              </div>
+              <div class="holo-avatar-depth holo-avatar-lineart" aria-hidden="true">
+                <img src="/holo-avatar/assets/lineart.png" alt="" width="768" height="1152" decoding="async" />
+              </div>
+              <div class="holo-avatar-foil" aria-hidden="true"></div>
+              <div class="holo-avatar-spark spark-one" aria-hidden="true"></div>
+              <div class="holo-avatar-spark spark-two" aria-hidden="true"></div>
+              <div class="holo-avatar-spark spark-three" aria-hidden="true"></div>
+              <img class="holo-avatar-text" src="/holo-avatar/assets/text.png" alt="" width="768" height="1152" decoding="async" aria-hidden="true" />
+            </div>
+          </div>
           <div class="profile-name">燚燿</div>
-          <div class="profile-role">DEVELOPER · BUILDER · LEARNER</div>
+          <div class="profile-role">DEVELOPER / BUILDER / LEARNER</div>
           <div class="social-links">
             <a class="social-link" href="https://github.com/yishuo299" target="_blank" rel="noreferrer" aria-label="访问 GitHub yishuo299">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.9-.39.98 0 1.98.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.27 5.68.41.35.78 1.04.78 2.1 0 1.52-.01 2.75-.01 3.12 0 .31.21.67.8.56A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" /></svg>
@@ -84,10 +101,14 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
         {projects.map((project, index) => (
           <div class="reveal project-item" data-project-category={`|${[project.name, ...project.tags].map((tag) => tag.toLowerCase()).join("|")}|`} data-project-search={`${project.name} ${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase()} style={`--delay:${(index % 3) * 70}ms;--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
             <button class="project-card" type="button" data-project-card data-name={project.name} data-title={project.title} data-description={project.description} data-detail={project.detail} data-article={(project as any).articleUrl ?? ""} data-project-url={(project as any).projectUrl ?? ""} data-icon={getTechMeta(project.tags[0] ?? project.name).svg}>
-              <span class="project-top"><span class="project-keyword">{project.name}</span></span>
-              <strong class="project-title">{project.title}</strong>
-              <span class="project-description">{project.description}</span>
-              <span class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</span>
+              <span class="project-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              <span class="project-body">
+                <span class="project-top"><span class="project-keyword">{project.name}</span></span>
+                <strong class="project-title">{project.title}</strong>
+                <span class="project-description">{project.description}</span>
+                <span class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</span>
+              </span>
+              <span class="project-open" aria-hidden="true">OPEN <span>↗</span></span>
             </button>
           </div>
         ))}
@@ -147,9 +168,22 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
     const filterPanel = document.getElementById("filterPanel");
     const toolbarStatus = document.getElementById("toolbarStatus");
     const noResult = document.getElementById("noResult");
-    let activeFilter = "all";
+    const initialParams = new URLSearchParams(window.location.search);
+    const initialFilter = initialParams.get("tech")?.toLowerCase() ?? "all";
+    let activeFilter = filterButtons.some((button) => (button.dataset.projectFilter ?? "").toLowerCase() === initialFilter) ? initialFilter : "all";
+    if (searchInput) searchInput.value = initialParams.get("q") ?? "";
+    filterButtons.forEach((button) => button.classList.toggle("active", (button.dataset.projectFilter ?? "all").toLowerCase() === activeFilter));
 
-    const applyFilters = () => {
+    const syncFilterUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      const keyword = searchInput?.value.trim() ?? "";
+      if (activeFilter === "all") params.delete("tech"); else params.set("tech", activeFilter);
+      if (keyword) params.set("q", keyword); else params.delete("q");
+      const query = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
+    };
+
+    const applyFilters = (updateUrl = false) => {
       const keyword = searchInput?.value.trim().toLowerCase() ?? "";
       let visible = 0;
       projectItems.forEach((item) => {
@@ -161,12 +195,14 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       });
       noResult?.classList.toggle("show", visible === 0);
       if (toolbarStatus) toolbarStatus.textContent = activeFilter === "all" ? (keyword ? `SEARCH: ${keyword.toUpperCase()}` : "ALL PROJECTS") : `FILTER: ${activeFilter.toUpperCase()}`;
+      if (updateUrl) syncFilterUrl();
     };
 
     searchButton?.addEventListener("click", () => { searchWrapper?.classList.toggle("open"); if (searchWrapper?.classList.contains("open")) window.setTimeout(() => searchInput?.focus(), 220); }, { signal: controller.signal });
-    searchInput?.addEventListener("input", applyFilters, { signal: controller.signal });
+    searchInput?.addEventListener("input", () => applyFilters(true), { signal: controller.signal });
     filterButton?.addEventListener("click", () => { const open = !filterPanel?.classList.contains("open"); filterPanel?.classList.toggle("open", open); filterButton.setAttribute("aria-expanded", String(open)); }, { signal: controller.signal });
-    filterButtons.forEach((button) => button.addEventListener("click", () => { activeFilter = button.dataset.projectFilter ?? "all"; filterButtons.forEach((item) => item.classList.toggle("active", item === button)); applyFilters(); }, { signal: controller.signal }));
+    filterButtons.forEach((button) => button.addEventListener("click", () => { activeFilter = (button.dataset.projectFilter ?? "all").toLowerCase(); filterButtons.forEach((item) => item.classList.toggle("active", item === button)); applyFilters(true); }, { signal: controller.signal }));
+    applyFilters();
 
     const revealObserver = "IntersectionObserver" in window ? new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("in-view"); revealObserver.unobserve(entry.target); } }), { threshold: 0.1, rootMargin: "0px 0px -36px" }) : null;
     document.querySelectorAll(".reveal").forEach((element) => revealObserver ? revealObserver.observe(element) : element.classList.add("in-view"));
@@ -219,7 +255,15 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
     };
     document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
       let clickTimer: number | undefined;
-      card.addEventListener("click", () => {
+      card.addEventListener("pointermove", (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+        card.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+      }, { signal: controller.signal, passive: true });
+      card.addEventListener("click", (event) => {
+        const rect = card.getBoundingClientRect();
+        const color = getComputedStyle(card).getPropertyValue("--project-color").trim() || "#9bdcff";
+        window.dispatchEvent(new CustomEvent("archive:burst", { detail: { x: event.clientX || rect.left + rect.width * 0.5, y: event.clientY || rect.top + rect.height * 0.5, color } }));
         window.clearTimeout(clickTimer);
         clickTimer = window.setTimeout(() => {
           if (detailOverlay?.classList.contains("show") && activeProjectCard === card) openArticle(card);

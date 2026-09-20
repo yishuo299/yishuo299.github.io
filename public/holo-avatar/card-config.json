@@ -1,0 +1,25 @@
+{
+  "title": "燚燿",
+  "subtitle": "个人项目档案",
+  "technique": "Build / Learn / Repeat",
+  "tagline": "记录项目，也记录成长。",
+  "edition": "01 / 01",
+  "collection": "Project Archive",
+  "description": "用于博客主页的交互式全息头像卡片。",
+  "assets": {
+    "subject": "./assets/subject.png",
+    "background": "./assets/background.png",
+    "text": "./assets/text.png",
+    "lineart": "./assets/lineart.png"
+  },
+  "parameters": {
+    "subjectScale": 1.08,
+    "subjectDepth": 0.42,
+    "backgroundDepth": -0.24,
+    "foil": 0.58
+  },
+  "safeArea": {
+    "scale": 1,
+    "offset": [0, 0]
+  }
+}
