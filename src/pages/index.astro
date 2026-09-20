@@ -253,13 +253,26 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       const frame = (now: number) => { const ratio = Math.min(1, (now - start) / 520); const eased = 1 - Math.pow(1 - ratio, 3); if (clickProgress) clickProgress.style.width = `${Math.round(eased * 100)}%`; if (ratio < 1) requestAnimationFrame(frame); else window.setTimeout(() => { clickLoader?.classList.remove("show"); clickLoader?.setAttribute("aria-hidden", "true"); showDetail(card); }, 120); };
       requestAnimationFrame(frame);
     };
+    const canTiltProjectCards = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
       let clickTimer: number | undefined;
       card.addEventListener("pointermove", (event) => {
         const rect = card.getBoundingClientRect();
-        card.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
-        card.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+        const localX = event.clientX - rect.left;
+        const localY = event.clientY - rect.top;
+        card.style.setProperty("--spot-x", `${localX}px`);
+        card.style.setProperty("--spot-y", `${localY}px`);
+        if (canTiltProjectCards) {
+          const rotateY = ((localX / rect.width) - 0.5) * 9;
+          const rotateX = (0.5 - (localY / rect.height)) * 6;
+          card.style.setProperty("--card-rotate-x", `${rotateX.toFixed(2)}deg`);
+          card.style.setProperty("--card-rotate-y", `${rotateY.toFixed(2)}deg`);
+        }
       }, { signal: controller.signal, passive: true });
+      card.addEventListener("pointerleave", () => {
+        card.style.setProperty("--card-rotate-x", "0deg");
+        card.style.setProperty("--card-rotate-y", "0deg");
+      }, { signal: controller.signal });
       card.addEventListener("click", (event) => {
         const rect = card.getBoundingClientRect();
         const color = getComputedStyle(card).getPropertyValue("--project-color").trim() || "#9bdcff";
