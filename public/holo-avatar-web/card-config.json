@@ -1,0 +1,33 @@
+{
+  "title": "燚燿",
+  "subtitle": "",
+  "technique": "个人全息闪卡",
+  "tagline": "清透水墨 · 浅金典藏",
+  "edition": "001 / 001",
+  "collection": "PERSONAL HOLOGRAPHIC CARD",
+  "description": "以青白山水、飞鹤与月轮为景深层次的个人全息典藏卡，背面展示微信号与 QQ 号。",
+  "font": "C:/Windows/Fonts/simkai.ttf",
+  "assets": {
+    "model": "./assets/card.glb",
+    "subject": "./assets/subject.png",
+    "background": "./assets/background.png",
+    "text": "./assets/text.png",
+    "lineart": "./assets/lineart.png",
+    "effects": "./assets/effects.png"
+  },
+  "appearance": {
+    "finish": "pearl"
+  },
+  "parameters": {
+    "subjectScale": 1.1,
+    "subjectDepth": 0.45,
+    "backgroundDepth": -0.1,
+    "effectsScale": 1.0,
+    "effectsDepth": -0.3,
+    "foil": 0.8
+  },
+  "safeArea": {
+    "scale": 1.0,
+    "offset": [0.0, 0.0]
+  }
+}
