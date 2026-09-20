@@ -148,6 +148,9 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         let targetRotateY = 4;
         let rotateX = targetRotateX;
         let rotateY = targetRotateY;
+        let avatarDragging = false;
+        let avatarLastX = 0;
+        let avatarLastY = 0;
         let lastFrameAt = performance.now();
         let randomState = 0x2f6e2b1;
         const seededRandom = () => {
@@ -248,16 +251,21 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
             particleContext.globalCompositeOperation = "source-over";
           }
 
-          if (holoCard) {
-            const idleX = pointerAwake ? 0 : Math.sin(now * 0.00045) * 1.5;
-            const idleY = pointerAwake ? 0 : Math.cos(now * 0.00038) * 2.2;
-            const follow = 1 - Math.exp(-10 * dt);
-            rotateX += (targetRotateX + idleX - rotateX) * follow;
-            rotateY += (targetRotateY + idleY - rotateY) * follow;
+          const applyHoloAvatar = () => {
+            if (!holoCard) return;
             holoCard.style.setProperty("--rotate-x", `${rotateX.toFixed(3)}deg`);
             holoCard.style.setProperty("--rotate-y", `${rotateY.toFixed(3)}deg`);
             holoCard.style.setProperty("--depth-x", `${(rotateY * 0.42).toFixed(3)}px`);
             holoCard.style.setProperty("--depth-y", `${(-rotateX * 0.42).toFixed(3)}px`);
+          };
+
+          if (holoCard) {
+            const idleX = pointerAwake ? 0 : Math.sin(now * 0.00045) * 1.5;
+            const idleY = pointerAwake ? 0 : Math.cos(now * 0.00038) * 2.2;
+            const follow = avatarDragging ? 1 : 1 - Math.exp(-10 * dt);
+            rotateX += (targetRotateX + idleX - rotateX) * follow;
+            rotateY += (targetRotateY + idleY - rotateY) * follow;
+            applyHoloAvatar();
           }
         };
         const tickMotion = (now: number) => {
@@ -274,22 +282,53 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           const detail = (event as CustomEvent<{ x?: number; y?: number; color?: string }>).detail ?? {};
           emitBurst(detail.x ?? viewportWidth * 0.5, detail.y ?? viewportHeight * 0.5, detail.color);
         }, { signal: controller.signal });
+        const syncHoloAvatarImmediately = () => {
+          rotateX = targetRotateX;
+          rotateY = targetRotateY;
+          holoCard?.style.setProperty("--rotate-x", `${rotateX.toFixed(3)}deg`);
+          holoCard?.style.setProperty("--rotate-y", `${rotateY.toFixed(3)}deg`);
+          holoCard?.style.setProperty("--depth-x", `${(rotateY * 0.42).toFixed(3)}px`);
+          holoCard?.style.setProperty("--depth-y", `${(-rotateX * 0.42).toFixed(3)}px`);
+        };
+        holoAvatar?.addEventListener("pointerdown", (event) => {
+          if (event.button !== 0 && event.pointerType === "mouse") return;
+          avatarDragging = true;
+          pointerAwake = true;
+          avatarLastX = event.clientX;
+          avatarLastY = event.clientY;
+          holoAvatar.classList.add("is-active", "is-dragging");
+          holoAvatar.setPointerCapture(event.pointerId);
+        }, { signal: controller.signal });
         holoAvatar?.addEventListener("pointermove", (event) => {
-          if (!finePointer || reduceMotion) return;
           const rect = holoAvatar.getBoundingClientRect();
           const px = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
           const py = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-          targetRotateX = (0.5 - py) * 15;
-          targetRotateY = (px - 0.5) * 18;
+          if (avatarDragging) {
+            const dx = event.clientX - avatarLastX;
+            const dy = event.clientY - avatarLastY;
+            targetRotateY += dx * 0.72;
+            targetRotateX += dy * 0.72;
+            avatarLastX = event.clientX;
+            avatarLastY = event.clientY;
+            if (reduceMotion) syncHoloAvatarImmediately();
+          } else if (finePointer && !reduceMotion) {
+            targetRotateX = (0.5 - py) * 15;
+            targetRotateY = (px - 0.5) * 18;
+          }
           holoCard?.style.setProperty("--light-x", `${(px * 100).toFixed(2)}%`);
           holoCard?.style.setProperty("--light-y", `${(py * 100).toFixed(2)}%`);
           holoCard?.style.setProperty("--foil-shift", `${((px + py) * 50).toFixed(2)}%`);
-        }, { signal: controller.signal, passive: true });
+        }, { signal: controller.signal });
+        const stopAvatarDrag = (event: PointerEvent) => {
+          avatarDragging = false;
+          holoAvatar?.classList.remove("is-dragging");
+          try { holoAvatar?.releasePointerCapture(event.pointerId); } catch {}
+        };
+        holoAvatar?.addEventListener("pointerup", stopAvatarDrag, { signal: controller.signal });
+        holoAvatar?.addEventListener("pointercancel", stopAvatarDrag, { signal: controller.signal });
         holoAvatar?.addEventListener("pointerenter", () => { pointerAwake = true; holoAvatar.classList.add("is-active"); }, { signal: controller.signal });
         holoAvatar?.addEventListener("pointerleave", () => {
-          pointerAwake = false;
-          targetRotateX = -2.5;
-          targetRotateY = 4;
+          if (!avatarDragging) pointerAwake = false;
           holoAvatar.classList.remove("is-active");
         }, { signal: controller.signal });
         document.addEventListener("visibilitychange", () => {

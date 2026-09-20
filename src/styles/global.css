@@ -209,22 +209,27 @@ body.day .bottom-gradient { background: linear-gradient(to bottom, transparent, 
 .archive-home { width: 100%; margin-inline: auto; }
 .archive-hero { min-height: 650px; min-height: max(650px,calc(100dvh - 94px)); display: grid; grid-template-columns: minmax(300px,.82fr) minmax(0,1.18fr); align-items: center; gap: clamp(64px,9vw,126px); padding: 54px 0 24px; }
 .hero-profile { display: flex; flex-direction: column; align-items: flex-start; }
-.holo-avatar-shell { --light-x: 50%; --light-y: 42%; --foil-shift: 50%; position: relative; width: min(248px,68vw); aspect-ratio: 2 / 3; margin: 0 0 28px; perspective: 1100px; isolation: isolate; }
+.holo-avatar-shell { --light-x: 50%; --light-y: 42%; --foil-shift: 50%; position: relative; width: min(248px,68vw); aspect-ratio: 2 / 3; margin: 0 0 28px; perspective: 1100px; isolation: isolate; cursor: grab; touch-action: none; }
+.holo-avatar-shell.is-dragging { cursor: grabbing; }
 .holo-avatar-shell::before { position: absolute; right: 8%; bottom: -9%; left: 8%; z-index: -1; height: 20%; border-radius: 50%; background: rgba(7,12,25,.46); filter: blur(20px); transform: scaleX(.92); content: ""; }
 .holo-avatar-shell::after { position: absolute; inset: 12% -10% auto auto; z-index: 8; width: 40%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle,rgba(255,255,255,.48),rgba(117,207,255,.1) 22%,transparent 65%); opacity: .46; transform: translate3d(0,0,70px); content: ""; pointer-events: none; transition: opacity var(--duration-standard) ease; }
 .holo-avatar-shell.is-active::after { opacity: .82; }
-.holo-avatar-card { --rotate-x: -2.5deg; --rotate-y: 4deg; --depth-x: 1.7px; --depth-y: 1px; position: absolute; inset: 0; border: 1px solid rgba(255,255,255,.34); border-radius: 28px; background: #c5d7dd; box-shadow: inset 0 1px rgba(255,255,255,.48), 0 30px 75px rgba(4,9,20,.35); transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) translateZ(0); transform-style: preserve-3d; backface-visibility: hidden; }
-.holo-avatar-depth, .holo-avatar-foil, .holo-avatar-text { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 27px; pointer-events: none; }
+.holo-avatar-card { --rotate-x: -2.5deg; --rotate-y: 4deg; --depth-x: 1.7px; --depth-y: 1px; --avatar-art-scale: 1.1; --avatar-subject-depth: 45px; --avatar-effects-depth: -30px; --avatar-bg-depth: -10px; --avatar-foil: .8; position: absolute; inset: 0; border: 1px solid rgba(255,255,255,.34); border-radius: 28px; background: #c5d7dd; box-shadow: inset 0 1px rgba(255,255,255,.48), 0 30px 75px rgba(4,9,20,.35); transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) translateZ(0); transform-style: preserve-3d; }
+.holo-avatar-depth, .holo-avatar-foil, .holo-avatar-text, .holo-avatar-back { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 27px; pointer-events: none; }
 .holo-avatar-depth { overflow: hidden; backface-visibility: hidden; }
 .holo-avatar-depth img, .holo-avatar-text { display: block; width: 100%; height: 100%; object-fit: cover; }
-.holo-avatar-background { transform: translate3d(calc(var(--depth-x) * -.55),calc(var(--depth-y) * -.55),-22px) scale(1.045); }
+.holo-avatar-background { transform: translate3d(calc(var(--depth-x) * -.10),calc(var(--depth-y) * -.10),var(--avatar-bg-depth)) scale(var(--avatar-art-scale)); }
 .holo-avatar-background::after { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(7,18,32,.02),rgba(7,18,32,.18)); content: ""; }
-.holo-avatar-subject { transform: translate3d(var(--depth-x),var(--depth-y),36px) scale(1.035); }
-.holo-avatar-lineart { opacity: .22; mix-blend-mode: screen; transform: translate3d(calc(var(--depth-x) * 1.18),calc(var(--depth-y) * 1.18),48px) scale(1.04); }
+.holo-avatar-subject { transform: translate3d(calc(var(--depth-x) * .45),calc(var(--depth-y) * .45),var(--avatar-subject-depth)) scale(var(--avatar-art-scale)); }
+.holo-avatar-effects { opacity: .9; mix-blend-mode: screen; transform: translate3d(calc(var(--depth-x) * -.3),calc(var(--depth-y) * -.3),var(--avatar-effects-depth)) scale(var(--avatar-art-scale)); }
+.holo-avatar-lineart { opacity: .22; mix-blend-mode: screen; transform: translate3d(calc(var(--depth-x) * .45),calc(var(--depth-y) * .45),50px) scale(var(--avatar-art-scale)); }
 .holo-avatar-lineart img { filter: invert(1) contrast(1.35); }
-.holo-avatar-foil { z-index: 5; overflow: hidden; background: radial-gradient(circle at var(--light-x) var(--light-y),rgba(255,255,255,.72),transparent 19%), conic-gradient(from 210deg at var(--light-x) var(--light-y),rgba(100,215,255,.05),rgba(255,208,121,.25),rgba(244,153,255,.22),rgba(113,212,255,.28),rgba(255,255,255,.08),rgba(100,215,255,.05)); background-position: var(--foil-shift) var(--foil-shift); background-size: 140% 140%; mix-blend-mode: color-dodge; opacity: .48; transform: translateZ(54px); }
+.holo-avatar-foil { z-index: 5; overflow: hidden; background: radial-gradient(circle at var(--light-x) var(--light-y),rgba(255,255,255,.78),transparent 19%), conic-gradient(from 210deg at var(--light-x) var(--light-y),rgba(175,236,255,.14),rgba(255,242,211,.32),rgba(241,210,255,.28),rgba(190,235,255,.34),rgba(255,255,255,.16),rgba(175,236,255,.14)); background-position: var(--foil-shift) var(--foil-shift); background-size: 140% 140%; mix-blend-mode: screen; opacity: var(--avatar-foil); transform: translateZ(54px); }
 .holo-avatar-foil::after { position: absolute; inset: -35%; background: repeating-linear-gradient(116deg,transparent 0 8%,rgba(255,255,255,.18) 9%,transparent 10% 17%); background-position: var(--light-x) var(--light-y); transform: translate3d(-2%,-2%,0); content: ""; }
 .holo-avatar-text { z-index: 7; object-fit: fill; transform: translateZ(62px); }
+.holo-avatar-back { z-index: 0; display: grid; place-content: center; gap: 12px; padding: 22px; border: 1px solid rgba(255,255,255,.24); background: linear-gradient(145deg,rgba(242,251,250,.96),rgba(255,245,219,.94)); color: #31403a; text-align: center; transform: rotateY(180deg) translateZ(3px); backface-visibility: hidden; box-shadow: inset 0 0 0 1px rgba(190,151,77,.18); }
+.holo-avatar-back span { color: #9a7330; font-family: KaiTi, "STKaiti", serif; font-size: 34px; font-weight: 700; letter-spacing: .16em; }
+.holo-avatar-back small { color: rgba(49,64,58,.82); font-size: 11px; letter-spacing: .13em; }
 .holo-avatar-spark { position: absolute; z-index: 6; width: 9px; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle,#fff 0 18%,rgba(173,232,255,.72) 19% 36%,transparent 68%); box-shadow: 0 0 16px rgba(169,225,255,.66); pointer-events: none; transform: translateZ(70px); animation: holoSpark 3.4s ease-in-out infinite; }
 .spark-one { top: 23%; left: 16%; }
 .spark-two { top: 56%; right: 12%; animation-delay: -1.1s; }
