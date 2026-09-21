@@ -138,10 +138,23 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
   const makeNebulaSpiral = () => {
     const arms = 2 + Math.floor(random() * 11);
     const turns = between(2.2, 4.6);
-    const pointCount = lowPower
-      ? clamp(arms * 20, 110, 240)
-      : clamp(arms * 32, 190, 420);
-    return { arms, turns, points: makeSpiral(pointCount, 1.12, arms, turns) };
+    const pointsPerArm = lowPower ? 38 : 64;
+    const points: SpiralPoint[] = [];
+    for (let arm = 0; arm < arms; arm += 1) {
+      for (let index = 0; index < pointsPerArm; index += 1) {
+        const progress = clamp((index + between(-0.24, 0.24)) / (pointsPerArm - 1), 0, 1);
+        const distance = 0.035 + progress * 1.085 + between(-0.008, 0.008);
+        const angle = arm * TAU / arms + progress * turns + between(-0.026, 0.026);
+        points.push({
+          x: Math.cos(angle) * distance,
+          y: Math.sin(angle) * distance * 0.54,
+          size: between(0.65, 1.75),
+          alpha: (1 - progress * 0.38) * between(0.68, 1),
+          phase: between(0, TAU),
+        });
+      }
+    }
+    return { arms, turns, points };
   };
 
   const createNebula = (x: number, y: number, generated = false): Nebula => {
@@ -376,28 +389,6 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       context.translate(x, y);
       context.rotate(nebula.phase + colors.rotation * 0.5 + (reducedMotion ? 0 : time * nebula.speed));
       context.scale(1, nebula.squash);
-      context.beginPath();
-      const curveSteps = lowPower ? 30 : 42;
-      for (let arm = 0; arm < nebula.arms; arm += 1) {
-        for (let step = 0; step <= curveSteps; step += 1) {
-          const progress = step / curveSteps;
-          const distance = 0.035 + progress * 1.08;
-          const angle = arm * TAU / nebula.arms + progress * nebula.turns;
-          const curveX = Math.cos(angle) * distance * radius;
-          const curveY = Math.sin(angle) * distance * radius * 0.54;
-          if (step === 0) context.moveTo(curveX, curveY); else context.lineTo(curveX, curveY);
-        }
-      }
-      context.lineCap = "round";
-      context.lineJoin = "round";
-      context.strokeStyle = `hsl(${hue} 96% 78%)`;
-      context.globalAlpha = Math.min(0.5, 0.23 * life * nebula.boost);
-      context.lineWidth = lowPower ? 3 : 4.2;
-      context.stroke();
-      context.strokeStyle = `hsl(${hue} 100% 94%)`;
-      context.globalAlpha = Math.min(0.82, 0.48 * life * nebula.boost);
-      context.lineWidth = lowPower ? 0.8 : 1.15;
-      context.stroke();
       context.fillStyle = `hsl(${hue} 94% 91%)`;
       for (const point of nebula.points) {
         const pointSize = point.size * (lowPower ? 1.35 : 1.55);
