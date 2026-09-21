@@ -137,19 +137,23 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
 
   const makeNebulaSpiral = () => {
     const arms = 2 + Math.floor(random() * 11);
-    const turns = between(2.2, 4.6);
-    const pointsPerArm = lowPower ? 38 : 64;
+    const turns = between(2.8, 5.2);
+    const pointsPerArm = lowPower ? 30 : 48;
     const points: SpiralPoint[] = [];
     for (let arm = 0; arm < arms; arm += 1) {
       for (let index = 0; index < pointsPerArm; index += 1) {
-        const progress = clamp((index + between(-0.24, 0.24)) / (pointsPerArm - 1), 0, 1);
-        const distance = 0.035 + progress * 1.085 + between(-0.008, 0.008);
-        const angle = arm * TAU / arms + progress * turns + between(-0.026, 0.026);
+        const progress = clamp((index + between(-0.34, 0.34)) / (pointsPerArm - 1), 0, 1);
+        if (progress > 0.58 && random() < 0.18 + (progress - 0.58) * 0.28) continue;
+        const armWidth = 0.008 + progress * 0.034;
+        const distance = 0.035 + Math.pow(progress, 1.16) * 1.085 + between(-armWidth, armWidth);
+        const angularWidth = 0.018 + progress * 0.07;
+        const angle = arm * TAU / arms + progress * turns + between(-angularWidth, angularWidth);
+        const brightStar = random() < 0.055;
         points.push({
           x: Math.cos(angle) * distance,
           y: Math.sin(angle) * distance * 0.54,
-          size: between(0.65, 1.75),
-          alpha: (1 - progress * 0.38) * between(0.68, 1),
+          size: brightStar ? between(1.45, 2.15) : between(0.48, 1.18),
+          alpha: (1 - progress * 0.52) * between(brightStar ? 0.88 : 0.58, 1),
           phase: between(0, TAU),
         });
       }
@@ -391,7 +395,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       context.scale(1, nebula.squash);
       context.fillStyle = `hsl(${hue} 94% 91%)`;
       for (const point of nebula.points) {
-        const pointSize = point.size * (lowPower ? 1.35 : 1.55);
+        const pointSize = point.size * (lowPower ? 1.08 : 1.25);
         context.globalAlpha = Math.min(1, point.alpha * colors.star * 1.08 * life * nebula.boost);
         context.fillRect(point.x * radius * 1.08 - pointSize * 0.5, point.y * radius * 1.08 - pointSize * 0.5, pointSize, pointSize);
       }
