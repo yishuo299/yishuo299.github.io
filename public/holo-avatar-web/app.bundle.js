@@ -31472,6 +31472,7 @@ async function init() {
   }
   if (config.sourceMode === "relief" && !reliefLayers.subject.length) throw Error("\u7F3A\u5C11\u72EC\u7ACB\u4EBA\u7269\u5C42\uFF0C\u8BF7\u91CD\u65B0\u751F\u6210\u6A21\u578B");
   addShadow();
+  if (embedMode && shadow) shadow.visible = false;
   const settingsHome = $("parameter-panel").parentElement;
   const responsiveSettings = () => {
     const panel = $("parameter-panel");
@@ -31797,6 +31798,13 @@ function setupControls() {
     "wheel",
     (e) => {
       e.preventDefault();
+      if (document.body.classList.contains("avatar-embed")) {
+        try {
+          window.parent.scrollBy({ top: e.deltaY, left: 0, behavior: "auto" });
+        } catch {
+        }
+        return;
+      }
       zoom = MathUtils.clamp(zoom - e.deltaY * 1e-3, 0.82, 1.05);
       resize();
     },

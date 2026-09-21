@@ -1,37 +1,121 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import projects from "../data/projects.json";
+import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
 
-const techColors: Record<string, string> = {
-  Python: "#3776ab",
-  STM32: "#4f8cff",
-  Django: "#44b78b",
-  Vue: "#42b883",
-  "Spring Boot": "#6db33f",
-  MySQL: "#4479a1",
-  Android: "#3ddc84",
-};
+const TECH_STACK_FILTERS = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android"];
+const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s*\d+$/, "")] ?? FALLBACK_TECH_META;
 ---
 
-<BaseLayout title="项目" sideBarActiveItemID="projects">
-  <section class="standalone-section">
-    <header class="page-heading">
-      <div class="section-label">PROJECT ARCHIVE</div>
-      <h1>Projects</h1>
-      <p>按技术栈整理的项目实践与学习记录。</p>
+<BaseLayout title="项目宇宙" description="燚燿的全部项目档案，可按名称和技术栈筛选。" sideBarActiveItemID="projects">
+  <section class="project-archive-page">
+    <header class="project-archive-hero">
+      <div class="section-label">ALL PROJECTS</div>
+      <h1>Project Universe</h1>
+      <p>浏览全部项目，使用名称搜索或沿技术轨道快速筛选。</p>
+      <div class="project-archive-meta"><span>{String(projects.length).padStart(2, "0")} PROJECTS</span><span>06 ORBITS</span></div>
     </header>
 
-    <div class="standalone-projects">
-      {projects.map((project, index) => (
-        <article class="standalone-card" style={`--project-color:${techColors[project.name] ?? "#8ab4ff"}`}>
-          <div class="project-top"><span class="project-keyword">{project.name}</span></div>
-          <h2>{project.title}</h2>
-          <p>{project.description}</p>
-          <p class="project-detail">{project.detail}</p>
-          {(project as any).articleUrl && <a class="project-read-link" href={(project as any).articleUrl}>阅读完整文章 ↗</a>}
-          <div class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</div>
-        </article>
-      ))}
+    <div class="project-filter-dock" aria-label="项目筛选工具">
+      <label class="project-name-search" for="projectNameSearch">
+        <span>SEARCH BY NAME</span>
+        <input id="projectNameSearch" type="search" placeholder="输入项目名称..." autocomplete="off" />
+      </label>
+      <div class="project-tech-filters" role="group" aria-label="按技术栈筛选">
+        <button class="active" type="button" data-archive-filter="all">全部</button>
+        {TECH_STACK_FILTERS.map((tech) => (
+          <button type="button" data-archive-filter={tech} style={`--filter-color:${getTechMeta(tech).color}`}>
+            <span set:html={getTechMeta(tech).svg}></span>{tech}
+          </button>
+        ))}
+      </div>
+      <div class="project-filter-result" id="projectFilterResult" aria-live="polite">显示 {projects.length} 个项目</div>
     </div>
+
+    <div class="project-archive-grid" id="projectArchiveGrid">
+      {projects.map((project, index) => {
+        const primary = getTechMeta(project.tags[0] ?? project.name);
+        const articleUrl = (project as any).articleUrl as string | undefined;
+        const searchable = `${project.title} ${project.name} ${project.description} ${project.tags.join(" ")}`.toLowerCase();
+        const categories = `|${[project.name, ...project.tags].map((tag) => tag.toLowerCase()).join("|")}|`;
+        return (
+          <article class="project-archive-card" data-archive-project data-search={searchable} data-categories={categories} data-article-url={articleUrl ?? ""} role={articleUrl ? "link" : undefined} tabindex={articleUrl ? "0" : undefined} style={`--project-color:${primary.color};--archive-index:${index}`}>
+            <div class="archive-card-index">{String(index + 1).padStart(2, "0")}</div>
+            <div class="archive-card-icon" aria-hidden="true" set:html={primary.svg}></div>
+            <div class="archive-card-copy">
+              <div class="project-keyword">{project.name}</div>
+              <h2>{project.title}</h2>
+              <p>{project.description}</p>
+              <div class="project-footer">{project.tags.map((tag) => <span class="tech-tag">{tag}</span>)}</div>
+            </div>
+            <div class="archive-card-actions">
+              {(project as any).projectUrl && <a href={(project as any).projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>}
+              {articleUrl && <a class="primary" href={articleUrl} data-book-transition>阅读文章 ↗</a>}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+    <div class="project-archive-empty" id="projectArchiveEmpty" hidden>当前轨道没有匹配的项目。</div>
   </section>
 </BaseLayout>
+
+<script>
+  let archiveProjectCleanup: () => void = () => {};
+
+  const initProjectArchive = () => {
+    archiveProjectCleanup();
+    const controller = new AbortController();
+    const search = document.getElementById("projectNameSearch") as HTMLInputElement | null;
+    const result = document.getElementById("projectFilterResult");
+    const empty = document.getElementById("projectArchiveEmpty");
+    const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-archive-project]"));
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-archive-filter]"));
+    if (!search || !cards.length) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedTech = params.get("tech")?.toLowerCase() ?? "all";
+    let activeTech = buttons.some((button) => (button.dataset.archiveFilter ?? "").toLowerCase() === requestedTech) ? requestedTech : "all";
+    search.value = params.get("q") ?? "";
+
+    const applyFilter = (syncUrl = false) => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach((card) => {
+        const nameMatch = !query || (card.dataset.search ?? "").includes(query);
+        const techMatch = activeTech === "all" || (card.dataset.categories ?? "").includes(`|${activeTech}|`);
+        const show = nameMatch && techMatch;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      buttons.forEach((button) => button.classList.toggle("active", (button.dataset.archiveFilter ?? "all").toLowerCase() === activeTech));
+      if (result) result.textContent = `显示 ${visible} 个项目`;
+      if (empty) empty.hidden = visible !== 0;
+      if (syncUrl) {
+        const next = new URLSearchParams();
+        if (activeTech !== "all") next.set("tech", activeTech);
+        if (query) next.set("q", search.value.trim());
+        window.history.replaceState({}, "", `${window.location.pathname}${next.size ? `?${next}` : ""}`);
+      }
+    };
+
+    search.addEventListener("input", () => applyFilter(true), { signal: controller.signal });
+    buttons.forEach((button) => button.addEventListener("click", () => {
+      activeTech = (button.dataset.archiveFilter ?? "all").toLowerCase();
+      applyFilter(true);
+    }, { signal: controller.signal }));
+    const openCardArticle = (card: HTMLElement) => {
+      const url = card.dataset.articleUrl;
+      if (url) window.dispatchEvent(new CustomEvent("archive:open-article", { detail: { url } }));
+    };
+    cards.forEach((card) => {
+      card.addEventListener("click", (event) => { if (!(event.target as HTMLElement).closest("a,button,input")) openCardArticle(card); }, { signal: controller.signal });
+      card.addEventListener("keydown", (event) => { if ((event.key === "Enter" || event.key === " ") && !(event.target as HTMLElement).closest("a,button,input")) { event.preventDefault(); openCardArticle(card); } }, { signal: controller.signal });
+    });
+    applyFilter();
+    archiveProjectCleanup = () => controller.abort();
+  };
+
+  document.addEventListener("astro:page-load", initProjectArchive);
+  if (document.readyState === "complete") initProjectArchive();
+</script>

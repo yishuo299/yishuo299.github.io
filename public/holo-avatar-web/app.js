@@ -427,6 +427,7 @@ async function init() {
   }
   if (config.sourceMode === "relief" && !reliefLayers.subject.length) throw Error("缺少独立人物层，请重新生成模型");
   addShadow();
+  if (embedMode && shadow) shadow.visible = false;
   const settingsHome=$('parameter-panel').parentElement;
   const responsiveSettings=()=>{
     const panel=$('parameter-panel');
@@ -780,6 +781,10 @@ function setupControls() {
     "wheel",
     (e) => {
       e.preventDefault();
+      if (document.body.classList.contains("avatar-embed")) {
+        try { window.parent.scrollBy({ top: e.deltaY, left: 0, behavior: "auto" }); } catch {}
+        return;
+      }
       zoom = THREE.MathUtils.clamp(zoom - e.deltaY * 0.001, 0.82, 1.05);
       resize();
     },

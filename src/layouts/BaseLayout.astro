@@ -25,21 +25,18 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
-    <div class="scene" id="scene" aria-hidden="true" style="--sky-top:#78b9e5;--sky-mid:#9ed2ec;--sky-bottom:#d8c7aa;--sun-x:50%;--sun-y:30%;--moon-x:75%;--moon-y:30%;--sun-opacity:1;--moon-opacity:0;--stars-opacity:0;--cloud-opacity:.8;--sky-glow:.8">
-      <div class="sky"></div>
+    <div class="scene galactic-scene" id="scene" aria-hidden="true" style="--sky-top:#020208;--sky-mid:#030513;--sky-bottom:#05081c;--stars-opacity:.8">
+      <canvas class="galactic-background" id="galacticBackground"></canvas>
+      <div class="cursor-aura" id="cursorAura"></div>
       <canvas class="ambient-particles" id="ambientParticles"></canvas>
       <div class="stars" id="stars"></div>
-      <div class="sky-ribbon sky-ribbon-one"></div><div class="sky-ribbon sky-ribbon-two"></div>
-      <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div>
-      <div class="sun-glow"></div><div class="sun"></div><div class="moon"></div>
-      <div class="horizon"><div class="mountains-back"></div><div class="mountains-front"></div></div>
-      <div class="bottom-gradient"></div>
     </div>
     <div class="scrim" id="scrim" aria-hidden="true"></div>
 
     {isHome && (
       <div id="loader" class="archive-loader archive-loading" aria-label="正在加载项目档案" aria-live="polite">
         <div class="loader-inner">
+          <div class="loader-sigil" aria-hidden="true"><i></i><i></i><span>Y</span></div>
           <div class="loader-title">INITIALIZING PROJECT ARCHIVE</div>
           <div class="folder-container" id="folderContainer">
             {loaderTechs.map((tech) => {
@@ -51,6 +48,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           <div class="progress-wrapper"><div id="progress"></div></div>
           <div class="progress-bottom"><span>LOADING TECH STACK</span><span id="progressText">0%</span></div>
         </div>
+        <canvas class="welcome-particle-canvas" id="welcomeParticles" aria-hidden="true"></canvas>
         <div class="welcome" id="welcome" aria-hidden="true"></div>
       </div>
     )}
@@ -59,7 +57,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
       <a class="skip-link" href="#home">跳到主要内容</a>
       <nav class="archive-nav" aria-label="主导航">
         <a class="nav-logo" href="/" aria-label="燚燿项目档案首页">Y燚</a>
-        <div class="nav-links"><a href="/">HOME</a><a href="/#projects">PROJECTS</a><a href="/#about">ABOUT</a></div>
+        <div class="nav-links"><a href="/">HOME</a><a href="/projects/">PROJECTS</a><a href="/#about">ABOUT</a></div>
         <a class="nav-github" href="https://github.com/yishuo299" target="_blank" rel="noreferrer">GITHUB ↗</a>
       </nav>
       <main class:list={["archive-main", isHome ? "archive-home" : "archive-content"]}><slot /></main>
@@ -75,18 +73,31 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         <button class="bg-live" id="bgLive" type="button">回到实时时间</button>
       </aside>
     )}
+    <div id="bookLoader" class="book-loader" aria-hidden="true">
+      <div class="book-loader-inner">
+        <div class="book" aria-hidden="true">
+          <span class="book-cover"></span><span class="book-page page-one"></span><span class="book-page page-two"></span><span class="book-page page-three"></span>
+        </div>
+        <div class="book-loader-text">OPENING ARTICLE</div>
+      </div>
+    </div>
     <div class="copy-status" id="copyStatus" role="status" aria-live="polite"></div>
 
     <script>
+      import { navigate } from "astro:transitions/client";
+      import { createGalacticBackground } from "../scripts/galacticBackground";
+
       let archiveCleanup: () => void = () => {};
 
       const initArchive = () => {
         archiveCleanup();
+        document.body.classList.remove("modal-open", "cosmic-transitioning", "motion-warmup", "heavy-warmup");
         const controller = new AbortController();
         const timers: number[] = [];
         const intervals: number[] = [];
-        const particles: HTMLElement[] = [];
         let motionFrame = 0;
+        let welcomeFrame = 0;
+        let globalArticleTimer = 0;
         let cancelled = false;
         const lockPage = () => {
           document.documentElement.classList.add("archive-loading-active");
@@ -104,6 +115,8 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const scrim = document.getElementById("scrim") as HTMLElement | null;
         const stars = document.getElementById("stars") as HTMLElement | null;
         const ambientCanvas = document.getElementById("ambientParticles") as HTMLCanvasElement | null;
+        const galacticCanvas = document.getElementById("galacticBackground") as HTMLCanvasElement | null;
+        const cursorAura = document.getElementById("cursorAura") as HTMLElement | null;
         const bigTime = document.getElementById("bigTime");
         const bigDate = document.getElementById("bigDate");
         const bigPeriod = document.getElementById("bigPeriod");
@@ -115,17 +128,19 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const bgClose = document.getElementById("bgClose");
         const clockAdjust = document.getElementById("clockAdjust");
         const copyStatus = document.getElementById("copyStatus");
-        if (!scene || !scrim || !stars || !ambientCanvas) return;
+        if (!scene || !scrim || !stars || !ambientCanvas || !galacticCanvas) return;
+
+        const galacticBackground = createGalacticBackground(galacticCanvas);
 
         stars.replaceChildren();
         const compactScreen = window.matchMedia("(max-width: 600px)").matches;
         const navigatorWithMemory = navigator as Navigator & { deviceMemory?: number };
         const lowPowerDevice = (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4) || (navigatorWithMemory.deviceMemory ?? 8) <= 4;
-        const starCount = compactScreen ? 28 : lowPowerDevice ? 42 : 64;
+          const starCount = 0;
         const starFragment = document.createDocumentFragment();
         for (let index = 0; index < starCount; index += 1) {
           const star = document.createElement("i");
-          star.className = "star"; star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 65}%`;
+            star.className = "star"; star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 96}%`;
           const size = Math.random() > 0.82 ? 3 : 2; star.style.width = `${size}px`; star.style.height = `${size}px`; starFragment.appendChild(star);
         }
         stars.appendChild(starFragment);
@@ -143,6 +158,8 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         let viewportHeight = window.innerHeight;
         let pointerX = viewportWidth * 0.5;
         let pointerY = viewportHeight * 0.45;
+        let auraX = pointerX;
+        let auraY = pointerY;
         let pointerAwake = false;
         let targetRotateX = -2.5;
         let targetRotateY = 4;
@@ -160,16 +177,16 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const resetAmbientPoints = () => {
           ambientPoints.length = 0;
           randomState = 0x2f6e2b1;
-          const count = compactScreen ? 30 : lowPowerDevice ? 42 : 68;
+          const count = compactScreen ? 36 : lowPowerDevice ? 54 : 78;
           for (let index = 0; index < count; index += 1) {
             const depth = 0.35 + seededRandom() * 0.9;
             ambientPoints.push({
               x: seededRandom() * viewportWidth,
               y: seededRandom() * viewportHeight,
-              vx: (seededRandom() - 0.5) * 5.5 * depth,
-              vy: -(2.4 + seededRandom() * 8) * depth,
-              radius: 0.65 + seededRandom() * 1.85,
-              alpha: 0.16 + seededRandom() * 0.38,
+              vx: (seededRandom() - 0.5) * 2.2 * depth,
+              vy: -(0.35 + seededRandom() * 2.1) * depth,
+              radius: 0.45 + seededRandom() * 1.35,
+              alpha: 0.12 + seededRandom() * 0.3,
               phase: seededRandom() * Math.PI * 2,
               depth,
             });
@@ -198,15 +215,28 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           if (burstPoints.length > 90) burstPoints.splice(0, burstPoints.length - 90);
         };
         const drawMotionSurface = (now: number, dt: number, animate: boolean) => {
+          if (document.body.classList.contains("archive-loading-active") || document.body.classList.contains("cosmic-transitioning") || document.body.classList.contains("modal-open")) return;
+          if (cursorAura) {
+            const auraFollow = reduceMotion ? 1 : 1 - Math.exp(-5.5 * dt);
+            auraX += (pointerX - auraX) * auraFollow;
+            auraY += (pointerY - auraY) * auraFollow;
+            cursorAura.style.transform = `translate3d(${auraX.toFixed(1)}px,${auraY.toFixed(1)}px,0) translate(-50%,-50%)`;
+          }
           if (particleContext) {
             particleContext.clearRect(0, 0, viewportWidth, viewportHeight);
             const isDay = document.body.classList.contains("day");
             particleContext.globalCompositeOperation = isDay ? "source-over" : "screen";
-            ambientPoints.forEach((point) => {
+            ambientPoints.forEach((point, pointIndex) => {
               if (animate) {
-                const sway = Math.sin(now * 0.00042 + point.phase) * 2.1;
-                point.x += (point.vx + sway) * dt;
-                point.y += point.vy * dt;
+                const sway = Math.sin(now * 0.00018 + point.phase) * 0.58;
+                const centerX = viewportWidth * 0.52;
+                const centerY = viewportHeight * 0.46;
+                const orbitX = point.x - centerX;
+                const orbitY = point.y - centerY;
+                const orbitDistance = Math.max(80, Math.hypot(orbitX, orbitY));
+                const orbitForce = 1.8 * point.depth;
+                point.x += (point.vx + sway - (orbitY / orbitDistance) * orbitForce) * dt;
+                point.y += (point.vy + (orbitX / orbitDistance) * orbitForce) * dt;
                 if (pointerAwake) {
                   const dx = point.x - pointerX;
                   const dy = point.y - pointerY;
@@ -223,6 +253,14 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
                 if (point.x > viewportWidth + 12) point.x = -12;
               }
               const shimmer = 0.72 + Math.sin(now * 0.0012 + point.phase) * 0.28;
+              if (pointIndex % 5 === 0) {
+                particleContext.beginPath();
+                particleContext.fillStyle = isDay
+                  ? `rgba(45, 132, 168, ${point.alpha * 0.08 * shimmer})`
+                  : `rgba(126, 210, 241, ${point.alpha * 0.13 * shimmer})`;
+                particleContext.arc(point.x, point.y, point.radius * point.depth * 4.8, 0, Math.PI * 2);
+                particleContext.fill();
+              }
               particleContext.beginPath();
               particleContext.fillStyle = isDay
                 ? `rgba(35, 92, 132, ${point.alpha * 0.52 * shimmer})`
@@ -344,29 +382,86 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           const a = hexToRgb(from); const b = hexToRgb(to); const channels = ["r", "g", "b"] as const;
           return `#${channels.map((key) => Math.round(a[key] + (b[key] - a[key]) * amount).toString(16).padStart(2, "0")).join("")}`;
         };
-        const calculateSky = (minutes: number) => {
-          const hour = minutes / 60;
-          const night = ["#101a35", "#1c2d52", "#29374b"], morning = ["#84c1e6", "#c5e4f5", "#f2dfb9"], day = ["#43aef2", "#a9e2ff", "#f9f0d6"], sunset = ["#314e78", "#db8160", "#e7b477"];
-          if (hour < 5) return night;
-          if (hour < 7) { const amount = (hour - 5) / 2; return night.map((color, index) => mixColor(color, morning[index], amount)); }
-          if (hour < 16) { const amount = Math.min(1, (hour - 7) / 2); return morning.map((color, index) => mixColor(color, day[index], amount)); }
-          if (hour < 20) { const amount = (hour - 16) / 4; return [mixColor(day[0], night[0], amount), mixColor(day[1], sunset[1], 1 - Math.abs(amount - 0.5) * 2), mixColor(sunset[2], night[2], amount)]; }
-          const amount = Math.min(1, (hour - 20) / 2); return sunset.map((color, index) => mixColor(color, night[index], amount));
+        const smoothStep = (value: number) => value * value * (3 - 2 * value);
+        const samplePalette = (hour: number, stops: Array<{ hour: number; colors: string[] }>) => {
+          const current = Math.max(0, Math.min(24, hour));
+          let endIndex = stops.findIndex((stop) => stop.hour >= current);
+          if (endIndex <= 0) endIndex = 1;
+          const start = stops[endIndex - 1], end = stops[Math.min(endIndex, stops.length - 1)];
+          const amount = smoothStep(Math.max(0, Math.min(1, (current - start.hour) / Math.max(0.001, end.hour - start.hour))));
+          return start.colors.map((color, index) => mixColor(color, end.colors[index], amount));
         };
-        const periodLabel = (hour: number) => hour < 5 ? "NIGHT" : hour < 8 ? "MORNING" : hour < 16 ? "DAYLIGHT" : hour < 20 ? "SUNSET" : "NIGHT";
-        const getScrim = (hour: number) => hour >= 7 && hour < 17 ? 0 : hour >= 17 && hour < 20 ? ((hour - 17) / 3) * 0.14 : hour >= 20 || hour < 5 ? 0.14 : 0.14 - ((hour - 5) / 2) * 0.14;
+        const skyStops = [
+          { hour: 0, colors: ["#000000", "#010208", "#05070d"] }, { hour: 4.5, colors: ["#000000", "#010208", "#05070d"] },
+          { hour: 6.7, colors: ["#18121f", "#80687f", "#d7a7b2"] }, { hour: 9.2, colors: ["#f2f7f8", "#c8dde4", "#7ea6b7"] },
+          { hour: 15.5, colors: ["#f2f7f8", "#c8dde4", "#7ea6b7"] }, { hour: 18.6, colors: ["#160914", "#773449", "#d97872"] },
+          { hour: 21.4, colors: ["#000000", "#010208", "#05070d"] }, { hour: 24, colors: ["#000000", "#010208", "#05070d"] },
+        ];
+        const nebulaStops = [
+          { hour: 0, colors: ["#153785", "#5c247d", "#09152f"] }, { hour: 4.5, colors: ["#153785", "#5c247d", "#09152f"] },
+          { hour: 6.7, colors: ["#28a9bd", "#d66386", "#6b304f"] }, { hour: 9.2, colors: ["#25c9e8", "#447ee8", "#55bdd0"] },
+          { hour: 15.5, colors: ["#25c9e8", "#447ee8", "#55bdd0"] }, { hour: 18.6, colors: ["#e64f6d", "#8944c8", "#9d3b65"] },
+          { hour: 21.4, colors: ["#153785", "#5c247d", "#09152f"] }, { hour: 24, colors: ["#153785", "#5c247d", "#09152f"] },
+        ];
+        const calculateSky = (minutes: number) => samplePalette(minutes / 60, skyStops);
+        const periodLabel = (hour: number) => hour < 5 ? "DEEP NIGHT" : hour < 8 ? "DAWN NEBULA" : hour < 16 ? "BLUE ORBIT" : hour < 20 ? "DUSK NEBULA" : "DEEP NIGHT";
+          const getScrim = (hour: number) => hour >= 8 && hour < 16 ? 0.03 : hour >= 16 && hour < 20 ? 0.08 : 0.13;
         const updateScene = (minutes: number) => {
+          galacticBackground.setTime(minutes);
           const hour = minutes / 60; const [top, middle, bottom] = calculateSky(minutes);
           const sunProgress = Math.max(0, Math.min(1, (minutes - 300) / 840));
           const moonProgress = Math.max(0, Math.min(1, minutes >= 1200 ? (minutes - 1200) / 240 : minutes / 300));
           const sunOpacity = Math.max(0, Math.min(1, hour < 5 ? 0 : hour < 6 ? hour - 5 : hour > 18.5 ? 1 - (hour - 18.5) / 0.8 : 1));
           const moonOpacity = hour >= 19.5 ? Math.min(1, (hour - 19.5) / 1.5) : hour < 5 ? Math.max(0, 1 - hour / 5) : 0;
-          const starOpacity = hour >= 19 ? Math.min(1, (hour - 19) / 2) : hour < 5 ? 0.9 : 0;
+          const daylight = Math.max(0, Math.sin(Math.max(0, Math.min(1, (hour - 5) / 14)) * Math.PI));
+          const dawnGlow = Math.max(0, 1 - Math.abs(hour - 6.4) / 2.2);
+          const duskGlow = Math.max(0, 1 - Math.abs(hour - 18.2) / 2.4);
+          const twilight = Math.max(dawnGlow, duskGlow);
+          const cosmicPhase = (minutes / 1440) * Math.PI * 2;
+          const cosmicDegrees = (minutes / 1440) * 360;
+          const timeFlowX = Math.cos(cosmicPhase) * 9;
+          const timeFlowY = Math.sin(cosmicPhase) * 6;
+          const starFlowX = Math.sin(cosmicPhase) * 5;
+          const starFlowY = Math.cos(cosmicPhase) * 3.5;
+          const starFlowDuration = Math.round(92 - daylight * 34);
+          const starOpacity = Math.max(0.2, 1 - daylight * 0.78 + twilight * 0.12);
           scene.style.setProperty("--sky-top", top); scene.style.setProperty("--sky-mid", middle); scene.style.setProperty("--sky-bottom", bottom);
           scene.style.setProperty("--sun-x", `${8 + sunProgress * 84}%`); scene.style.setProperty("--sun-y", `${75 - Math.sin(sunProgress * Math.PI) * 58}%`); scene.style.setProperty("--sun-opacity", String(sunOpacity));
           scene.style.setProperty("--moon-x", `${78 - moonProgress * 40}%`); scene.style.setProperty("--moon-y", `${27 + Math.sin(moonProgress * Math.PI) * 12}%`); scene.style.setProperty("--moon-opacity", String(moonOpacity));
-          scene.style.setProperty("--stars-opacity", String(starOpacity)); scene.style.setProperty("--cloud-opacity", String(hour < 6 || hour > 21 ? 0.28 : 0.8));
-          scrim.style.setProperty("--scrim", String(getScrim(hour))); document.body.classList.toggle("day", hour >= 7 && hour < 17);
+          scene.style.setProperty("--stars-opacity", String(starOpacity)); scene.style.setProperty("--cloud-opacity", String(hour < 6 || hour > 21 ? 0.32 : 0.18));
+          scene.style.setProperty("--deep-star-opacity", String(starOpacity * 0.72));
+          scene.style.setProperty("--near-star-opacity", String(starOpacity * 0.34));
+          const nebulaSets = samplePalette(hour, nebulaStops);
+          const cosmicSaturation = 1.28 + twilight * 0.34 - daylight * 0.08;
+          const nebulaStrength = 0.92 - daylight * 0.2 + twilight * 0.18;
+          scene.style.setProperty("--nebula-a", nebulaSets[0] as string);
+          scene.style.setProperty("--nebula-b", nebulaSets[1] as string);
+          scene.style.setProperty("--galaxy-opacity", (0.98 - daylight * 0.36 + twilight * 0.14).toFixed(3));
+          scene.style.setProperty("--time-wash", nebulaSets[2] as string);
+          scene.style.setProperty("--cosmic-saturation", cosmicSaturation.toFixed(3));
+          scene.style.setProperty("--nebula-strength", nebulaStrength.toFixed(3));
+          scene.style.setProperty("--day-radiance", daylight.toFixed(3));
+          scene.style.setProperty("--twilight-radiance", twilight.toFixed(3));
+          scene.style.setProperty("--vignette-strength", (0.7 - daylight * 0.42).toFixed(3));
+          scene.style.setProperty("--horizon-strength", String(hour >= 8 && hour < 16 ? 0.34 : hour >= 16 && hour < 20 ? 0.68 : 0.86));
+          scene.style.setProperty("--galaxy-angle", `${(cosmicDegrees - 188).toFixed(2)}deg`);
+          scene.style.setProperty("--disc-angle", `${(cosmicDegrees - 228).toFixed(2)}deg`);
+          scene.style.setProperty("--time-flow-x", `${timeFlowX.toFixed(2)}vw`);
+          scene.style.setProperty("--time-flow-y", `${timeFlowY.toFixed(2)}vh`);
+          scene.style.setProperty("--time-flow-x-inverse", `${(-timeFlowX).toFixed(2)}vw`);
+          scene.style.setProperty("--time-flow-y-soft-inverse", `${(-timeFlowY * 0.7).toFixed(2)}vh`);
+          scene.style.setProperty("--star-flow-x", `${starFlowX.toFixed(2)}vw`);
+          scene.style.setProperty("--star-flow-y", `${starFlowY.toFixed(2)}vh`);
+          scene.style.setProperty("--star-flow-x-near", `${(-starFlowX * 0.55).toFixed(2)}vw`);
+          scene.style.setProperty("--star-flow-y-near", `${(-starFlowY * 0.55).toFixed(2)}vh`);
+          scene.style.setProperty("--galaxy-scale", (1.02 + daylight * 0.12 + twilight * 0.04).toFixed(3));
+          scene.style.setProperty("--star-flow-duration", `${starFlowDuration}s`);
+          scene.style.setProperty("--near-star-flow-duration", `${Math.round(starFlowDuration * 0.68)}s`);
+          scene.style.setProperty("--disc-star-flow-duration", `${Math.round(starFlowDuration * 0.72)}s`);
+          scene.style.setProperty("--nebula-flow-duration", `${Math.round(42 - twilight * 12)}s`);
+          scene.dataset.period = periodLabel(hour).toLowerCase();
+          scrim.style.setProperty("--scrim", String(getScrim(hour)));
+          document.body.classList.toggle("day", daylight > 0.74);
         };
 
         const liveMinutes = () => { const now = new Date(); return now.getHours() * 60 + now.getMinutes(); };
@@ -388,7 +483,12 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const openPanel = () => { updatePanel(); bgPanel?.classList.add("open"); bgPanel?.setAttribute("aria-hidden", "false"); };
         const closePanel = () => { bgPanel?.classList.remove("open"); bgPanel?.setAttribute("aria-hidden", "true"); saveBackgroundState(); };
         clockAdjust?.addEventListener("click", openPanel, { signal: controller.signal }); bgClose?.addEventListener("click", closePanel, { signal: controller.signal });
-        bgSlider?.addEventListener("input", () => { followsLive = false; backgroundMinutes = Number(bgSlider.value); lastMinute = -1; tick(); saveBackgroundState(); }, { signal: controller.signal });
+        let sliderFrame = 0;
+        bgSlider?.addEventListener("input", () => {
+          followsLive = false; backgroundMinutes = Number(bgSlider.value);
+          if (sliderFrame) return;
+          sliderFrame = window.requestAnimationFrame(() => { sliderFrame = 0; lastMinute = -1; tick(); saveBackgroundState(); });
+        }, { signal: controller.signal });
         bgLive?.addEventListener("click", () => { followsLive = true; backgroundMinutes = liveMinutes(); lastMinute = -1; tick(); saveBackgroundState(); }, { signal: controller.signal });
         document.addEventListener("keydown", (event) => { if (event.key === "Escape" && bgPanel?.classList.contains("open")) closePanel(); }, { signal: controller.signal });
 
@@ -398,7 +498,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           if (copyStatus) { copyStatus.textContent = `${button.dataset.copyLabel ?? "内容"}已复制`; copyStatus.classList.add("show"); later(() => copyStatus.classList.remove("show"), 1400); }
         }, { signal: controller.signal }));
 
-        const loader = document.getElementById("loader"), progress = document.getElementById("progress") as HTMLElement | null, progressText = document.getElementById("progressText"), loadingStatus = document.getElementById("loadingStatus"), welcome = document.getElementById("welcome");
+        const loader = document.getElementById("loader"), progress = document.getElementById("progress") as HTMLElement | null, progressText = document.getElementById("progressText"), loadingStatus = document.getElementById("loadingStatus"), welcome = document.getElementById("welcome"), welcomeCanvas = document.getElementById("welcomeParticles") as HTMLCanvasElement | null;
         const folders = Array.from(document.querySelectorAll<HTMLElement>(".folder"));
         const loaderStorageKey = "archive-home-loader-last-run";
         const loaderInterval = 30 * 60 * 1000;
@@ -436,6 +536,22 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           const activeFolder = folders[activeIndex];
           if (loadingStatus && activeFolder && rounded < 100) loadingStatus.textContent = `loading /${activeFolder.dataset.folder?.toLowerCase()}`;
         };
+        const activateDeferredFrames = () => {
+          const activate = () => document.querySelectorAll<HTMLIFrameElement>("iframe[data-deferred-src]").forEach((frame) => {
+            const source = frame.dataset.deferredSrc;
+            if (source && frame.getAttribute("src") !== source) frame.src = source;
+          });
+          later(() => {
+            const idleWindow = window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number };
+            if (idleWindow.requestIdleCallback) idleWindow.requestIdleCallback(activate, { timeout: 2600 }); else later(activate, 1200);
+          }, 900);
+        };
+        const revealHomeInStages = () => {
+          document.body.classList.add("archive-ready", "heavy-warmup", "motion-warmup"); unlockPage();
+          later(() => document.body.classList.remove("heavy-warmup"), 260);
+          later(() => document.body.classList.remove("motion-warmup"), 760);
+          activateDeferredFrames();
+        };
         const animateProgress = (from: number, to: number, duration: number) => new Promise<void>((resolve) => {
           const start = performance.now(); const frame = (now: number) => { if (cancelled) return resolve(); const ratio = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - ratio, 3); renderProgress(from + (to - from) * eased); if (ratio < 1) requestAnimationFrame(frame); else resolve(); }; requestAnimationFrame(frame);
         });
@@ -445,45 +561,82 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         };
         const disperseWelcome = () => {
           if (!welcome || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-          const palette = [["#ffffff", "rgba(255,255,255,.9)"], ["#bcd4ff", "rgba(150,190,255,.85)"], ["#8fe0ff", "rgba(110,210,255,.85)"], ["#ffe7c2", "rgba(255,210,140,.85)"]];
-          const perLetter = compactScreen ? 8 : lowPowerDevice ? 10 : 14;
-          const particleFragment = document.createDocumentFragment();
-          const newParticles: HTMLElement[] = [];
+          if (!welcomeCanvas) return;
+          const welcomeContext = welcomeCanvas.getContext("2d", { alpha: true });
+          if (!welcomeContext) return;
+          const palette = ["#ffffff", "#70e8ff", "#75a7ff", "#b989ff", "#ff75d8", "#ff7f9f", "#ffb65f", "#ffe074", "#73f5aa"];
+          const perLetter = compactScreen ? 17 : lowPowerDevice ? 21 : 27;
+          const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
+          welcomeCanvas.width = Math.round(window.innerWidth * pixelRatio); welcomeCanvas.height = Math.round(window.innerHeight * pixelRatio);
+          welcomeCanvas.style.width = `${window.innerWidth}px`; welcomeCanvas.style.height = `${window.innerHeight}px`;
+          welcomeContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+          welcomeCanvas.classList.add("active");
+          const welcomePoints: Array<{ x: number; y: number; vx: number; vy: number; size: number; life: number; maxLife: number; color: string }> = [];
           const letterData = Array.from(welcome.querySelectorAll<HTMLElement>(".welcome-letter"), (letter) => ({ letter, rect: letter.getBoundingClientRect() }));
-          letterData.forEach(({ letter, rect }, letterIndex) => {
+          letterData.forEach(({ letter, rect }) => {
             letter.classList.add("dispersing");
             for (let index = 0; index < perLetter; index += 1) {
-              const particle = document.createElement("i"), large = Math.random() < 0.12, size = large ? 3.5 + Math.random() * 3 : 1.5 + Math.random() * 2.5;
-              const [color, glow] = palette[Math.floor(Math.random() * palette.length)], angle = Math.random() * Math.PI * 2, distance = large ? 70 + Math.random() * 250 : 130 + Math.random() * 430;
-              particle.className = "welcome-particle fly"; particle.style.left = `${rect.left + Math.random() * rect.width}px`; particle.style.top = `${rect.top + Math.random() * rect.height}px`;
-              particle.style.setProperty("--size", `${size.toFixed(2)}px`); particle.style.setProperty("--color", color); particle.style.setProperty("--glow", glow); particle.style.setProperty("--x", `${(Math.cos(angle) * distance).toFixed(1)}px`); particle.style.setProperty("--y", `${(Math.sin(angle) * distance * 0.8 + 60 + Math.random() * 110).toFixed(1)}px`); particle.style.setProperty("--duration", `${(1 + Math.random() * 1.15).toFixed(2)}s`); particle.style.animationDelay = `${letterIndex * 0.03 + Math.random() * 0.16}s`;
-              particleFragment.appendChild(particle); newParticles.push(particle);
+              const large = Math.random() < 0.16, angle = Math.random() * Math.PI * 2, distance = large ? 230 + Math.random() * 260 : 140 + Math.random() * 360;
+              const maxLife = 1.25 + Math.random() * 0.48;
+              welcomePoints.push({ x: rect.left + Math.random() * rect.width, y: rect.top + Math.random() * rect.height, vx: Math.cos(angle) * distance / maxLife, vy: Math.sin(angle) * distance / maxLife, size: large ? 5 + Math.random() * 3.5 : 1.8 + Math.random() * 3, life: maxLife, maxLife, color: palette[Math.floor(Math.random() * palette.length)] });
             }
           });
-          document.body.appendChild(particleFragment); particles.push(...newParticles); later(() => newParticles.forEach((particle) => particle.remove()), 2600); welcome.classList.add("disappear");
+          let previous = performance.now();
+          const renderWelcomeParticles = (now: number) => {
+            const dt = Math.min((now - previous) / 1000, 0.034); previous = now;
+            welcomeContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            welcomeContext.globalCompositeOperation = "lighter";
+            for (let index = welcomePoints.length - 1; index >= 0; index -= 1) {
+              const point = welcomePoints[index]; point.life -= dt; if (point.life <= 0) { welcomePoints.splice(index, 1); continue; }
+              point.x += point.vx * dt; point.y += point.vy * dt; point.vx *= Math.exp(-0.42 * dt); point.vy *= Math.exp(-0.42 * dt);
+              const life = point.life / point.maxLife;
+              welcomeContext.globalAlpha = life * 0.2; welcomeContext.fillStyle = point.color; welcomeContext.beginPath(); welcomeContext.arc(point.x, point.y, point.size * 3.4, 0, Math.PI * 2); welcomeContext.fill();
+              welcomeContext.globalAlpha = Math.min(1, life * 1.35); welcomeContext.beginPath(); welcomeContext.arc(point.x, point.y, point.size * (0.55 + life * 0.45), 0, Math.PI * 2); welcomeContext.fill();
+            }
+            welcomeContext.globalAlpha = 1; welcomeContext.globalCompositeOperation = "source-over";
+            if (welcomePoints.length && !cancelled) welcomeFrame = window.requestAnimationFrame(renderWelcomeParticles);
+            else { welcomeCanvas.classList.remove("active"); welcomeContext.clearRect(0, 0, window.innerWidth, window.innerHeight); }
+          };
+          window.cancelAnimationFrame(welcomeFrame); welcomeFrame = window.requestAnimationFrame(renderWelcomeParticles); welcome.classList.add("disappear");
         };
         const runLoader = async () => {
-          if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
+          if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); activateDeferredFrames(); return; }
           if (!shouldRunHomeLoader()) {
-            loader.classList.remove("archive-loading");
-            loader.classList.add("hide");
-            document.body.classList.add("archive-ready");
-            unlockPage();
+            lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("welcome-only");
+            showWelcome(); await wait(820); disperseWelcome(); await wait(reduceMotion ? 180 : 1780);
+            if (cancelled) return; loader.classList.remove("archive-loading", "welcome-only"); loader.classList.add("hide");
+            revealHomeInStages();
             return;
           }
           lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("archive-loading"); folders.forEach((folder) => folder.classList.remove("active", "done")); renderProgress(0); await wait(130);
-          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(220); }
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(180); showWelcome(); await wait(520); }
           else {
             if (loadingStatus) loadingStatus.textContent = "loading tech stack";
             await animateProgress(0, 100, lowPowerDevice ? 620 : 760);
             folders.forEach((folder) => folder.classList.add("done"));
             if (loadingStatus) loadingStatus.textContent = "project archive ready";
-            await wait(100); showWelcome(); await wait(720); disperseWelcome(); await wait(650);
+            await wait(100); showWelcome(); await wait(840); disperseWelcome(); await wait(1780);
           }
-          if (cancelled) return; rememberHomeLoader(); loader.classList.remove("archive-loading"); loader.classList.add("hide"); document.body.classList.add("archive-ready"); unlockPage();
+          if (cancelled) return; rememberHomeLoader(); loader.classList.remove("archive-loading"); loader.classList.add("hide"); revealHomeInStages();
         };
         void runLoader();
-        archiveCleanup = () => { cancelled = true; controller.abort(); window.cancelAnimationFrame(motionFrame); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); particles.forEach((particle) => particle.remove()); unlockPage(); };
+        const globalBookLoader = document.getElementById("bookLoader");
+        const closeGlobalBookLoader = () => { window.clearTimeout(globalArticleTimer); globalBookLoader?.classList.remove("show"); globalBookLoader?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
+        const openArticleWithBook = (url: string) => {
+          if (!url) return;
+          document.body.classList.add("modal-open"); globalBookLoader?.classList.add("show"); globalBookLoader?.setAttribute("aria-hidden", "false");
+          window.clearTimeout(globalArticleTimer); globalArticleTimer = window.setTimeout(() => {
+            try { const destination = new URL(url, window.location.href); if (destination.origin === window.location.origin) void navigate(`${destination.pathname}${destination.search}${destination.hash}`); else window.location.href = destination.href; }
+            catch { window.location.href = url; }
+          }, reduceMotion ? 80 : 720);
+        };
+        window.addEventListener("archive:open-article", (event) => { const url = (event as CustomEvent<{ url?: string }>).detail?.url; if (url) openArticleWithBook(url); }, { signal: controller.signal });
+        document.querySelectorAll<HTMLAnchorElement>("a[data-book-transition]").forEach((link) => link.addEventListener("click", (event) => {
+          if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+          event.preventDefault(); openArticleWithBook(link.href);
+        }, { signal: controller.signal }));
+        window.addEventListener("pageshow", closeGlobalBookLoader, { signal: controller.signal });
+        archiveCleanup = () => { cancelled = true; controller.abort(); galacticBackground.destroy(); window.clearTimeout(globalArticleTimer); window.cancelAnimationFrame(sliderFrame); window.cancelAnimationFrame(motionFrame); window.cancelAnimationFrame(welcomeFrame); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); unlockPage(); };
       };
       document.addEventListener("astro:page-load", initArchive);
       if (document.readyState === "complete") initArchive();
