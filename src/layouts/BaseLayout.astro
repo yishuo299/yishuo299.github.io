@@ -484,6 +484,9 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         }, { signal: controller.signal }));
 
         const loader = document.getElementById("loader"), progress = document.getElementById("progress") as HTMLElement | null, progressText = document.getElementById("progressText"), loadingStatus = document.getElementById("loadingStatus"), welcome = document.getElementById("welcome"), welcomeCanvas = document.getElementById("welcomeParticles") as HTMLCanvasElement | null;
+        const visitWindow = window as Window & { __archiveRouteInitialized?: boolean };
+        const isReturningHome = Boolean(loader && visitWindow.__archiveRouteInitialized);
+        visitWindow.__archiveRouteInitialized = true;
         const folders = Array.from(document.querySelectorAll<HTMLElement>(".folder"));
         const loaderStorageKey = "archive-home-loader-last-run";
         const loaderInterval = 30 * 60 * 1000;
@@ -575,6 +578,14 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         };
         const runLoader = async () => {
           if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
+          if (isReturningHome) {
+            loader.classList.remove("archive-loading", "welcome-only");
+            loader.classList.add("hide");
+            document.body.classList.add("archive-ready", "home-returning");
+            document.body.classList.remove("heavy-warmup", "motion-warmup");
+            unlockPage();
+            return;
+          }
           if (!shouldRunHomeLoader()) {
             lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("welcome-only");
             showWelcome(); await wait(820); disperseWelcome(); await wait(reduceMotion ? 180 : 1780);

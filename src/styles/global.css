@@ -312,6 +312,8 @@ body.day .scene::after { opacity: .08; }
 .home-page:not(.archive-ready) .holo-avatar-shell, .home-page:not(.archive-ready) .hero-message { opacity: 0; }
 .home-page.archive-ready .holo-avatar-shell { animation: avatarEnter .9s var(--ease-out-expo) both; }
 .home-page.archive-ready .hero-message { animation: heroCopyEnter .8s .08s var(--ease-out-expo) both; }
+.home-page.home-returning .site-shell { transition: none; }
+.home-page.home-returning :is(.holo-avatar-shell,.hero-message) { animation: none; }
 @keyframes avatarEnter { from { opacity: 0; transform: translate3d(-28px,22px,0) scale(.94); } }
 @keyframes heroCopyEnter { from { opacity: 0; transform: translate3d(28px,0,0); } }
 .profile-name { margin-bottom: 7px; font-size: 24px; font-weight: 650; text-shadow: 0 2px 18px rgba(0,0,0,.35); }

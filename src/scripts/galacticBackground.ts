@@ -138,9 +138,9 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     const period = generated ? between(16, 26) : between(68, 138);
     return {
       x, y, radius: generated ? between(0.14, 0.24) : between(0.12, 0.23),
-      hue: between(192, 304), phase: between(0, TAU), speed: between(0.07, 0.15) * (random() < 0.5 ? -1 : 1),
+      hue: between(0, 360), phase: between(0, TAU), speed: between(0.07, 0.15) * (random() < 0.5 ? -1 : 1),
       squash: between(0.45, 0.72),
-      points: makeSpiral(Math.max(28, Math.round(58 * quality)), 1, 2 + (random() * 3 | 0), between(2, 4.2)),
+      points: makeSpiral(Math.max(28, Math.round(58 * quality)), 1, 2 + Math.floor(random() * 11), between(2, 4.2)),
       bornAt: generated ? now : now - random() * period,
       period, screenX: 0, screenY: 0, screenRadius: 0, boost: generated ? 1.9 : 1.28,
       velocityX: between(-0.0055, 0.0055), velocityY: between(-0.0045, 0.0045),
@@ -152,7 +152,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     nebula.x = between(0.06, 0.94);
     nebula.y = between(0.08, 0.92);
     nebula.radius = between(0.12, 0.23);
-    nebula.hue = between(192, 304);
+    nebula.hue = between(0, 360);
     nebula.phase = between(0, TAU);
     nebula.speed = between(0.07, 0.15) * (random() < 0.5 ? -1 : 1);
     nebula.squash = between(0.45, 0.72);
@@ -164,7 +164,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     nebula.driftPhase = between(0, TAU);
     nebula.driftSpeed = between(0.16, 0.42);
     nebula.collisionCooldown = 1.2;
-    nebula.points = makeSpiral(Math.max(28, Math.round(58 * quality)), 1, 2 + (random() * 3 | 0), between(2, 4.2));
+    nebula.points = makeSpiral(Math.max(28, Math.round(58 * quality)), 1, 2 + Math.floor(random() * 11), between(2, 4.2));
   };
 
   const build = () => {
@@ -406,6 +406,26 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       const wanderY = Math.cos(time * nebula.driftSpeed * 0.73 + nebula.driftPhase * 1.31) * 0.0032;
       nebula.x += (nebula.velocityX + wanderX) * delta;
       nebula.y += (nebula.velocityY + wanderY) * delta;
+      if (pointer.active) {
+        const dx = nebula.x * width - pointer.x;
+        const dy = nebula.y * height - pointer.y;
+        const distance = Math.max(0.001, Math.hypot(dx, dy));
+        const influence = Math.max(110, nebula.radius * minSize * 0.82);
+        if (distance < influence) {
+          const force = (1 - distance / influence) * 0.016;
+          const directionX = dx / distance;
+          const directionY = dy / distance;
+          nebula.x += directionX * force * delta;
+          nebula.y += directionY * force * delta;
+          nebula.velocityX += directionX * force * 0.075;
+          nebula.velocityY += directionY * force * 0.075;
+          const speed = Math.hypot(nebula.velocityX, nebula.velocityY);
+          if (speed > 0.014) {
+            nebula.velocityX = nebula.velocityX / speed * 0.014;
+            nebula.velocityY = nebula.velocityY / speed * 0.014;
+          }
+        }
+      }
       const marginX = clamp(nebula.radius * minSize / width * 0.36, 0.025, 0.12);
       const marginY = clamp(nebula.radius * minSize / height * 0.36, 0.025, 0.12);
       if (nebula.x < marginX || nebula.x > 1 - marginX) {
