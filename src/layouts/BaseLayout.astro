@@ -22,13 +22,6 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
 <html lang="zh-CN" data-theme="lofi" class:list={{ "archive-loading-active": isHome }}>
   <head>
     <BaseHead title={title} description={description} image={image} ogType={ogType} />
-    {isHome && (
-      <>
-        <link rel="modulepreload" href="/holo-avatar-web/app.bundle.js?v=20260921-3" />
-        <link rel="preload" as="image" href="/holo-avatar-web/assets/background.png" fetchpriority="high" />
-        <link rel="preload" as="image" href="/holo-avatar-web/assets/subject.png" fetchpriority="high" />
-      </>
-    )}
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
@@ -128,7 +121,15 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const copyStatus = document.getElementById("copyStatus");
         if (!scene || !scrim || !stars || !ambientCanvas || !galacticCanvas) return;
 
-        const galacticBackground = createGalacticBackground(galacticCanvas);
+        let galacticBackground: ReturnType<typeof createGalacticBackground> = {
+          setTime: () => {},
+          destroy: () => {},
+        };
+        try {
+          galacticBackground = createGalacticBackground(galacticCanvas);
+        } catch (error) {
+          console.error("[archive] Galactic background disabled on this device.", error);
+        }
 
         stars.replaceChildren();
         const compactScreen = window.matchMedia("(max-width: 600px)").matches;
@@ -576,6 +577,20 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           };
           window.cancelAnimationFrame(welcomeFrame); welcomeFrame = window.requestAnimationFrame(renderWelcomeParticles); welcome.classList.add("disappear");
         };
+        const revealWithoutLoader = () => {
+          const currentLoader = document.getElementById("loader");
+          currentLoader?.classList.remove("archive-loading", "welcome-only");
+          currentLoader?.classList.add("hide");
+          document.body.classList.add("archive-ready");
+          document.body.classList.remove("heavy-warmup", "motion-warmup");
+          unlockPage();
+        };
+        const loaderWatchdog = later(() => {
+          if (document.body.classList.contains("archive-loading-active")) {
+            console.warn("[archive] Loader timed out; revealing the page.");
+            revealWithoutLoader();
+          }
+        }, 12000);
         const runLoader = async () => {
           if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
           if (isReturningHome) {
@@ -604,7 +619,11 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           }
           if (cancelled) return; rememberHomeLoader(); loader.classList.remove("archive-loading"); loader.classList.add("hide"); revealHomeInStages();
         };
-        void runLoader();
+        void runLoader().catch((error) => {
+          console.error("[archive] Loader failed; revealing the page.", error);
+          window.clearTimeout(loaderWatchdog);
+          revealWithoutLoader();
+        });
         const globalBookLoader = document.getElementById("bookLoader");
         const closeGlobalBookLoader = () => { window.clearTimeout(globalArticleTimer); globalBookLoader?.classList.remove("show"); globalBookLoader?.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open"); };
         const openArticleWithBook = (url: string) => {

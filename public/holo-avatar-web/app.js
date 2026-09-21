@@ -276,6 +276,7 @@ async function init() {
   if (!response.ok) throw Error("作品配置未找到");
   config = await response.json();
   const embedMode = document.body.classList.contains("avatar-embed");
+  const compactEmbed = embedMode && matchMedia("(max-width: 760px)").matches;
   document.title = config.title + " · 全息闪卡";
   for (const [id, key] of [
     ["card-title", "title"],
@@ -292,19 +293,19 @@ async function init() {
   await document.fonts.load("500 42px Atelier");
   try {
     renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: !compactEmbed,
       alpha: embedMode,
-      preserveDrawingBuffer: true,
-      powerPreference: "high-performance",
+      preserveDrawingBuffer: !compactEmbed,
+      powerPreference: compactEmbed ? "low-power" : "high-performance",
     });
   } catch (error) {
     // First retry with the most permissive context attributes — some setups
     // reject "high-performance" but accept the default.
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: true,
+        antialias: !compactEmbed,
         alpha: embedMode,
-        preserveDrawingBuffer: true,
+        preserveDrawingBuffer: !compactEmbed,
         powerPreference: "default",
         failIfMajorPerformanceCaveat: false,
       });
@@ -316,7 +317,7 @@ async function init() {
     }
   }
   renderer.setClearColor(config.appearance?.background || "#fafafa", embedMode ? 0 : 1);
-  renderer.setPixelRatio(Math.min(devicePixelRatio * (embedMode ? 1.35 : 1), embedMode ? 2.75 : 2));
+  renderer.setPixelRatio(compactEmbed ? Math.min(devicePixelRatio, 1.25) : Math.min(devicePixelRatio * (embedMode ? 1.15 : 1), 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NoToneMapping;
   stage.append(renderer.domElement);

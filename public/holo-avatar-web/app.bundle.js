@@ -31338,6 +31338,7 @@ async function init() {
   if (!response.ok) throw Error("\u4F5C\u54C1\u914D\u7F6E\u672A\u627E\u5230");
   config = await response.json();
   const embedMode = document.body.classList.contains("avatar-embed");
+  const compactEmbed = embedMode && matchMedia("(max-width: 760px)").matches;
   document.title = config.title + " \xB7 \u5168\u606F\u95EA\u5361";
   for (const [id, key] of [
     ["card-title", "title"],
@@ -31352,17 +31353,17 @@ async function init() {
   await document.fonts.load("500 42px Atelier");
   try {
     renderer = new WebGLRenderer({
-      antialias: true,
+      antialias: !compactEmbed,
       alpha: embedMode,
-      preserveDrawingBuffer: true,
-      powerPreference: "high-performance"
+      preserveDrawingBuffer: !compactEmbed,
+      powerPreference: compactEmbed ? "low-power" : "high-performance"
     });
   } catch (error) {
     try {
       renderer = new WebGLRenderer({
-        antialias: true,
+        antialias: !compactEmbed,
         alpha: embedMode,
-        preserveDrawingBuffer: true,
+        preserveDrawingBuffer: !compactEmbed,
         powerPreference: "default",
         failIfMajorPerformanceCaveat: false
       });
@@ -31372,7 +31373,7 @@ async function init() {
     }
   }
   renderer.setClearColor(config.appearance?.background || "#fafafa", embedMode ? 0 : 1);
-  renderer.setPixelRatio(Math.min(devicePixelRatio * (embedMode ? 1.35 : 1), embedMode ? 2.75 : 2));
+  renderer.setPixelRatio(compactEmbed ? Math.min(devicePixelRatio, 1.25) : Math.min(devicePixelRatio * (embedMode ? 1.15 : 1), 2));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping;
   stage.append(renderer.domElement);
