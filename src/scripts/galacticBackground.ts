@@ -135,7 +135,9 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
 
   const makeNebulaSpiral = () => {
     const arms = 2 + Math.floor(random() * 11);
-    const pointCount = Math.max(arms * (lowPower ? 9 : 12), Math.round(72 * quality));
+    const pointCount = lowPower
+      ? clamp(arms * 20, 110, 240)
+      : clamp(arms * 32, 190, 420);
     return makeSpiral(pointCount, 1.12, arms, between(2.2, 4.6));
   };
 
@@ -367,10 +369,10 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       context.translate(x, y);
       context.rotate(nebula.phase + colors.rotation * 0.5 + (reducedMotion ? 0 : time * nebula.speed));
       context.scale(1, nebula.squash);
-      context.fillStyle = `hsl(${hue} 86% 84%)`;
+      context.fillStyle = `hsl(${hue} 94% 91%)`;
       for (const point of nebula.points) {
         const pointSize = point.size * (lowPower ? 1.35 : 1.55);
-        context.globalAlpha = Math.min(1, point.alpha * colors.star * 0.9 * life * nebula.boost);
+        context.globalAlpha = Math.min(1, point.alpha * colors.star * 1.08 * life * nebula.boost);
         context.fillRect(point.x * radius * 1.08 - pointSize * 0.5, point.y * radius * 1.08 - pointSize * 0.5, pointSize, pointSize);
       }
       context.restore();
