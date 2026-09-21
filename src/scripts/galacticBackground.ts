@@ -133,6 +133,12 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     return points;
   };
 
+  const makeNebulaSpiral = () => {
+    const arms = 2 + Math.floor(random() * 11);
+    const pointCount = Math.max(arms * (lowPower ? 9 : 12), Math.round(72 * quality));
+    return makeSpiral(pointCount, 1.12, arms, between(2.2, 4.6));
+  };
+
   const createNebula = (x: number, y: number, generated = false): Nebula => {
     const now = performance.now() / 1000;
     const period = generated ? between(16, 26) : between(68, 138);
@@ -140,7 +146,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       x, y, radius: generated ? between(0.14, 0.24) : between(0.12, 0.23),
       hue: between(0, 360), phase: between(0, TAU), speed: between(0.07, 0.15) * (random() < 0.5 ? -1 : 1),
       squash: between(0.45, 0.72),
-      points: makeSpiral(Math.max(28, Math.round(58 * quality)), 1, 2 + Math.floor(random() * 11), between(2, 4.2)),
+      points: makeNebulaSpiral(),
       bornAt: generated ? now : now - random() * period,
       period, screenX: 0, screenY: 0, screenRadius: 0, boost: generated ? 1.9 : 1.28,
       velocityX: between(-0.0055, 0.0055), velocityY: between(-0.0045, 0.0045),
@@ -164,7 +170,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     nebula.driftPhase = between(0, TAU);
     nebula.driftSpeed = between(0.16, 0.42);
     nebula.collisionCooldown = 1.2;
-    nebula.points = makeSpiral(Math.max(28, Math.round(58 * quality)), 1, 2 + Math.floor(random() * 11), between(2, 4.2));
+    nebula.points = makeNebulaSpiral();
   };
 
   const build = () => {
@@ -363,8 +369,9 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       context.scale(1, nebula.squash);
       context.fillStyle = `hsl(${hue} 86% 84%)`;
       for (const point of nebula.points) {
-        context.globalAlpha = Math.min(1, point.alpha * colors.star * 0.7 * life * nebula.boost);
-        context.fillRect(point.x * radius, point.y * radius, point.size, point.size);
+        const pointSize = point.size * (lowPower ? 1.35 : 1.55);
+        context.globalAlpha = Math.min(1, point.alpha * colors.star * 0.9 * life * nebula.boost);
+        context.fillRect(point.x * radius * 1.08 - pointSize * 0.5, point.y * radius * 1.08 - pointSize * 0.5, pointSize, pointSize);
       }
       context.restore();
       const coreRadius = clamp(radius * 0.17, 9, 34);
