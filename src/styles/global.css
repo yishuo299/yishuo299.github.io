@@ -97,12 +97,12 @@ body.day {
 .galactic-scene .stars { display: none; }
 .galactic-scene::before {
   z-index: 7;
-  background: radial-gradient(ellipse at 50% 46%,transparent 48%,rgba(0,0,0,.38) 100%);
+  background: radial-gradient(ellipse at 50% 46%,transparent 66%,rgba(0,0,0,.24) 100%);
 }
 .galactic-scene::after {
-  z-index: 8;
-  opacity: .1;
+  display: none;
 }
+.galactic-scene + .scrim { background: radial-gradient(ellipse at 50% 46%,transparent 72%,rgba(0,0,0,.1)); }
 .scene::before { position: absolute; inset: 0; z-index: 8; background: radial-gradient(ellipse at 50% 44%,transparent 8%,rgba(1,3,8,.12) 58%,rgb(1 2 6 / var(--vignette-strength,.58))); pointer-events: none; transition: background 2.2s ease; content: ""; }
 .scene::after { position: absolute; inset: 0; z-index: 9; opacity: .24; background-image: repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px); mix-blend-mode: soft-light; pointer-events: none; content: ""; }
 .scene-grid { position: absolute; right: -10vw; bottom: -32vh; left: -10vw; z-index: 1; height: 72vh; opacity: .055; background-image: linear-gradient(rgba(185,225,245,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(185,225,245,.18) 1px,transparent 1px); background-size: 72px 72px; mask-image: linear-gradient(to bottom,transparent,black 38%,transparent 94%); transform: perspective(520px) rotateX(62deg) scale(1.35); transform-origin: center bottom; pointer-events: none; }

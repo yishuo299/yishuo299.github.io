@@ -403,7 +403,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         ];
         const calculateSky = (minutes: number) => samplePalette(minutes / 60, skyStops);
         const periodLabel = (hour: number) => hour < 5 ? "DEEP NIGHT" : hour < 8 ? "DAWN NEBULA" : hour < 16 ? "BLUE ORBIT" : hour < 20 ? "DUSK NEBULA" : "DEEP NIGHT";
-          const getScrim = (hour: number) => hour >= 8 && hour < 16 ? 0.03 : hour >= 16 && hour < 20 ? 0.08 : 0.13;
+          const getScrim = (_hour: number) => 0;
         const updateScene = (minutes: number) => {
           galacticBackground.setTime(minutes);
           const hour = minutes / 60; const [top, middle, bottom] = calculateSky(minutes);
