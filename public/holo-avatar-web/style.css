@@ -922,7 +922,18 @@ body.avatar-embed .stage {
   width: 100vw;
   height: 100vh;
   min-height: 0;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
   cursor: grab;
+}
+
+body.avatar-embed .face3d,
+body.avatar-embed .card3d,
+body.avatar-embed .flipper3d {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
 }
 
 body.avatar-embed .stage.dragging {

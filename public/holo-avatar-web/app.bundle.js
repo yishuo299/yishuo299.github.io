@@ -31453,6 +31453,10 @@ async function init() {
   gltf.scene.traverse((ob) => {
     if (!ob.isMesh) return;
     const role = ob.material?.name;
+    if (embedMode && role === "web_edge") {
+      ob.visible = false;
+      return;
+    }
     if (role === "web_text" && config.sourceMode !== "relief") {
       ob.visible = false;
       return;

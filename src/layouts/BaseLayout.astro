@@ -24,7 +24,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
     <BaseHead title={title} description={description} image={image} ogType={ogType} />
     {isHome && (
       <>
-        <link rel="modulepreload" href="/holo-avatar-web/app.bundle.js?v=20260921-2" />
+        <link rel="modulepreload" href="/holo-avatar-web/app.bundle.js?v=20260921-3" />
         <link rel="preload" as="image" href="/holo-avatar-web/assets/background.png" fetchpriority="high" />
         <link rel="preload" as="image" href="/holo-avatar-web/assets/subject.png" fetchpriority="high" />
       </>
@@ -472,7 +472,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const tick = () => {
           const now = new Date();
           if (backgroundMinutes !== lastMinute) { lastMinute = backgroundMinutes; updateScene(backgroundMinutes); updatePanel(); }
-          if (bigTime) bigTime.textContent = "00:00:00"; if (bigDate) bigDate.textContent = `${weekdays[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`; if (bigPeriod) bigPeriod.textContent = "DEEP NIGHT";
+          if (bigTime) bigTime.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`; if (bigDate) bigDate.textContent = `${weekdays[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`; if (bigPeriod) bigPeriod.textContent = periodLabel(now.getHours());
         };
         tick(); intervals.push(window.setInterval(tick, 1000));
         let sliderFrame = 0;
