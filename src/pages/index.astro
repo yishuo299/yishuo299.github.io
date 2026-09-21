@@ -44,10 +44,10 @@ const PROJECT_STARS = projects.map((project, index) => {
             <div class="holo-avatar-card holo-avatar-live-card">
               <iframe
                 class="holo-avatar-frame"
-                src="about:blank"
-                data-deferred-src="/holo-avatar-web/"
+                src="/holo-avatar-web/"
                 title="燚燿全息头像卡片"
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
               ></iframe>
             </div>
           </div>
@@ -81,9 +81,6 @@ const PROJECT_STARS = projects.map((project, index) => {
       <div class="hero-clock">
         <div class="hero-clock-row">
           <div class="big-time" id="bigTime">00:00:00</div>
-          <button class="clock-adjust" id="clockAdjust" type="button" title="调整背景时间" aria-label="调整背景时间">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-          </button>
         </div>
         <div class="big-date" id="bigDate">LOADING LOCAL TIME</div>
         <div class="big-period" id="bigPeriod">DAYLIGHT</div>

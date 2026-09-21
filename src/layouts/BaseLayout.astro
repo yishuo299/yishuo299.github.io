@@ -64,15 +64,6 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
       <footer class="archive-footer"><div class="container"><span>BUILD. LEARN. REPEAT.</span><span>© {new Date().getFullYear()} 燚燿 · PROJECT ARCHIVE</span></div></footer>
     </div>
 
-    {isHome && (
-      <aside class="bg-panel" id="bgPanel" aria-label="背景时间设置" aria-hidden="true">
-        <div class="bg-panel-head"><div class="bg-panel-title">BACKGROUND TIME</div><button class="bg-close" id="bgClose" type="button" aria-label="关闭时间设置">×</button></div>
-        <div class="bg-panel-time" id="bgPanelTime">09:22</div><div class="bg-panel-period" id="bgPanelPeriod">MORNING</div>
-        <div class="bg-slider-labels"><span>00:00</span><span>23:59</span></div>
-        <input type="range" id="bgSlider" min="0" max="1439" value="562" aria-label="背景时间" />
-        <button class="bg-live" id="bgLive" type="button">回到实时时间</button>
-      </aside>
-    )}
     <div id="bookLoader" class="book-loader" aria-hidden="true">
       <div class="book-loader-inner">
         <div class="book" aria-hidden="true">
@@ -464,10 +455,8 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           document.body.classList.toggle("day", daylight > 0.74);
         };
 
-        const liveMinutes = () => { const now = new Date(); return now.getHours() * 60 + now.getMinutes(); };
-        const storageKey = "archive-background-time"; let backgroundMinutes = liveMinutes(); let followsLive = true;
-        try { const saved = JSON.parse(localStorage.getItem(storageKey) ?? "null"); if (saved && typeof saved.minutes === "number" && saved.minutes >= 0 && saved.minutes <= 1439) { backgroundMinutes = saved.minutes; followsLive = saved.live !== false; } } catch {}
-        const saveBackgroundState = () => { try { localStorage.setItem(storageKey, JSON.stringify({ minutes: backgroundMinutes, live: followsLive })); } catch {} };
+        let backgroundMinutes = 0; let followsLive = false;
+        const saveBackgroundState = () => {};
         const updatePanel = () => {
           const hour = Math.floor(backgroundMinutes / 60), minute = Math.floor(backgroundMinutes % 60);
           if (bgPanelTime) bgPanelTime.textContent = `${pad(hour)}:${pad(minute)}`; if (bgPanelPeriod) bgPanelPeriod.textContent = periodLabel(backgroundMinutes / 60); if (bgSlider) bgSlider.value = String(backgroundMinutes); bgLive?.classList.toggle("active", followsLive);
@@ -475,7 +464,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         const weekdays = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
         let lastMinute = -1;
         const tick = () => {
-          const now = new Date(); if (followsLive) backgroundMinutes = liveMinutes();
+          const now = new Date();
           if (backgroundMinutes !== lastMinute) { lastMinute = backgroundMinutes; updateScene(backgroundMinutes); updatePanel(); }
           if (bigTime) bigTime.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`; if (bigDate) bigDate.textContent = `${weekdays[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`; if (bigPeriod) bigPeriod.textContent = periodLabel(now.getHours());
         };
@@ -536,21 +525,10 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           const activeFolder = folders[activeIndex];
           if (loadingStatus && activeFolder && rounded < 100) loadingStatus.textContent = `loading /${activeFolder.dataset.folder?.toLowerCase()}`;
         };
-        const activateDeferredFrames = () => {
-          const activate = () => document.querySelectorAll<HTMLIFrameElement>("iframe[data-deferred-src]").forEach((frame) => {
-            const source = frame.dataset.deferredSrc;
-            if (source && frame.getAttribute("src") !== source) frame.src = source;
-          });
-          later(() => {
-            const idleWindow = window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number };
-            if (idleWindow.requestIdleCallback) idleWindow.requestIdleCallback(activate, { timeout: 2600 }); else later(activate, 1200);
-          }, 900);
-        };
         const revealHomeInStages = () => {
           document.body.classList.add("archive-ready", "heavy-warmup", "motion-warmup"); unlockPage();
           later(() => document.body.classList.remove("heavy-warmup"), 260);
           later(() => document.body.classList.remove("motion-warmup"), 760);
-          activateDeferredFrames();
         };
         const animateProgress = (from: number, to: number, duration: number) => new Promise<void>((resolve) => {
           const start = performance.now(); const frame = (now: number) => { if (cancelled) return resolve(); const ratio = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - ratio, 3); renderProgress(from + (to - from) * eased); if (ratio < 1) requestAnimationFrame(frame); else resolve(); }; requestAnimationFrame(frame);
@@ -600,7 +578,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           window.cancelAnimationFrame(welcomeFrame); welcomeFrame = window.requestAnimationFrame(renderWelcomeParticles); welcome.classList.add("disappear");
         };
         const runLoader = async () => {
-          if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); activateDeferredFrames(); return; }
+          if (!loader) { document.body.classList.add("archive-ready"); unlockPage(); return; }
           if (!shouldRunHomeLoader()) {
             lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("welcome-only");
             showWelcome(); await wait(820); disperseWelcome(); await wait(reduceMotion ? 180 : 1780);

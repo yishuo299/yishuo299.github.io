@@ -36,9 +36,15 @@ type Nebula = {
   speed: number;
   squash: number;
   points: SpiralPoint[];
+  bornAt: number;
+  period: number;
+  screenX: number;
+  screenY: number;
+  screenRadius: number;
 };
 
 type Meteor = { x: number; y: number; vx: number; vy: number; age: number; life: number };
+type Burst = { x: number; y: number; vx: number; vy: number; size: number; age: number; life: number; hue: number };
 
 const TAU = Math.PI * 2;
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -61,6 +67,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
   const orbit: OrbitPoint[] = [];
   const nebulae: Nebula[] = [];
   const meteors: Meteor[] = [];
+  const bursts: Burst[] = [];
   let width = 1;
   let height = 1;
   let minSize = 1;
@@ -70,7 +77,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
   let lastFrame = performance.now();
   let lastPaint = 0;
   let nextMeteor = 2.4;
-  let timeMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+  let timeMinutes = 0;
   let randomState = 0x71ca91d;
   const glowSprite = document.createElement("canvas");
   glowSprite.width = 64;
@@ -117,6 +124,32 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     return points;
   };
 
+  const createNebula = (x: number, y: number, generated = false): Nebula => {
+    const now = performance.now() / 1000;
+    const period = generated ? between(16, 26) : between(68, 138);
+    return {
+      x, y, radius: generated ? between(0.1, 0.19) : between(0.08, 0.17),
+      hue: between(192, 304), phase: between(0, TAU), speed: between(-0.035, 0.035),
+      squash: between(0.45, 0.72),
+      points: makeSpiral(Math.max(28, Math.round(68 * quality)), 1, 2 + (random() * 3 | 0), between(2, 4.2)),
+      bornAt: generated ? now : now - random() * period,
+      period, screenX: 0, screenY: 0, screenRadius: 0,
+    };
+  };
+
+  const respawnNebula = (nebula: Nebula, now: number) => {
+    nebula.x = between(0.06, 0.94);
+    nebula.y = between(0.08, 0.92);
+    nebula.radius = between(0.08, 0.17);
+    nebula.hue = between(192, 304);
+    nebula.phase = between(0, TAU);
+    nebula.speed = between(-0.035, 0.035);
+    nebula.squash = between(0.45, 0.72);
+    nebula.period = between(68, 138);
+    nebula.bornAt = now;
+    nebula.points = makeSpiral(Math.max(28, Math.round(68 * quality)), 1, 2 + (random() * 3 | 0), between(2, 4.2));
+  };
+
   const build = () => {
     randomState = 0x71ca91d;
     far.length = 0; middle.length = 0; near.length = 0; galaxy.length = 0; orbit.length = 0; nebulae.length = 0;
@@ -130,13 +163,10 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     }
     const nebulaCount = Math.max(4, Math.round(10 * quality));
     for (let index = 0; index < nebulaCount; index += 1) {
-      nebulae.push({
-        x: (index % 4 + between(0.25, 0.75)) / 4,
-        y: (Math.floor(index / 4) + between(0.28, 0.72)) / Math.ceil(nebulaCount / 4),
-        radius: between(0.08, 0.17), hue: between(192, 304), phase: between(0, TAU),
-        speed: between(-0.035, 0.035), squash: between(0.45, 0.72),
-        points: makeSpiral(Math.max(28, Math.round(68 * quality)), 1, 2 + (random() * 3 | 0), between(2, 4.2)),
-      });
+      nebulae.push(createNebula(
+        (index % 4 + between(0.25, 0.75)) / 4,
+        (Math.floor(index / 4) + between(0.28, 0.72)) / Math.ceil(nebulaCount / 4),
+      ));
     }
   };
 
@@ -286,13 +316,26 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     context.save();
     context.globalCompositeOperation = "screen";
     for (const nebula of nebulae) {
+      let progress = (time - nebula.bornAt) / nebula.period;
+      if (progress >= 1) {
+        respawnNebula(nebula, time);
+        progress = 0;
+      }
+      const appear = clamp(progress / 0.16, 0, 1);
+      const fade = 1 - clamp((progress - 0.76) / 0.24, 0, 1);
+      const life = appear * fade;
+      const scale = 0.22 + appear * 0.84 - (1 - fade) * 0.42;
+      if (life < 0.006) continue;
       const x = nebula.x * width;
       const y = nebula.y * height;
-      const radius = nebula.radius * minSize;
+      const radius = nebula.radius * minSize * scale;
+      nebula.screenX = x;
+      nebula.screenY = y;
+      nebula.screenRadius = radius;
       const hue = nebula.hue + Math.sin(colors.rotation + nebula.phase) * 24;
       const gas = context.createRadialGradient(x, y, 0, x, y, radius);
-      gas.addColorStop(0, `hsla(${hue},85%,70%,${0.09 * colors.glow})`);
-      gas.addColorStop(0.46, `hsla(${hue + 35},76%,54%,${0.045 * colors.glow})`);
+      gas.addColorStop(0, `hsla(${hue},85%,70%,${0.11 * colors.glow * life})`);
+      gas.addColorStop(0.46, `hsla(${hue + 35},76%,54%,${0.055 * colors.glow * life})`);
       gas.addColorStop(1, "rgba(0,0,0,0)");
       context.fillStyle = gas;
       context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
@@ -302,13 +345,64 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       context.scale(1, nebula.squash);
       context.fillStyle = `hsl(${hue} 86% 84%)`;
       for (const point of nebula.points) {
-        context.globalAlpha = point.alpha * colors.star * 0.48;
+        context.globalAlpha = point.alpha * colors.star * 0.52 * life;
         context.fillRect(point.x * radius, point.y * radius, point.size, point.size);
       }
       context.restore();
     }
     context.restore();
     context.globalAlpha = 1;
+  };
+
+  const scatterNebula = (nebula: Nebula, time: number) => {
+    const amount = Math.round((lowPower ? 38 : 66) * (reducedMotion ? 0.35 : 1));
+    for (let index = 0; index < amount; index += 1) {
+      const angle = between(0, TAU);
+      const speed = between(36, 260);
+      bursts.push({
+        x: nebula.screenX, y: nebula.screenY,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        size: between(0.7, 2.4), age: 0, life: between(0.7, 1.65), hue: nebula.hue,
+      });
+    }
+    respawnNebula(nebula, time);
+  };
+
+  const drawBursts = (delta: number) => {
+    context.save();
+    context.globalCompositeOperation = "screen";
+    for (let index = bursts.length - 1; index >= 0; index -= 1) {
+      const burst = bursts[index];
+      burst.age += delta;
+      if (burst.age >= burst.life) { bursts.splice(index, 1); continue; }
+      burst.x += burst.vx * delta;
+      burst.y += burst.vy * delta;
+      burst.vx *= Math.exp(-2.1 * delta);
+      burst.vy *= Math.exp(-2.1 * delta);
+      const life = 1 - burst.age / burst.life;
+      context.globalAlpha = Math.sin(Math.PI * life) * 0.9;
+      context.fillStyle = `hsl(${burst.hue} 88% 82%)`;
+      context.fillRect(burst.x, burst.y, burst.size, burst.size);
+    }
+    context.restore();
+    context.globalAlpha = 1;
+  };
+
+  const drawPressGlow = (now: number) => {
+    if (!press.active || reducedMotion) return;
+    const held = (now - press.started) / 1000;
+    if (held < 0.1) return;
+    const radius = clamp(8 + held * minSize * 0.085, 8, minSize * 0.34);
+    const glow = context.createRadialGradient(press.x, press.y, 0, press.x, press.y, radius);
+    glow.addColorStop(0, "rgba(255,255,255,.9)");
+    glow.addColorStop(0.22, "rgba(205,224,255,.48)");
+    glow.addColorStop(0.58, "rgba(153,188,255,.15)");
+    glow.addColorStop(1, "rgba(120,165,255,0)");
+    context.save();
+    context.globalCompositeOperation = "screen";
+    context.fillStyle = glow;
+    context.fillRect(press.x - radius, press.y - radius, radius * 2, radius * 2);
+    context.restore();
   };
 
   const drawMeteors = (delta: number) => {
@@ -351,7 +445,9 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
     drawStarLayer(far, time, colors.star * 0.74, true);
     drawStarLayer(middle, time, colors.star * 0.88, true);
     drawStarLayer(near, time, colors.star, false);
+    drawBursts(delta);
     drawMeteors(delta);
+    drawPressGlow(now);
   };
 
   const tick = (now: number) => {
@@ -368,6 +464,46 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
 
   const onPointerMove = (event: PointerEvent) => { pointer.x = event.clientX; pointer.y = event.clientY; pointer.active = true; };
   const onPointerLeave = () => { pointer.active = false; };
+  const press = { active: false, x: 0, y: 0, started: 0, pointerId: -1 };
+  const onPointerDown = (event: PointerEvent) => {
+    if (event.button !== 0 || reducedMotion) return;
+    press.active = true;
+    press.x = event.clientX;
+    press.y = event.clientY;
+    press.started = performance.now();
+    press.pointerId = event.pointerId;
+  };
+  const onPointerUp = (event: PointerEvent) => {
+    if (!press.active || event.pointerId !== press.pointerId) return;
+    press.active = false;
+    const held = performance.now() - press.started;
+    const now = performance.now() / 1000;
+    if (held >= 520) {
+      let nebula: Nebula;
+      if (nebulae.length >= (lowPower ? 9 : 16)) {
+        nebula = nebulae[0];
+        respawnNebula(nebula, now);
+      } else {
+        nebula = createNebula(clamp(press.x / width, 0.04, 0.96), clamp(press.y / height, 0.05, 0.95), true);
+        nebulae.push(nebula);
+      }
+      nebula.x = clamp(press.x / width, 0.04, 0.96);
+      nebula.y = clamp(press.y / height, 0.05, 0.95);
+      nebula.bornAt = now;
+      return;
+    }
+    let closest: Nebula | null = null;
+    let closestDistance = Number.POSITIVE_INFINITY;
+    for (const nebula of nebulae) {
+      const distance = Math.hypot(nebula.screenX - event.clientX, nebula.screenY - event.clientY);
+      if (distance < Math.max(28, nebula.screenRadius * 0.72) && distance < closestDistance) {
+        closest = nebula;
+        closestDistance = distance;
+      }
+    }
+    if (closest) scatterNebula(closest, now);
+  };
+  const onPointerCancel = () => { press.active = false; };
   const onVisibility = () => {
     if (!document.hidden) {
       lastFrame = performance.now();
@@ -379,14 +515,17 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
   resize();
   window.addEventListener("resize", resize, { passive: true });
   window.addEventListener("pointermove", onPointerMove, { passive: true });
+  window.addEventListener("pointerdown", onPointerDown, { passive: true });
+  window.addEventListener("pointerup", onPointerUp, { passive: true });
+  window.addEventListener("pointercancel", onPointerCancel, { passive: true });
   document.addEventListener("pointerleave", onPointerLeave);
   document.addEventListener("visibilitychange", onVisibility);
   if (reducedMotion) paint(performance.now(), 0);
   else frame = window.requestAnimationFrame(tick);
 
   return {
-    setTime(minutes: number) {
-      timeMinutes = clamp(minutes, 0, 1439);
+    setTime(_minutes: number) {
+      timeMinutes = 0;
       if (reducedMotion) paint(performance.now(), 0);
     },
     destroy() {
@@ -394,6 +533,9 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
       document.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
     },
