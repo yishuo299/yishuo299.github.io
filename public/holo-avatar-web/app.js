@@ -452,7 +452,7 @@ async function init() {
     fallback3D(new Error("当前设备无法显示卡面材质"));
     return;
   }
-  $("loading").remove();
+  $("loading")?.remove();
   root.rotation.set(targetX, targetY, 0);
   window.__holo = {
     ready: true,
@@ -517,7 +517,7 @@ function fallback3D(error) {
   flipper.append(card);
   wrap.append(flipper);
   stage.append(wrap);
-  $("loading").remove();
+  $("loading")?.remove();
 
   // ---- interaction state (independent of the WebGL path) ----
   let tx = -0.03, ty = -0.06, curX = 0, curY = 0, curFlip = 0, flipTarget = 0;

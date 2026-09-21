@@ -161,7 +161,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       const radius = between(0.05, 0.5);
       orbit.push({ radius, angle: between(0, TAU), speed: between(0.08, 0.2) / Math.sqrt(radius), eccentricity: between(0.5, 0.82), size: between(0.75, 2.1), phase: between(0, TAU) });
     }
-    const nebulaCount = Math.max(4, Math.round(10 * quality));
+    const nebulaCount = lowPower ? 10 : 18;
     for (let index = 0; index < nebulaCount; index += 1) {
       nebulae.push(createNebula(
         (index % 4 + between(0.25, 0.75)) / 4,
@@ -321,10 +321,11 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
         respawnNebula(nebula, time);
         progress = 0;
       }
-      const appear = clamp(progress / 0.16, 0, 1);
+      const appearProgress = clamp(progress / 0.16, 0, 1);
+      const appear = 0.15 + 0.85 * (1 - Math.pow(1 - appearProgress, 3));
       const fade = 1 - clamp((progress - 0.76) / 0.24, 0, 1);
       const life = appear * fade;
-      const scale = 0.22 + appear * 0.84 - (1 - fade) * 0.42;
+      const scale = 0.2 + appear * 0.8 - (1 - fade) * 0.42;
       if (life < 0.006) continue;
       const x = nebula.x * width;
       const y = nebula.y * height;
@@ -334,8 +335,8 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
       nebula.screenRadius = radius;
       const hue = nebula.hue + Math.sin(colors.rotation + nebula.phase) * 24;
       const gas = context.createRadialGradient(x, y, 0, x, y, radius);
-      gas.addColorStop(0, `hsla(${hue},85%,70%,${0.11 * colors.glow * life})`);
-      gas.addColorStop(0.46, `hsla(${hue + 35},76%,54%,${0.055 * colors.glow * life})`);
+      gas.addColorStop(0, `hsla(${hue},85%,70%,${0.16 * colors.glow * life})`);
+      gas.addColorStop(0.46, `hsla(${hue + 35},76%,54%,${0.08 * colors.glow * life})`);
       gas.addColorStop(1, "rgba(0,0,0,0)");
       context.fillStyle = gas;
       context.fillRect(x - radius, y - radius, radius * 2, radius * 2);

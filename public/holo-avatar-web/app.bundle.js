@@ -31496,7 +31496,7 @@ async function init() {
     fallback3D(new Error("\u5F53\u524D\u8BBE\u5907\u65E0\u6CD5\u663E\u793A\u5361\u9762\u6750\u8D28"));
     return;
   }
-  $("loading").remove();
+  $("loading")?.remove();
   root.rotation.set(targetX, targetY, 0);
   window.__holo = {
     ready: true,
@@ -31554,7 +31554,7 @@ function fallback3D(error) {
   flipper.append(card);
   wrap.append(flipper);
   stage.append(wrap);
-  $("loading").remove();
+  $("loading")?.remove();
   let tx = -0.03, ty = -0.06, curX = 0, curY = 0, curFlip = 0, flipTarget = 0;
   let lastMove = 0, sway = !media.matches;
   let scale = 1, depthScale = 1, bgScale = 1;

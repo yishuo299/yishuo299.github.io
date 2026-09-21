@@ -22,6 +22,13 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
 <html lang="zh-CN" data-theme="lofi" class:list={{ "archive-loading-active": isHome }}>
   <head>
     <BaseHead title={title} description={description} image={image} ogType={ogType} />
+    {isHome && (
+      <>
+        <link rel="modulepreload" href="/holo-avatar-web/app.bundle.js?v=20260921-2" />
+        <link rel="preload" as="image" href="/holo-avatar-web/assets/background.png" fetchpriority="high" />
+        <link rel="preload" as="image" href="/holo-avatar-web/assets/subject.png" fetchpriority="high" />
+      </>
+    )}
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
@@ -455,31 +462,20 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           document.body.classList.toggle("day", daylight > 0.74);
         };
 
-        let backgroundMinutes = 0; let followsLive = false;
-        const saveBackgroundState = () => {};
+        const backgroundMinutes = 0;
         const updatePanel = () => {
           const hour = Math.floor(backgroundMinutes / 60), minute = Math.floor(backgroundMinutes % 60);
-          if (bgPanelTime) bgPanelTime.textContent = `${pad(hour)}:${pad(minute)}`; if (bgPanelPeriod) bgPanelPeriod.textContent = periodLabel(backgroundMinutes / 60); if (bgSlider) bgSlider.value = String(backgroundMinutes); bgLive?.classList.toggle("active", followsLive);
+          if (bgPanelTime) bgPanelTime.textContent = `${pad(hour)}:${pad(minute)}`; if (bgPanelPeriod) bgPanelPeriod.textContent = periodLabel(backgroundMinutes / 60); if (bgSlider) bgSlider.value = String(backgroundMinutes);
         };
         const weekdays = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"], months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
         let lastMinute = -1;
         const tick = () => {
           const now = new Date();
           if (backgroundMinutes !== lastMinute) { lastMinute = backgroundMinutes; updateScene(backgroundMinutes); updatePanel(); }
-          if (bigTime) bigTime.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`; if (bigDate) bigDate.textContent = `${weekdays[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`; if (bigPeriod) bigPeriod.textContent = periodLabel(now.getHours());
+          if (bigTime) bigTime.textContent = "00:00:00"; if (bigDate) bigDate.textContent = `${weekdays[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`; if (bigPeriod) bigPeriod.textContent = "DEEP NIGHT";
         };
         tick(); intervals.push(window.setInterval(tick, 1000));
-        const openPanel = () => { updatePanel(); bgPanel?.classList.add("open"); bgPanel?.setAttribute("aria-hidden", "false"); };
-        const closePanel = () => { bgPanel?.classList.remove("open"); bgPanel?.setAttribute("aria-hidden", "true"); saveBackgroundState(); };
-        clockAdjust?.addEventListener("click", openPanel, { signal: controller.signal }); bgClose?.addEventListener("click", closePanel, { signal: controller.signal });
         let sliderFrame = 0;
-        bgSlider?.addEventListener("input", () => {
-          followsLive = false; backgroundMinutes = Number(bgSlider.value);
-          if (sliderFrame) return;
-          sliderFrame = window.requestAnimationFrame(() => { sliderFrame = 0; lastMinute = -1; tick(); saveBackgroundState(); });
-        }, { signal: controller.signal });
-        bgLive?.addEventListener("click", () => { followsLive = true; backgroundMinutes = liveMinutes(); lastMinute = -1; tick(); saveBackgroundState(); }, { signal: controller.signal });
-        document.addEventListener("keydown", (event) => { if (event.key === "Escape" && bgPanel?.classList.contains("open")) closePanel(); }, { signal: controller.signal });
 
         document.querySelectorAll<HTMLElement>("[data-copy]").forEach((button) => button.addEventListener("click", async () => {
           const value = button.dataset.copy ?? "";
