@@ -123,11 +123,12 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
     });
   };
 
-  const srcForRole = (base: string, config: any, roleConfig: any) => {
-    if (config.mode === "hash") return `${base}#${roleConfig.hash}`;
+  const srcForRole = (base: string, config: any, roleConfig: any, key: string) => {
+    const stamp = `mockRole=${encodeURIComponent(key)}&mockTick=${Date.now()}`;
+    if (config.mode === "hash") return `${base}?${stamp}#${roleConfig.hash}`;
     if (config.mode === "static") return `${base}${roleConfig.query ?? ""}`;
     if (config.mode === "history-session" || config.mode === "history-local") {
-      return `${base}?experienceRoute=${encodeURIComponent(roleConfig.path)}`;
+      return `${base}?${stamp}&experienceRoute=${encodeURIComponent(roleConfig.path)}`;
     }
     return base;
   };
@@ -151,9 +152,13 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
       if (!roleConfig) return;
       buttons.forEach((item) => item.classList.toggle("active", item === button));
       if (current) current.textContent = button.textContent ?? "";
+      ["token", "userInfo", "user", "rolePermissionMap", "roleEdits"].forEach((name) => {
+        window.localStorage.removeItem(name);
+        window.sessionStorage.removeItem(name);
+      });
       if (roleConfig.local) writeStorage(roleConfig.local, window.localStorage);
       if (roleConfig.session) writeStorage(roleConfig.session, window.sessionStorage);
-      frame.src = srcForRole(base, config, roleConfig);
+      frame.src = srcForRole(base, config, roleConfig, key);
     };
 
     buttons.forEach((button) => {

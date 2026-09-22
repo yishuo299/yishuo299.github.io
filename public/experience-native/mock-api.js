@@ -45,6 +45,8 @@
     doctors: [{ id: 1, name: "李医生", departmentId: 1, title: "主任医师", fee: 25 }, { id: 2, name: "周医生", departmentId: 3, title: "副主任医师", fee: 20 }],
     schedules: [{ id: 1, doctorId: 1, doctorName: "李医生", departmentName: "内科", workDate: "2026-09-22", period: "上午", total: 30, leftNum: 12, status: 1 }],
     appointments: [{ id: 1, patientName: "测试患者", doctorName: "李医生", departmentName: "内科", appointmentDate: "2026-09-22", status: 1, fee: 25 }],
+    records: [{ id: 1, patientName: "测试患者", doctorName: "李医生", diagnosis: "上呼吸道感染", advice: "多饮水，按时服药", createTime: "2026-09-22 09:30" }],
+    prescriptions: [{ id: 1, patientName: "测试患者", doctorName: "李医生", amount: 58, status: 0, createTime: "2026-09-22 09:40" }],
     drugs: [{ id: 1, name: "布洛芬", stock: 200, price: 12.5 }, { id: 2, name: "阿莫西林", stock: 120, price: 18 }],
     books: [{ id: 1, title: "数据库系统概论", name: "数据库系统概论", author: "王珊", isbn: "9787040406641", stock: 8, status: 1 }, { id: 2, title: "Java 编程思想", name: "Java 编程思想", author: "Bruce Eckel", isbn: "9787111213826", stock: 5, status: 1 }],
     readers: [{ id: 1, name: "张同学", cardNo: "R2026001", phone: "13800000001", status: 1 }],
@@ -57,9 +59,21 @@
     teachers: [{ id: 1, name: "周老师", teacherNo: "T2026001" }, { id: 2, name: "王老师", teacherNo: "T2026002" }],
     classes: [{ id: 1, name: "软件 2401" }, { id: 2, name: "软件 2402" }],
     courses: [{ id: 1, name: "软件工程", teacherName: "周老师", capacity: 60 }, { id: 2, name: "数据库原理", teacherName: "王老师", capacity: 60 }],
+    offerings: [
+      { id: 1, offeringId: 1, courseId: 1, courseName: "软件工程", courseCode: "SE-2401", teacherName: "周老师", credit: 3, courseType: 1, streamType: 1, selectedCount: 38, maxStudents: 60, classroomName: "A302", scheduleInfo: "周一 第1-2节", dayOfWeek: 1, startSection: 1, endSection: 2, weekStart: 1, weekEnd: 16, description: "围绕软件生命周期、需求分析、设计与测试展开。" },
+      { id: 2, offeringId: 2, courseId: 2, courseName: "数据库原理", courseCode: "DB-2402", teacherName: "王老师", credit: 4, courseType: 1, streamType: 2, selectedCount: 55, maxStudents: 60, classroomName: "B208", scheduleInfo: "周三 第3-4节", dayOfWeek: 3, startSection: 3, endSection: 4, weekStart: 1, weekEnd: 16, description: "学习关系模型、SQL、事务与数据库设计。" },
+      { id: 3, offeringId: 3, courseId: 3, courseName: "Python 程序设计", courseCode: "PY-2403", teacherName: "陈老师", credit: 2, courseType: 2, streamType: 1, selectedCount: 28, maxStudents: 50, classroomName: "C105", scheduleInfo: "周五 第5-6节", dayOfWeek: 5, startSection: 5, endSection: 6, weekStart: 2, weekEnd: 14, description: "通过案例掌握 Python 基础和数据处理。" },
+    ],
+    selections: [{ id: 1, offeringId: 1, courseName: "软件工程", teacherName: "周老师", credit: 3 }],
+    grades: [
+      { id: 1, gradeId: 1, studentId: 1, studentNo: "S2026001", studentName: "张同学", offeringId: 1, courseName: "软件工程", usualScore: 88, finalScore: 91, totalScore: 90.1, gpa: 4.0, gradeStatus: 3 },
+      { id: 2, gradeId: 2, studentId: 2, studentNo: "S2026002", studentName: "李同学", offeringId: 1, courseName: "软件工程", usualScore: 78, finalScore: 83, totalScore: 81.5, gpa: 3.3, gradeStatus: 1 },
+    ],
+    appeals: [{ id: 1, gradeId: 2, courseName: "软件工程", studentName: "李同学", appealReason: "希望复核期末试卷得分。", status: 0, processResult: "" }],
     sessions: [{ id: 1, courseName: "软件工程", className: "软件 2401", startTime: "2026-09-22 08:00", status: 1 }],
     attendance: [{ id: 1, studentName: "张同学", courseName: "软件工程", signTime: "08:03", status: "正常" }],
     leaves: [{ id: 1, studentName: "李同学", courseName: "数据库原理", reason: "身体不适", status: 0 }],
+    logs: [{ id: 1, username: "admin", action: "登录系统", ip: "127.0.0.1", createTime: "2026-09-22 09:00" }],
     equipment: [{ id: 1, name: "光谱检测仪", type: "检测设备", status: "库存", health: 96 }, { id: 2, name: "便携终端", type: "终端设备", status: "服役中", health: 82 }],
     requests: [{ id: 1, equipmentName: "便携终端", applicantName: "普通用户", type: "BORROW", status: "PENDING", progress: 35 }],
   };
@@ -94,6 +108,10 @@
 
   const mapResource = (url) => {
     const u = url.toLowerCase();
+    if (u.includes("grade-appeal")) return "appeals";
+    if (u.includes("/grade")) return "grades";
+    if (u.includes("course-selection")) return "selections";
+    if (u.includes("offering")) return "offerings";
     if (u.includes("category") || u.includes("genre")) return u.includes("genre") ? "genres" : "categories";
     if (u.includes("product")) return "products";
     if (u.includes("order")) return "orders";
@@ -103,6 +121,8 @@
     if (u.includes("doctor")) return "doctors";
     if (u.includes("schedule")) return "schedules";
     if (u.includes("appointment")) return "appointments";
+    if (u.includes("prescription")) return "prescriptions";
+    if (u.includes("record")) return "records";
     if (u.includes("drug")) return "drugs";
     if (u.includes("book")) return "books";
     if (u.includes("reader")) return "readers";
@@ -117,6 +137,7 @@
     if (u.includes("class")) return "classes";
     if (u.includes("course")) return "courses";
     if (u.includes("session")) return "sessions";
+    if (u.includes("log")) return "logs";
     if (u.includes("attendance")) return "attendance";
     if (u.includes("leave")) return "leaves";
     if (u.includes("equipment")) return "equipment";
@@ -152,6 +173,7 @@
     }
     if (lower.includes("/wallet/info")) return ok({ balance: 268.5, frozen: 0 });
     if (lower.includes("/wallet/transactions")) return ok(page([{ id: 1, type: "充值", amount: 100, createTime: "2026-09-22" }], current, size));
+    if (lower.includes("/config")) return ok({ maxBorrowDays: 30, maxBorrowCount: 8, finePerDay: 0.5, systemName: "图书馆管理系统" });
     if (lower.includes("/movies/years")) return ok([2026, 2025, 2024, 2014, 2010]);
     if (lower.includes("/movies/countries")) return ok(["中国", "美国", "日本", "英国"]);
     if (lower.includes("/recommend")) return ok(clone(db.movies));
@@ -162,6 +184,29 @@
     if (lower.includes("/face/train") || lower.includes("/face/enroll")) return ok({ sampleCount: 8, message: "训练完成" });
     if (lower.includes("/equipment/types")) return clone(["检测设备", "终端设备", "通信设备"]);
     if (lower.includes("/equipment/stock/")) return clone(db.equipment.filter((item) => item.status === "库存"));
+    if (lower.includes("/equipment/my/")) return clone(db.equipment.filter((item) => item.status === "服役中"));
+    if (lower.includes("/requests/pending")) return clone(db.requests.filter((item) => item.status === "PENDING"));
+    if (lower.includes("/requests/user/")) return clone(db.requests);
+    if (lower.includes("/maintenance/worker/")) return clone(db.requests.map((item) => ({ ...item, equipmentName: item.equipmentName || "便携终端", progress: item.progress || 35 })));
+
+    if (lower.includes("/course/common/teachers")) return ok(page(clone(db.teachers), current, size));
+    if (lower.includes("/course/common/semesters")) return ok([{ value: "2026-2027-1", label: "2026-2027 学年第 1 学期", isCurrent: true }, { value: "2025-2026-2", label: "2025-2026 学年第 2 学期" }]);
+    if (lower.includes("/course/common/classrooms")) return ok([{ id: 1, name: "A302" }, { id: 2, name: "B208" }, { id: 3, name: "C105" }]);
+    if (lower.includes("/course/common/courses")) return ok(clone(db.courses));
+    if (lower.includes("/course/common/classes")) return ok(clone(db.classes));
+    if (lower.includes("/course-selection/available")) return ok(page(clone(db.offerings), current, size));
+    if (lower.includes("/course-selection/my-schedule")) return ok(clone(db.offerings.filter((item) => db.selections.some((sel) => sel.offeringId === item.id))));
+    if (lower.includes("/course-selection/my-selections")) return ok(page(clone(db.selections), current, size));
+    if (lower.includes("/course/teacher/offerings")) return ok(page(clone(db.offerings), current, size));
+    if (lower.includes("/course/offering/list")) return ok(page(clone(db.offerings), current, size));
+    if (lower.includes("/course/offering/") && lower.includes("/students")) return ok(clone(db.students));
+    if (lower.includes("/grade/my-stats")) return ok({ gpa: 3.72, totalCredits: 18, courseCount: 6, passedCount: 6, passRate: 100, rank: 8, totalStudents: 126 });
+    if (lower.includes("/grade/my-grades")) return ok(page(clone(db.grades), current, size));
+    if (lower.includes("/grade/offering/")) return ok(page(clone(db.grades), current, size));
+    if (lower.includes("/grade/pending-audit")) return ok(page(clone(db.offerings.map((item) => ({ ...item, submitStatus: 2, avgScore: 86.4 }))), current, size));
+    if (lower.includes("/grade-appeal/my") || lower.includes("/grade-appeal/page")) return ok(page(clone(db.appeals), current, size));
+    if (lower.includes("/user/stats/admin")) return ok({ userCount: 42, roleCount: 4, logCount: 128, onlineCount: 6 });
+    if (lower.includes("/user/stats/academic")) return ok({ courseCount: 86, offeringCount: 34, studentCount: 1200, pendingGradeCount: 3 });
 
     if (method === "GET") {
       const rows = normalizeRows(key, clone(listBy(key)));
@@ -173,6 +218,58 @@
     }
 
     if (method === "POST") {
+      if (lower.includes("/course-selection/select/")) {
+        const id = Number((url.match(/select\/(\d+)/) || [])[1]);
+        const offering = db.offerings.find((item) => item.id === id);
+        if (offering && !db.selections.some((item) => item.offeringId === id)) {
+          db.selections.push({ id: ++idSeq, offeringId: id, courseName: offering.courseName, teacherName: offering.teacherName, credit: offering.credit });
+          offering.selectedCount += 1;
+        }
+        return ok(true);
+      }
+      if (lower.includes("/course-selection/drop/")) {
+        const id = Number((url.match(/drop\/(\d+)/) || [])[1]);
+        removeItem("selections", db.selections.find((item) => item.offeringId === id)?.id);
+        const offering = db.offerings.find((item) => item.id === id);
+        if (offering) offering.selectedCount = Math.max(0, offering.selectedCount - 1);
+        return ok(true);
+      }
+      if (lower.includes("/grade/batch-input")) {
+        const rows = Array.isArray(body) ? body : [];
+        rows.forEach((row) => {
+          const currentGrade = db.grades.find((item) => item.studentId === row.studentId && item.offeringId === row.offeringId);
+          if (currentGrade) Object.assign(currentGrade, row, { gradeStatus: 1, totalScore: Number(((row.usualScore || 0) * 0.3 + (row.finalScore || 0) * 0.7).toFixed(1)) });
+        });
+        return ok(true);
+      }
+      if (lower.includes("/grade/input")) return ok(addItem("grades", { ...body, gradeStatus: 1 }));
+      if (lower.includes("/grade/submit/")) {
+        db.grades.forEach((item) => { item.gradeStatus = Math.max(item.gradeStatus || 0, 2); });
+        return ok(true);
+      }
+      if (lower.includes("/grade/audit/") || lower.includes("/grade/publish/")) {
+        db.grades.forEach((item) => { item.gradeStatus = lower.includes("publish") ? 4 : 3; });
+        return ok(true);
+      }
+      if (lower.includes("/grade-appeal/submit")) return ok(addItem("appeals", { gradeId: params.gradeId || 1, appealReason: params.appealReason || "申请复核", status: 0 }));
+      if (lower.includes("/grade-appeal/process/")) return ok(updateItem("appeals", (url.match(/process\/(\d+)/) || [])[1], { status: params.approved === "true" ? 1 : 2, processResult: params.result || params.remark || "已处理" }));
+      if (lower.includes("/borrow/return")) return ok(updateItem("borrows", body.id || body.borrowId || 1, { status: 2, returnDate: new Date().toLocaleDateString() }));
+      if (lower.includes("/borrow/renew")) return ok(updateItem("borrows", body.id || body.borrowId || 1, { dueDate: "2026-10-28" }));
+      if (lower.includes("/borrow")) return ok(addItem("borrows", { ...body, bookName: "数据库系统概论", readerName: "张同学", status: 1 }));
+      if (lower.includes("/reservation")) return ok(addItem("borrows", { ...body, bookName: "Java 编程思想", readerName: "张同学", status: "已预约" }));
+      if (lower.includes("/fine/pay")) return ok(true);
+      if (lower.includes("/appointment/book")) {
+        const schedule = db.schedules.find((item) => String(item.id) === String(body.scheduleId)) || db.schedules[0];
+        if (schedule) schedule.leftNum = Math.max(0, (schedule.leftNum || 1) - 1);
+        return ok(addItem("appointments", { ...body, patientName: "测试患者", doctorName: schedule?.doctorName || "李医生", departmentName: schedule?.departmentName || "内科", status: 1 }));
+      }
+      if (lower.includes("/record")) return ok(addItem("records", { ...body, patientName: "测试患者", doctorName: "李医生" }));
+      if (lower.includes("/prescription")) return ok(addItem("prescriptions", { ...body, patientName: "测试患者", amount: 58, status: 0 }));
+      if (lower.includes("/requests/borrow")) return ok(addItem("requests", { ...body, type: "BORROW", status: "PENDING", applicantName: "普通用户" }));
+      if (lower.includes("/requests/scrap")) return ok(addItem("requests", { ...body, type: "SCRAP", status: "PENDING", applicantName: "普通用户" }));
+      if (lower.includes("/requests/") && lower.includes("/approve")) return ok(updateItem("requests", (url.match(/requests\/(\d+)/) || [])[1], { status: "APPROVED" }));
+      if (lower.includes("/requests/") && lower.includes("/reject")) return ok(updateItem("requests", (url.match(/requests\/(\d+)/) || [])[1], { status: "REJECTED" }));
+      if (lower.includes("/maintenance/") && lower.includes("/progress")) return ok(updateItem("requests", (url.match(/maintenance\/(\d+)/) || [])[1], { progress: Number(params.progress || 100), status: params.status || "PROCESSING" }));
       if (lower.includes("/delete/") || lower.includes("/cancel") || lower.includes("/remove")) {
         removeItem(key, (url.match(/\/(\d+)(?:\?|$)/) || [])[1]);
         return ok(true);
