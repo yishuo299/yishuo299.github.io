@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { projectExperiences } from "../data/projectExperiences";
 
-const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stack))).sort((a, b) => a.localeCompare(b));
+const filterStacks = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android"];
 ---
 
 <BaseLayout title="项目体验" description="燚燿的项目纯前端模拟体验入口。" sideBarActiveItemID="experience">
@@ -17,7 +17,7 @@ const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stac
         </label>
         <div class="experience-stack-filter" role="list" aria-label="技术栈筛选">
           <button class="active" type="button" data-experience-filter="all">全部</button>
-          {stacks.map((stack) => <button type="button" data-experience-filter={stack.toLowerCase()}>{stack}</button>)}
+          {filterStacks.map((stack) => <button type="button" data-experience-filter={stack.toLowerCase()}>{stack}</button>)}
         </div>
       </div>
     </header>
@@ -154,7 +154,8 @@ const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stac
       let visible = 0;
       visibleItems = [];
       items.forEach((item, index) => {
-        const stackMatch = activeStack === "all" || (item.dataset.experienceStack ?? "").includes(`|${activeStack}|`);
+        const stackTokens = (item.dataset.experienceStack ?? "").split("|").filter(Boolean);
+        const stackMatch = activeStack === "all" || stackTokens.some((token) => token === activeStack || token.startsWith(`${activeStack} `) || token.includes(activeStack));
         const searchMatch = !keyword || (item.dataset.experienceSearch ?? "").includes(keyword);
         const match = stackMatch && searchMatch;
         item.toggleAttribute("hidden", !match);

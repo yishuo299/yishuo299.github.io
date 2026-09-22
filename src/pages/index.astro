@@ -163,17 +163,16 @@ const PROJECT_STARS = projectExperiences.map((experience, index) => {
     </div>
   </section>
 
-  <section id="about" class="content-section">
-    <div class="container">
-      <header class="section-heading reveal"><div><div class="section-label">ABOUT</div><h2 class="section-title">Build · Learn · Repeat</h2></div></header>
-      <p class="about-text reveal">这里是我的个人项目档案。我喜欢通过实际项目学习新技术，从 Python、Web 开发，到 STM32 嵌入式开发、Android 与前后端项目。每一个项目都是一次实践，也记录着不断尝试、学习和成长的过程。</p>
-    </div>
-  </section>
-
   <div id="blackHoleTransition" class="black-hole-transition" aria-hidden="true">
     <div class="black-hole-lens"><i></i><span></span></div>
     <div class="black-hole-shards" aria-hidden="true">{Array.from({ length: 14 }, (_, index) => <i data-hole-shard style={`--shard-index:${index}`}></i>)}</div>
     <div class="black-hole-label" id="blackHoleLabel">ENTERING ORBIT</div>
+  </div>
+  <div id="planetBurstTransition" class="planet-burst-transition" aria-hidden="true">
+    <div class="planet-burst-core"></div>
+    <div class="planet-burst-ring"></div>
+    <div class="planet-burst-particles" aria-hidden="true">{Array.from({ length: 22 }, (_, index) => <i data-burst-particle style={`--burst-index:${index}`}></i>)}</div>
+    <div class="planet-burst-label" id="planetBurstLabel">OPENING PROJECT</div>
   </div>
 </BaseLayout>
 
@@ -239,6 +238,9 @@ const PROJECT_STARS = projectExperiences.map((experience, index) => {
     const blackHoleTransition = document.getElementById("blackHoleTransition");
     const blackHoleLabel = document.getElementById("blackHoleLabel");
     const holeShards = Array.from(document.querySelectorAll<HTMLElement>("[data-hole-shard]"));
+    const planetBurstTransition = document.getElementById("planetBurstTransition");
+    const planetBurstLabel = document.getElementById("planetBurstLabel");
+    const burstParticles = Array.from(document.querySelectorAll<HTMLElement>("[data-burst-particle]"));
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const constellationMap = document.querySelector<HTMLElement>(".constellation-map");
     const orbitStars = Array.from(document.querySelectorAll<HTMLElement>("[data-category-star]"));
@@ -287,13 +289,33 @@ const PROJECT_STARS = projectExperiences.map((experience, index) => {
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
         event.preventDefault();
         const destination = star.href;
-        if (reducedMotion || !blackHoleTransition) { void navigate(destination); return; }
         const rect = star.getBoundingClientRect();
         const holeX = rect.left + rect.width / 2;
         const holeY = rect.top + rect.height / 2;
+        const entryLabel = star.dataset.entryLabel ?? star.dataset.category ?? "PROJECT";
+        if (star.hasAttribute("data-experience-star")) {
+          if (reducedMotion || !planetBurstTransition) { void navigate(destination); return; }
+          planetBurstTransition.style.setProperty("--burst-x", `${holeX}px`);
+          planetBurstTransition.style.setProperty("--burst-y", `${holeY}px`);
+          planetBurstTransition.style.setProperty("--burst-color", getComputedStyle(star).getPropertyValue("--satellite-color") || "#8ab4ff");
+          if (planetBurstLabel) planetBurstLabel.textContent = `PROJECT ${entryLabel.toUpperCase()}`;
+          burstParticles.forEach((particle, index) => {
+            const angle = (Math.PI * 2 * index) / burstParticles.length + (index % 4) * 0.11;
+            const distance = 120 + (index % 7) * 34;
+            particle.style.setProperty("--burst-dx", `${Math.cos(angle) * distance}px`);
+            particle.style.setProperty("--burst-dy", `${Math.sin(angle) * distance}px`);
+            particle.style.setProperty("--burst-delay", `${(index % 8) * 14}ms`);
+          });
+          planetBurstTransition.classList.add("show");
+          planetBurstTransition.setAttribute("aria-hidden", "false");
+          document.body.classList.add("cosmic-transitioning");
+          window.cancelAnimationFrame(orbitFrame);
+          window.setTimeout(() => { void navigate(destination); }, 680);
+          return;
+        }
+        if (reducedMotion || !blackHoleTransition) { void navigate(destination); return; }
         blackHoleTransition.style.setProperty("--hole-x", `${holeX}px`);
         blackHoleTransition.style.setProperty("--hole-y", `${holeY}px`);
-        const entryLabel = star.dataset.entryLabel ?? star.dataset.category ?? "PROJECT";
         if (blackHoleLabel) blackHoleLabel.textContent = `ENTERING ${entryLabel.toUpperCase()}`;
         holeShards.forEach((shard, index) => {
           const angle = (Math.PI * 2 * index) / holeShards.length + (index % 3) * 0.19;
