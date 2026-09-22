@@ -1,267 +1,221 @@
-export const projectExperiences = [
+export type ExperienceRole = {
+  key: string;
+  label: string;
+  name: string;
+  menu: string[];
+  active: string;
+};
+
+export type ProjectExperience = {
+  slug: string;
+  title: string;
+  shortTitle: string;
+  description: string;
+  articleUrl: string;
+  projectUrl: string;
+  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment";
+  accent: string;
+  roles: ExperienceRole[];
+  stack: string[];
+  hero?: {
+    title: string;
+    subtitle: string;
+    search?: string;
+    categories?: string[];
+  };
+  cards: Array<[string, string, string?]>;
+  panels: Array<{
+    title: string;
+    subtitle?: string;
+    type: "table" | "cards" | "chart" | "form" | "scan" | "store";
+  }>;
+  columns: string[];
+  rows: string[][];
+  products?: Array<{
+    title: string;
+    price: string;
+    origin?: string;
+    tag: string;
+    meta: string;
+    color: string;
+  }>;
+};
+
+export const projectExperiences: ProjectExperience[] = [
   {
     slug: "campus-marketplace",
     title: "校园二手交易平台",
-    shortTitle: "校园交易",
-    category: "Spring Boot",
-    description: "模拟校园闲置商品发布、下单、钱包支付、发货、收货和评价闭环。",
+    shortTitle: "校园集市",
+    description: "复刻原项目橙色校园闲置集市：首页搜索、分类筛选、商品瀑布流、卖家中心和后台管理。",
     articleUrl: "/projects/campus-marketplace-reproduction/",
     projectUrl: "https://github.com/yishuo299/campus-marketplace",
-    accent: "#7dd3fc",
+    ui: "market",
+    accent: "#f97316",
     stack: ["Spring Boot", "MyBatis-Plus", "MySQL", "Vue 3", "Pinia", "Element Plus"],
-    roles: ["买家", "卖家", "管理员"],
-    modules: ["商品广场", "订单中心", "钱包流水", "评价信用", "后台审核"],
-    metrics: [
-      ["在售商品", "128", "+12"],
-      ["待处理订单", "36", "+5"],
-      ["钱包流水", "9,482", "+18%"],
-      ["交易完成率", "92%", "+3%"],
+    roles: [
+      { key: "buyer", label: "测试买家", name: "林同学", active: "首页", menu: ["首页", "发布闲置", "我的订单", "收藏", "钱包", "消息"] },
+      { key: "seller", label: "测试卖家", name: "周同学", active: "卖家中心", menu: ["首页", "发布闲置", "卖家中心", "我的订单", "钱包", "地址"] },
+      { key: "admin", label: "测试管理员", name: "平台管理员", active: "后台首页", menu: ["后台首页", "用户管理", "商品审核", "订单管理", "分类管理"] },
     ],
-    spotlight: {
-      title: "交易流程模拟",
-      text: "选择商品后生成订单，再进入付款、发货、确认收货和评价流程。页面中的金额、订单状态和日志都会在前端即时变化。",
+    hero: {
+      title: "校园闲置集市",
+      subtitle: "买卖闲置，认识同学，让好物在校园里流动起来",
+      search: "搜索你想要的宝贝，如 iPad、考研、山地车...",
+      categories: ["全部", "数码", "书籍", "生活", "运动", "美妆", "票券"],
     },
-    tableTitle: "最新商品",
-    columns: ["商品", "分类", "价格", "状态"],
-    rows: [
-      ["机械键盘 K87", "数码", "¥169", "待付款"],
-      ["高数辅导资料", "书籍", "¥28", "在售"],
-      ["宿舍小冰箱", "生活", "¥240", "待发货"],
-      ["蓝牙耳机", "数码", "¥88", "已完成"],
+    cards: [["今日上新", "32"], ["在售商品", "128"], ["待付款订单", "6"], ["钱包余额", "¥268.50"]],
+    panels: [
+      { title: "瀑布流商品墙", subtitle: "复刻原项目首页卡片、价格、成色与校区信息", type: "store" },
+      { title: "交易状态", subtitle: "下单、付款、发货、收货与评价流程", type: "table" },
     ],
-    stages: ["发布商品", "买家下单", "钱包支付", "卖家发货", "收货评价"],
-    activity: ["卖家发布了 1 件数码商品", "买家创建订单并冻结库存", "钱包扣款成功，订单进入待发货", "管理员审核异常商品"],
+    columns: ["商品", "买家/卖家", "金额", "状态"],
+    rows: [["机械键盘 K87", "林同学 / 周同学", "¥169.00", "待付款"], ["高数辅导资料", "陈同学 / 王同学", "¥28.00", "交易完成"], ["宿舍小冰箱", "李同学 / 张同学", "¥240.00", "待发货"], ["蓝牙耳机", "赵同学 / 孙同学", "¥88.00", "待评价"]],
+    products: [
+      { title: "机械键盘 K87，成色很新，送键帽", price: "169.00", origin: "259.00", tag: "几乎全新", meta: "东校区 · 信用 96", color: "#fed7aa" },
+      { title: "考研数学复习全套资料", price: "28.00", tag: "轻微使用痕迹", meta: "西校区 · 浏览 186", color: "#fde68a" },
+      { title: "宿舍小冰箱，毕业转让", price: "240.00", origin: "399.00", tag: "明显使用痕迹", meta: "南湖校区 · 浏览 92", color: "#bfdbfe" },
+      { title: "蓝牙耳机，续航正常", price: "88.00", tag: "几乎全新", meta: "北苑校区 · 浏览 71", color: "#ddd6fe" },
+    ],
   },
   {
     slug: "clinic-appointment",
     title: "门诊预约挂号系统",
     shortTitle: "门诊预约",
-    category: "Spring Boot",
-    description: "模拟科室、医生、排班、预约、叫号、病历、处方和收费流程。",
+    description: "复刻原项目白底青绿色医疗系统：横向导航、角色菜单、数据工作台、预约和排班表。",
     articleUrl: "/projects/clinic-appointment-reproduction/",
     projectUrl: "https://github.com/yishuo299/clinic-appointment",
-    accent: "#86efac",
+    ui: "medical",
+    accent: "#0d9488",
     stack: ["Spring Boot", "MyBatis-Plus", "MySQL", "JWT", "Vue 3", "ECharts"],
-    roles: ["患者", "医生", "管理员"],
-    modules: ["科室医生", "排班号源", "预约叫号", "病历处方", "统计看板"],
-    metrics: [
-      ["今日预约", "214", "+31"],
-      ["剩余号源", "67", "-12"],
-      ["叫号队列", "18", "+4"],
-      ["就诊完成", "156", "+22"],
+    roles: [
+      { key: "patient", label: "测试患者", name: "患者王明", active: "预约挂号", menu: ["预约挂号", "我的挂号", "我的病历"] },
+      { key: "doctor", label: "测试医生", name: "李医生", active: "工作台", menu: ["工作台", "我的排班", "今日患者", "写病历", "开处方"] },
+      { key: "admin", label: "测试管理员", name: "医务管理员", active: "工作台", menu: ["工作台", "科室管理", "医生管理", "排班管理", "挂号管理", "病历管理", "药品管理"] },
     ],
-    spotlight: {
-      title: "号源与叫号模拟",
-      text: "点击操作会模拟扣减号源、生成排队号并推进就诊状态，用于展示门诊系统的核心业务联动。",
-    },
-    tableTitle: "今日排班",
-    columns: ["科室", "医生", "时段", "剩余"],
-    rows: [
-      ["内科", "李医生", "08:00-10:00", "12"],
-      ["儿科", "周医生", "10:00-12:00", "8"],
-      ["口腔科", "陈医生", "14:00-16:00", "15"],
-      ["外科", "王医生", "16:00-18:00", "6"],
-    ],
-    stages: ["选择科室", "选择医生", "预约排班", "排队叫号", "病历处方"],
-    activity: ["患者完成线上预约", "系统生成排队号 A018", "医生叫号下一位患者", "处方费用已计算"],
+    cards: [["科室数量", "12", "#0d9488"], ["医生人数", "48", "#0ea5e9"], ["患者人数", "1,286", "#8b5cf6"], ["今日挂号", "214", "#f59e0b"]],
+    panels: [{ title: "各科室就诊量对比", type: "chart" }, { title: "今日排班与号源", subtitle: "模拟排班剩余号源、预约状态与叫号队列", type: "table" }],
+    columns: ["科室", "医生", "时段", "剩余号源"],
+    rows: [["内科", "李医生", "08:00-10:00", "12"], ["儿科", "周医生", "10:00-12:00", "8"], ["口腔科", "陈医生", "14:00-16:00", "15"], ["外科", "王医生", "16:00-18:00", "6"]],
   },
   {
     slug: "library-management",
     title: "图书馆管理系统",
-    shortTitle: "图书管理",
-    category: "Spring Boot",
-    description: "模拟图书、读者、借阅、归还、续借、预约、罚款和公告管理。",
+    shortTitle: "图书馆",
+    description: "复刻原项目深蓝金色图书馆后台：左侧菜单、顶部标题、统计卡片、借阅趋势和管理表格。",
     articleUrl: "/projects/library-management-reproduction/",
     projectUrl: "https://github.com/yishuo299/library-management",
-    accent: "#fbbf24",
+    ui: "library",
+    accent: "#c9a227",
     stack: ["Spring Boot", "MySQL", "Vue 3", "Pinia", "Element Plus"],
-    roles: ["读者", "馆员", "管理员"],
-    modules: ["图书台账", "读者管理", "借阅归还", "预约罚款", "系统配置"],
-    metrics: [
-      ["馆藏图书", "4,826", "+76"],
-      ["今日借阅", "93", "+18"],
-      ["逾期记录", "11", "-2"],
-      ["预约排队", "27", "+6"],
+    roles: [
+      { key: "reader", label: "测试读者", name: "读者赵晴", active: "图书管理", menu: ["数据概览", "图书管理", "借阅管理", "预约管理", "罚金管理", "公告通知"] },
+      { key: "librarian", label: "测试馆员", name: "馆员刘老师", active: "借阅管理", menu: ["数据概览", "图书管理", "借阅管理", "预约管理", "罚金管理", "分类管理", "读者管理"] },
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "系统配置", menu: ["数据概览", "图书管理", "借阅管理", "预约管理", "分类管理", "读者管理", "系统配置"] },
     ],
-    spotlight: {
-      title: "借阅规则模拟",
-      text: "体验页会模拟借阅库存扣减、归还状态更新和逾期罚款计算，突出传统信息管理系统的数据联动。",
-    },
-    tableTitle: "借阅记录",
+    cards: [["馆藏图书(种)", "4,826"], ["馆藏副本(册)", "12,480"], ["注册读者", "1,936"], ["当前在借", "326"], ["逾期未还", "11"], ["未缴罚金(元)", "168"]],
+    panels: [{ title: "近 12 个月借阅量趋势", type: "chart" }, { title: "热门图书借阅排行 Top 10", type: "table" }],
     columns: ["图书", "读者", "应还日期", "状态"],
-    rows: [
-      ["数据库系统概论", "张同学", "09-28", "借阅中"],
-      ["Java 编程思想", "李同学", "09-26", "即将到期"],
-      ["Python 数据分析", "陈同学", "09-18", "已逾期"],
-      ["软件工程", "王同学", "10-02", "已预约"],
-    ],
-    stages: ["检索图书", "借出登记", "库存扣减", "归还续借", "罚款结算"],
-    activity: ["馆员登记 1 条借阅记录", "系统扣减可借库存", "读者提交续借申请", "逾期罚款自动生成"],
+    rows: [["数据库系统概论", "张同学", "09-28", "借阅中"], ["Java 编程思想", "李同学", "09-26", "即将到期"], ["Python 数据分析", "陈同学", "09-18", "已逾期"], ["软件工程", "王同学", "10-02", "已预约"]],
   },
   {
     slug: "movie-recommend",
     title: "智能电影推荐系统",
-    shortTitle: "电影推荐",
-    category: "Django",
-    description: "模拟电影浏览、评分、收藏、协同过滤推荐和后台统计。",
+    shortTitle: "霓虹影院",
+    description: "复刻原项目紫粉暗色影院界面：首页、为你推荐、收藏、数据大屏和管理后台。",
     articleUrl: "/projects/movie-recommend-reproduction/",
     projectUrl: "https://github.com/yishuo299/movie-recommend",
-    accent: "#c084fc",
-    stack: ["Python", "Django", "MySQL", "协同过滤", "Vue 3", "ECharts"],
-    roles: ["用户", "管理员", "算法视图"],
-    modules: ["电影资料", "评分评论", "收藏偏好", "推荐计算", "数据统计"],
-    metrics: [
-      ["电影条目", "2,436", "+42"],
-      ["用户评分", "18,902", "+316"],
-      ["推荐命中", "87%", "+5%"],
-      ["收藏行为", "6,218", "+91"],
+    ui: "movie",
+    accent: "#a855f7",
+    stack: ["Python", "Django", "MySQL", "协同过滤", "Vue 3", "Element Plus"],
+    roles: [
+      { key: "user", label: "测试用户", name: "影迷小许", active: "首页", menu: ["首页", "为你推荐", "我的收藏", "数据大屏"] },
+      { key: "admin", label: "测试管理员", name: "影院管理员", active: "管理后台", menu: ["首页", "为你推荐", "我的收藏", "数据大屏", "电影管理", "类型管理", "影评审核"] },
     ],
-    spotlight: {
-      title: "推荐结果模拟",
-      text: "点击模拟推荐后，会在前端生成新的推荐理由和相似度分数，用来展示评分矩阵与推荐结果之间的关系。",
-    },
-    tableTitle: "推荐列表",
-    columns: ["电影", "类型", "预测分", "理由"],
-    rows: [
-      ["星际穿越", "科幻", "9.6", "相似用户喜欢"],
-      ["盗梦空间", "悬疑", "9.4", "同类型偏好"],
-      ["寻梦环游记", "动画", "9.2", "高分收藏"],
-      ["楚门的世界", "剧情", "9.1", "评分相近"],
-    ],
-    stages: ["浏览电影", "评分收藏", "构建矩阵", "计算相似度", "输出推荐"],
-    activity: ["用户给电影打出 5 星", "系统更新偏好向量", "相似用户集合已刷新", "推荐列表重新排序"],
+    cards: [["电影条目", "2,436"], ["用户评分", "18,902"], ["推荐命中", "87%"], ["收藏行为", "6,218"]],
+    panels: [{ title: "为你推荐", subtitle: "根据评分矩阵和相似用户生成推荐理由", type: "cards" }, { title: "推荐结果", type: "table" }],
+    columns: ["电影", "类型", "预测分", "推荐理由"],
+    rows: [["星际穿越", "科幻", "9.6", "相似用户喜欢"], ["盗梦空间", "悬疑", "9.4", "同类型偏好"], ["寻梦环游记", "动画", "9.2", "高分收藏"], ["楚门的世界", "剧情", "9.1", "评分相近"]],
   },
   {
     slug: "face-attendance",
     title: "人脸识别考勤系统",
     shortTitle: "人脸考勤",
-    category: "Python",
-    description: "模拟人脸录入、LBPH 训练、识别签到、请假审批和考勤统计。",
+    description: "复刻原项目黑蓝霓虹科技后台：人脸签到、录入、签到记录、请假审批和统计报表。",
     articleUrl: "/projects/face-attendance-reproduction/",
     projectUrl: "https://github.com/yishuo299/face-attendance",
-    accent: "#60a5fa",
+    ui: "face",
+    accent: "#00e5b0",
     stack: ["Python", "Flask", "OpenCV", "LBPH", "MySQL", "Vue 3"],
-    roles: ["学生", "教师", "管理员"],
-    modules: ["人员课程", "人脸录入", "模型训练", "识别签到", "考勤统计"],
-    metrics: [
-      ["已录样本", "1,286", "+34"],
-      ["今日签到", "342", "+58"],
-      ["识别通过率", "96%", "+2%"],
-      ["请假待审", "7", "-3"],
+    roles: [
+      { key: "student", label: "测试学生", name: "学生陈一", active: "人脸签到", menu: ["数据看板", "人脸签到", "签到记录", "请假审批"] },
+      { key: "teacher", label: "测试教师", name: "教师周宁", active: "签到场次", menu: ["数据看板", "签到记录", "请假审批", "学生管理", "课程管理", "签到场次", "统计报表"] },
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "系统日志", menu: ["数据看板", "人脸录入", "学生管理", "教师管理", "班级管理", "课程管理", "签到场次", "统计报表", "系统日志"] },
     ],
-    spotlight: {
-      title: "识别签到模拟",
-      text: "体验页用纯前端状态模拟检测、训练、识别和签到结果，不调用摄像头，也不会上传图片。",
-    },
-    tableTitle: "考勤结果",
+    cards: [["已录样本", "1,286"], ["今日签到", "342"], ["识别通过率", "96%"], ["请假待审", "7"]],
+    panels: [{ title: "人脸签到扫描区", subtitle: "纯前端模拟扫描线与识别结果，不调用摄像头", type: "scan" }, { title: "考勤结果", type: "table" }],
     columns: ["学生", "课程", "时间", "状态"],
-    rows: [
-      ["张同学", "软件工程", "08:03", "正常"],
-      ["李同学", "数据库", "08:16", "迟到"],
-      ["王同学", "计算机视觉", "未签到", "缺勤"],
-      ["陈同学", "Python", "请假", "已请假"],
-    ],
-    stages: ["录入样本", "检测人脸", "训练模型", "识别签到", "生成报表"],
-    activity: ["新增 3 张人脸样本", "LBPH 模型训练完成", "识别置信度 42.6", "教师审批一条请假"],
+    rows: [["张同学", "软件工程", "08:03", "正常"], ["李同学", "数据库", "08:16", "迟到"], ["王同学", "计算机视觉", "未签到", "缺勤"], ["陈同学", "Python", "请假", "已请假"]],
   },
   {
     slug: "research-management",
     title: "高校科研管理系统",
     shortTitle: "科研管理",
-    category: "Django",
-    description: "模拟科研人员、科研项目、论文、获奖、著作和账号管理。",
+    description: "复刻 Django 管理系统的服务端渲染风格：顶部导航、简洁表格、成果台账和导出入口。",
     articleUrl: "/projects/research-management-template-3/",
     projectUrl: "https://github.com/yishuo299/University_Research_Management_System",
-    accent: "#5eead4",
+    ui: "library",
+    accent: "#2563eb",
     stack: ["Python", "Django", "MySQL", "Django Template", "Bootstrap"],
-    roles: ["科研秘书", "教师", "管理员"],
-    modules: ["人员台账", "项目立项", "论文成果", "获奖著作", "用户管理"],
-    metrics: [
-      ["科研人员", "184", "+8"],
-      ["在研项目", "46", "+5"],
-      ["论文成果", "312", "+21"],
-      ["获奖著作", "79", "+6"],
+    roles: [
+      { key: "secretary", label: "测试科研秘书", name: "科研秘书", active: "科研项目", menu: ["首页", "科研人员", "科研项目", "论文成果", "科研获奖", "科研著作"] },
+      { key: "teacher", label: "测试教师", name: "教师用户", active: "论文成果", menu: ["首页", "个人资料", "科研项目", "论文成果", "获奖成果", "著作成果"] },
+      { key: "admin", label: "测试管理员", name: "管理员", active: "用户管理", menu: ["首页", "用户管理", "科研人员", "科研项目", "成果管理", "数据导出"] },
     ],
-    spotlight: {
-      title: "成果归档模拟",
-      text: "通过前端模拟新增科研项目、登记论文成果和导出数据，展示 Django 管理系统的典型业务路径。",
-    },
-    tableTitle: "科研成果",
+    cards: [["科研人员", "184"], ["在研项目", "46"], ["论文成果", "312"], ["获奖著作", "79"], ["待审核", "12"], ["导出任务", "5"]],
+    panels: [{ title: "科研成果台账", subtitle: "复刻管理系统表格、查询与导出结构", type: "table" }, { title: "成果分布统计", type: "chart" }],
     columns: ["成果名称", "负责人", "类别", "状态"],
-    rows: [
-      ["智慧校园数据治理研究", "刘老师", "项目", "在研"],
-      ["教学评价模型论文", "赵老师", "论文", "已发表"],
-      ["高校科研平台设计", "钱老师", "著作", "归档中"],
-      ["省级科研奖励", "孙老师", "获奖", "已审核"],
-    ],
-    stages: ["人员建档", "项目立项", "成果登记", "审核归档", "数据导出"],
-    activity: ["科研秘书新增项目记录", "教师提交论文成果", "管理员审核获奖信息", "系统导出 JSON 数据"],
+    rows: [["智慧校园数据治理研究", "刘老师", "项目", "在研"], ["教学评价模型论文", "赵老师", "论文", "已发表"], ["高校科研平台设计", "钱老师", "著作", "归档中"], ["省级科研奖励", "孙老师", "获奖", "已审核"]],
   },
   {
     slug: "equipment-system",
     title: "装备全生命周期管理系统",
     shortTitle: "装备管理",
-    category: "Spring Boot",
-    description: "模拟装备入库、领用审批、维修工单、状态流转和报废管理。",
+    description: "复刻原项目玻璃拟态装备后台：管理员、普通用户和维修人员三套工作台可切换。",
     articleUrl: "/projects/equipment-system-template-3/",
     projectUrl: "https://github.com/yishuo299/equipment-system",
-    accent: "#fb7185",
+    ui: "equipment",
+    accent: "#4f46e5",
     stack: ["Spring Boot", "MyBatis", "MySQL", "Vue 3", "Element Plus"],
-    roles: ["普通用户", "维修人员", "管理员"],
-    modules: ["装备台账", "领用审批", "维修工单", "报废流转", "操作记录"],
-    metrics: [
-      ["装备总数", "623", "+17"],
-      ["在用装备", "418", "+9"],
-      ["维修中", "21", "-4"],
-      ["待审批", "13", "+3"],
+    roles: [
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "流程审批", menu: ["装备入库", "流程审批", "生命周期监控", "人员档案"] },
+      { key: "user", label: "测试普通用户", name: "普通用户", active: "我的申请", menu: ["装备库存查询", "我的申请进度", "持有的装备"] },
+      { key: "worker", label: "测试维修人员", name: "维保工程师", active: "待办维修任务", menu: ["待办维修任务", "历史与报废"] },
     ],
-    spotlight: {
-      title: "生命周期模拟",
-      text: "体验页会模拟装备从库存、领用、维修到报废的状态变化，帮助理解台账型管理系统的核心逻辑。",
-    },
-    tableTitle: "装备台账",
-    columns: ["装备", "编号", "负责人", "状态"],
-    rows: [
-      ["光谱检测仪", "EQ-1024", "实验室 A", "库存"],
-      ["便携终端", "EQ-2018", "张工", "在用"],
-      ["温控设备", "EQ-3309", "维修组", "维修中"],
-      ["老旧传感器", "EQ-0788", "仓库", "待报废"],
-    ],
-    stages: ["装备入库", "提交申请", "审批领用", "维修处理", "报废归档"],
-    activity: ["管理员新增装备台账", "普通用户提交领用申请", "维修人员接收工单", "装备状态流转为在用"],
+    cards: [["装备总数", "623"], ["在用装备", "418"], ["维修中", "21"], ["待审批", "13"]],
+    panels: [{ title: "流程审批", subtitle: "领用、维修、报废申请模拟审批", type: "table" }, { title: "装备健康度", type: "chart" }],
+    columns: ["装备", "数字身份证", "状态", "健康度"],
+    rows: [["光谱检测仪", "EQ-1024-2026", "库存", "96%"], ["便携终端", "EQ-2018-2026", "服役中", "82%"], ["温控设备", "EQ-3309-2026", "检修中", "64%"], ["老旧传感器", "EQ-0788-2026", "待报废", "18%"]],
   },
   {
     slug: "course-selection",
     title: "选课与成绩管理系统",
-    shortTitle: "选课成绩",
-    category: "Spring Boot",
-    description: "模拟教师开课、学生选课、课表生成、成绩录入和权限管理。",
+    shortTitle: "学苑通",
+    description: "复刻原项目现代教学服务后台：深色侧边栏、顶部搜索、角色菜单、卡片和课表表格。",
     articleUrl: "/projects/course-selection-template-3/",
     projectUrl: "https://github.com/yishuo299/School_Course_Selection_Management_System",
-    accent: "#f97316",
+    ui: "course",
+    accent: "#6366f1",
     stack: ["Spring Boot", "MyBatis-Plus", "MySQL", "Vue 3", "Element Plus"],
-    roles: ["学生", "教师", "管理员"],
-    modules: ["用户权限", "教师开课", "学生选课", "课表成绩", "操作日志"],
-    metrics: [
-      ["课程数量", "86", "+11"],
-      ["选课记录", "1,248", "+164"],
-      ["成绩录入", "72%", "+9%"],
-      ["权限角色", "3", "稳定"],
+    roles: [
+      { key: "student", label: "测试学生", name: "学生张一", active: "在线选课", menu: ["首页", "在线选课", "我的课表", "教学资料", "成绩查询", "教学评价", "个人信息"] },
+      { key: "teacher", label: "测试教师", name: "教师李明", active: "成绩录入", menu: ["首页", "我的课程", "成绩录入", "教学资料", "个人信息"] },
+      { key: "academic", label: "测试教务管理员", name: "教务管理员", active: "开课管理", menu: ["首页", "课程管理", "开课管理", "成绩审核", "成绩异议", "学籍管理", "年级专业", "选课控制"] },
+      { key: "admin", label: "测试系统管理员", name: "系统管理员", active: "用户管理", menu: ["首页", "用户管理", "角色管理", "系统日志", "系统监控"] },
     ],
-    spotlight: {
-      title: "教务闭环模拟",
-      text: "页面模拟开课、选课、课表和成绩录入流程，突出教务系统中课程容量、时间冲突和角色权限的联动。",
-    },
-    tableTitle: "课程安排",
+    cards: [["课程数量", "86"], ["选课记录", "1,248"], ["成绩录入", "72%"], ["权限角色", "4"]],
+    panels: [{ title: "在线选课", subtitle: "复刻课程卡片、容量、时间冲突与选课状态", type: "cards" }, { title: "课程安排", type: "table" }],
     columns: ["课程", "教师", "容量", "状态"],
-    rows: [
-      ["Java Web 开发", "王老师", "45/60", "可选"],
-      ["数据库原理", "李老师", "60/60", "已满"],
-      ["软件工程", "周老师", "38/50", "可选"],
-      ["Python 程序设计", "陈老师", "52/55", "待开课"],
-    ],
-    stages: ["教师开课", "容量校验", "学生选课", "课表生成", "成绩查询"],
-    activity: ["教师发布新课程", "学生完成选课申请", "系统检测时间冲突", "管理员查看操作日志"],
+    rows: [["Java Web 开发", "王老师", "45/60", "可选"], ["数据库原理", "李老师", "60/60", "已满"], ["软件工程", "周老师", "38/50", "可选"], ["Python 程序设计", "陈老师", "52/55", "待开课"]],
   },
 ];
 

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>高校科研管理系统</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    body { background-color: #f8f9fa; font-family: 'Segoe UI','Microsoft YaHei',sans-serif; min-height: 100vh; }
+    .main-wrapper { display: flex; min-height: 100vh; }
+    .sidebar { width: 250px; background: linear-gradient(180deg,#1a237e 0%,#283593 100%); color: white; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000; }
+    .sidebar-header { padding: 25px 20px; border-bottom: 1px solid rgba(255,255,255,.1); text-align: center; }
+    .sidebar-menu { padding: 20px 0; }
+    .nav-item { margin-bottom: 5px; }
+    .nav-link { color: rgba(255,255,255,.8); padding: 12px 20px; display: flex; align-items: center; transition: all .3s; border-left: 3px solid transparent; }
+    .nav-link:hover,.nav-link.active { color: white; background: rgba(255,255,255,.15); border-left-color: #4fc3f7; text-decoration: none; }
+    .nav-icon { width: 24px; margin-right: 12px; text-align: center; }
+    .main-content { flex: 1; margin-left: 250px; padding: 20px; min-height: 100vh; background-color: #f8f9fa; }
+    .navbar-top { background: white; box-shadow: 0 2px 10px rgba(0,0,0,.1); padding: 15px 30px; position: sticky; top: 0; z-index: 999; margin-left: 250px; display: flex; justify-content: space-between; align-items: center; }
+    .user-info { display: flex; align-items: center; gap: 15px; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,#1a237e 0%,#3949ab 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+    .logout-btn { background: linear-gradient(135deg,#ff5252 0%,#ff6b6b 100%); color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,.05); transition: transform .2s; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,.1); }
+    .role-pill { border: 0; border-radius: 999px; padding: 6px 12px; background: #e8eaf6; color: #1a237e; font-size: 12px; font-weight: 600; }
+    @media (max-width: 992px) { .sidebar { position: static; width: 100%; height: auto; } .navbar-top,.main-content { margin-left: 0; } .main-wrapper { display: block; } .navbar-top { flex-direction: column; align-items: flex-start; gap: 15px; } }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div style="font-size:32px;margin-bottom:10px"><i class="fas fa-graduation-cap"></i></div>
+      <h5 style="margin:0;font-weight:600">科研管理系统</h5>
+      <small style="opacity:.8">高校科研管理平台</small>
+    </div>
+    <div style="padding:20px;border-bottom:1px solid rgba(255,255,255,.1)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="user-avatar" data-avatar>科</div>
+        <div><div style="font-weight:500;font-size:16px" data-user-name>科研秘书</div><div style="font-size:12px;opacity:.8" data-user-dept>科研处</div></div>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <ul class="nav flex-column" data-menu></ul>
+    </nav>
+  </aside>
+  <nav class="navbar-top">
+    <div><h4 style="margin:0;color:#1a237e;font-weight:600" data-page-title>系统首页</h4></div>
+    <div class="user-info">
+      <span class="role-pill" data-role-title>科研秘书</span>
+      <div style="text-align:right"><div style="font-weight:500" data-user-name-copy>科研秘书</div><div style="font-size:13px;color:#666" data-position>科研管理人员</div></div>
+      <div class="user-avatar" data-avatar-copy>科</div>
+      <button type="button" class="logout-btn"><i class="fas fa-sign-out-alt"></i>退出登录</button>
+    </div>
+  </nav>
+  <main class="main-content">
+    <div class="container-fluid">
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title"><i class="fas fa-home text-primary me-2"></i>欢迎回来，<span data-user-name-inline>科研秘书</span>！</h4>
+              <p class="card-text text-muted" data-now>欢迎使用高校科研管理系统。</p>
+              <div class="alert alert-warning mt-3"><i class="fas fa-exclamation-triangle me-2"></i><strong>安全提示：</strong>体验页面为静态前端展示，不包含真实个人数据。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md mb-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-users fa-3x text-primary mb-3"></i><h5>人员管理</h5><p class="text-muted small">管理科研项目参与人员信息</p></div></div></div>
+        <div class="col-md mb-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-project-diagram fa-3x text-success mb-3"></i><h5>项目管理</h5><p class="text-muted small">管理科研项目基本信息</p></div></div></div>
+        <div class="col-md mb-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-trophy fa-3x text-warning mb-3"></i><h5>获奖管理</h5><p class="text-muted small">管理项目获奖情况</p></div></div></div>
+        <div class="col-md mb-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-file-alt fa-3x text-info mb-3"></i><h5>论文管理</h5><p class="text-muted small">管理期刊论文信息</p></div></div></div>
+        <div class="col-md mb-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-book fa-3x text-danger mb-3"></i><h5>著作管理</h5><p class="text-muted small">管理科研著作信息</p></div></div></div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-7">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-table me-2"></i>科研成果台账</h6></div>
+            <div class="card-body table-responsive">
+              <table class="table table-hover align-middle">
+                <thead><tr><th>成果名称</th><th>负责人</th><th>类别</th><th>状态</th></tr></thead>
+                <tbody>
+                  <tr><td>智慧校园数据治理研究</td><td>刘老师</td><td>项目</td><td><span class="badge bg-primary">在研</span></td></tr>
+                  <tr><td>教学评价模型论文</td><td>赵老师</td><td>论文</td><td><span class="badge bg-success">已发表</span></td></tr>
+                  <tr><td>高校科研平台设计</td><td>钱老师</td><td>著作</td><td><span class="badge bg-secondary">归档中</span></td></tr>
+                  <tr><td>省级科研奖励</td><td>孙老师</td><td>获奖</td><td><span class="badge bg-warning text-dark">待审核</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>系统说明</h6></div>
+            <div class="card-body">
+              <h6>高校科研管理系统</h6>
+              <p class="text-muted small">本系统用于对学校科研项目、科研人员、论文著作、科研获奖等信息进行统一管理。</p>
+              <hr />
+              <ul class="small mb-0">
+                <li>支持人员、项目、论文、著作、获奖信息维护</li>
+                <li>支持按角色进入不同科研管理流程</li>
+                <li>保留原 Django 模板的侧栏、顶部栏与 Bootstrap 卡片布局</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const roles = {
+      secretary: { name: '科研秘书', avatar: '科', role: '科研秘书', dept: '科研处', position: '科研管理人员', menu: ['系统首页','修改密码','个人资料','人员管理','项目管理','获奖管理','论文管理','著作管理'] },
+      teacher: { name: '教师用户', avatar: '教', role: '教师用户', dept: '信息工程学院', position: '普通用户', menu: ['系统首页','个人资料','项目管理','论文管理','获奖管理','著作管理'] },
+      admin: { name: '系统管理员', avatar: '管', role: '管理员', dept: '系统管理部', position: '系统管理员', menu: ['系统首页','修改密码','个人资料','系统管理后台','人员管理','项目管理','获奖管理','论文管理','著作管理'] }
+    };
+    const params = new URLSearchParams(location.search);
+    const current = roles[params.get('role')] || roles.secretary;
+    const setText = (selector, text) => document.querySelectorAll(selector).forEach((el) => { el.textContent = text; });
+    setText('[data-user-name]', current.name);
+    setText('[data-user-name-copy]', current.name);
+    setText('[data-user-name-inline]', current.name);
+    setText('[data-avatar]', current.avatar);
+    setText('[data-avatar-copy]', current.avatar);
+    setText('[data-role-title]', current.role);
+    setText('[data-user-dept]', current.dept);
+    setText('[data-position]', current.position);
+    const menu = document.querySelector('[data-menu]');
+    menu.innerHTML = current.menu.map((item, index) => `<li class="nav-item"><a class="nav-link ${index === 0 ? 'active' : ''}" href="#"><span class="nav-icon"><i class="fas fa-${index === 0 ? 'tachometer-alt' : index === 1 ? 'key' : index === 2 ? 'user' : index === 3 ? 'users' : index === 4 ? 'project-diagram' : index === 5 ? 'trophy' : index === 6 ? 'file-alt' : 'book'}"></i></span>${item}</a></li>`).join('');
+    function updateTime() {
+      const dateString = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.querySelector('[data-now]').textContent = '欢迎使用高校科研管理系统，现在是 ' + dateString;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</body>
+</html>

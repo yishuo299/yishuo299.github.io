@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/experience-native/equipment-system/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>装备全生命周期管理系统</title>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var route = params.get('experienceRoute');
+        if (route) history.replaceState(null, '', '/experience-native/equipment-system' + route);
+      })();
+    </script>
+    <script type="module" crossorigin src="/experience-native/equipment-system/assets/index-ErOLnNSB.js"></script>
+    <link rel="stylesheet" crossorigin href="/experience-native/equipment-system/assets/index-_MqOqIHD.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

@@ -20,7 +20,7 @@ import { projectExperiences } from "../data/projectExperiences";
         <article class="experience-card" style={`--experience-color:${item.accent};--experience-index:${index}`}>
           <div class="experience-card-top">
             <span>{String(index + 1).padStart(2, "0")}</span>
-            <span>{item.category}</span>
+            <span>{item.stack[0]}</span>
           </div>
           <h2>{item.title}</h2>
           <p>{item.description}</p>

@@ -1,0 +1,1 @@
+async function d(n,a){const o=localStorage.getItem("token"),t=await fetch(n,{headers:o?{Authorization:`Bearer ${o}`}:{}});if(!t.ok)return;const r=await t.blob(),c=URL.createObjectURL(r),e=document.createElement("a");e.href=c,e.download=a,document.body.appendChild(e),e.click(),document.body.removeChild(e),URL.revokeObjectURL(c)}export{d};

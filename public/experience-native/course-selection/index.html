@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选课与成绩管理系统</title>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var route = params.get('experienceRoute');
+        if (route) history.replaceState(null, '', route);
+      })();
+    </script>
+    <script type="module" crossorigin src="/experience-native/course-selection/assets/index-Bt_S0yxz.js"></script>
+    <link rel="stylesheet" crossorigin href="/experience-native/course-selection/assets/index-CbBkAoWc.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
