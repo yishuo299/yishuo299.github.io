@@ -172,8 +172,10 @@ const PROJECT_STARS = projectExperiences.map((experience, index) => {
     <div class="planet-burst-core">
       {Array.from({ length: 8 }, (_, index) => <i data-core-fragment style={`--fragment-index:${index}`}></i>)}
     </div>
+    <div class="planet-burst-cracks" aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i style={`--crack-index:${index}`}></i>)}</div>
+    <div class="planet-burst-flare" aria-hidden="true">{Array.from({ length: 12 }, (_, index) => <i style={`--flare-index:${index}`}></i>)}</div>
     <div class="planet-burst-ring"></div>
-    <div class="planet-burst-particles" aria-hidden="true">{Array.from({ length: 38 }, (_, index) => <i data-burst-particle style={`--burst-index:${index}`}></i>)}</div>
+    <div class="planet-burst-particles" aria-hidden="true">{Array.from({ length: 54 }, (_, index) => <i data-burst-particle style={`--burst-index:${index}`}></i>)}</div>
     <div class="planet-burst-label" id="planetBurstLabel">OPENING PROJECT</div>
   </div>
 </BaseLayout>
