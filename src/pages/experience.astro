@@ -33,19 +33,23 @@ const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stac
           data-experience-stack={`|${item.stack.map((stack) => stack.toLowerCase()).join("|")}|`}
           aria-label={`进入${item.title}体验`}
         >
-          <div class="experience-card-top">
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <span>{item.roles.length} 个测试身份</span>
+          <div class="experience-card-aura" aria-hidden="true"></div>
+          <span class="experience-card-ghost" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+          <span class="experience-card-index">{String(index + 1).padStart(2, "0")}</span>
+          <div class="experience-card-info">
+            <h2>{item.title}</h2>
+            <p>{item.description}</p>
           </div>
-          <h2>{item.title}</h2>
-          <p>{item.description}</p>
-          <div class="experience-card-summary">
+          <div class="experience-card-side">
+            <span class="experience-card-tag">{item.stack[0]} · {item.roles.length} 身份</span>
+            <span class="experience-card-arrow">→</span>
+          </div>
+          <div class="experience-card-detail">
             {item.panels.slice(0, 2).map((panel) => <span>{panel.title}</span>)}
           </div>
-          <div class="experience-stack">
+          <div class="experience-stack" aria-label="技术栈">
             {item.stack.slice(0, 4).map((stack) => <span>{stack}</span>)}
           </div>
-          <div class="experience-card-enter" aria-hidden="true">进入体验 <span>↗</span></div>
         </a>
       ))}
     </div>
@@ -67,10 +71,88 @@ const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stac
     const search = document.getElementById("experienceSearch") as HTMLInputElement | null;
     const empty = document.getElementById("experienceEmpty");
     let activeStack = "all";
+    let frame = 0;
+    let activeIndex = -1;
+    let hovered = false;
+    let pointerX = window.innerWidth / 2;
+    let pointerY = window.innerHeight / 2;
+    let mouseX = 0.5;
+    let mouseY = 0.5;
+    let visibleItems: HTMLElement[] = [];
+    const current = new WeakMap<HTMLElement, { y: number; scale: number; brightness: number; z: number; rx: number; ry: number }>();
+    const cardHeight = () => window.matchMedia("(max-width: 700px)").matches ? 118 : 150;
+    const gap = () => window.matchMedia("(max-width: 700px)").matches ? 92 : 112;
+    const getState = (item: HTMLElement) => {
+      let state = current.get(item);
+      if (!state) {
+        state = { y: 0, scale: 1, brightness: 1, z: 0, rx: 0, ry: 0 };
+        current.set(item, state);
+      }
+      return state;
+    };
+
+    const syncStackHeight = () => {
+      const height = Math.max(window.matchMedia("(max-width: 700px)").matches ? 520 : 620, (visibleItems.length - 1) * gap() + cardHeight() + 36);
+      grid.style.height = `${height}px`;
+    };
+
+    const setActive = (index: number) => {
+      if (activeIndex === index) return;
+      if (activeIndex >= 0) visibleItems[activeIndex]?.classList.remove("is-active");
+      activeIndex = index;
+      if (activeIndex >= 0) visibleItems[activeIndex]?.classList.add("is-active");
+    };
+
+    const updateActive = (clientY: number) => {
+      if (!visibleItems.length) return setActive(-1);
+      const rect = grid.getBoundingClientRect();
+      const aim = clientY - rect.top - cardHeight() / 2;
+      let best = 0;
+      let distance = Number.POSITIVE_INFINITY;
+      visibleItems.forEach((item, index) => {
+        const state = getState(item);
+        const value = Math.abs(state.y - aim);
+        if (value < distance) {
+          distance = value;
+          best = index;
+        }
+      });
+      setActive(best);
+    };
+
+    const animateStack = () => {
+      const h = cardHeight();
+      const g = gap();
+      const stackHeight = Math.max(window.matchMedia("(max-width: 700px)").matches ? 520 : 620, (visibleItems.length - 1) * g + h + 36);
+      const offset = Math.max(0, (stackHeight - ((visibleItems.length - 1) * g + h)) / 2);
+
+      visibleItems.forEach((item, index) => {
+        const state = getState(item);
+        const isActive = hovered && index === activeIndex;
+        const dim = hovered && !isActive;
+        const targetY = offset + index * g;
+        const targetScale = isActive ? 1.035 : dim ? 0.985 : 1;
+        const targetBrightness = isActive ? 1.08 : dim ? 0.82 : 1;
+        const targetZ = isActive ? 64 : 0;
+        const targetRx = isActive ? -(mouseY - 0.5) * 10 : 0;
+        const targetRy = isActive ? (mouseX - 0.5) * 10 : 0;
+        state.y += (targetY - state.y) * 0.18;
+        state.scale += (targetScale - state.scale) * 0.18;
+        state.brightness += (targetBrightness - state.brightness) * 0.18;
+        state.z += (targetZ - state.z) * 0.18;
+        state.rx += (targetRx - state.rx) * 0.18;
+        state.ry += (targetRy - state.ry) * 0.18;
+        item.style.transform = `translate(-50%, ${state.y.toFixed(2)}px) perspective(1000px) translateZ(${state.z.toFixed(2)}px) rotateX(${state.rx.toFixed(2)}deg) rotateY(${state.ry.toFixed(2)}deg) scale(${state.scale.toFixed(3)})`;
+        item.style.filter = `brightness(${state.brightness.toFixed(3)})`;
+        item.style.zIndex = String(isActive ? 1000 : index + 1);
+      });
+      frame = window.requestAnimationFrame(animateStack);
+    };
 
     const applyFilter = () => {
       const keyword = search?.value.trim().toLowerCase() ?? "";
       let visible = 0;
+      visibleItems = [];
       items.forEach((item, index) => {
         const stackMatch = activeStack === "all" || (item.dataset.experienceStack ?? "").includes(`|${activeStack}|`);
         const searchMatch = !keyword || (item.dataset.experienceSearch ?? "").includes(keyword);
@@ -78,12 +160,15 @@ const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stac
         item.toggleAttribute("hidden", !match);
         if (match) {
           item.style.setProperty("--experience-visible-index", String(visible));
+          visibleItems.push(item);
           visible += 1;
         } else {
           item.style.setProperty("--experience-visible-index", String(index));
         }
       });
       empty?.classList.toggle("show", visible === 0);
+      setActive(-1);
+      syncStackHeight();
     };
 
     buttons.forEach((button) => {
@@ -94,9 +179,40 @@ const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stac
       }, { signal: controller.signal });
     });
     search?.addEventListener("input", applyFilter, { signal: controller.signal });
+    grid.addEventListener("pointerenter", (event) => {
+      hovered = true;
+      updateActive(event.clientY);
+    }, { signal: controller.signal });
+    grid.addEventListener("pointermove", (event) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      updateActive(pointerY);
+      const item = activeIndex >= 0 ? visibleItems[activeIndex] : null;
+      if (item) {
+        const rect = item.getBoundingClientRect();
+        mouseX = Math.min(1, Math.max(0, (pointerX - rect.left) / rect.width));
+        mouseY = Math.min(1, Math.max(0, (pointerY - rect.top) / rect.height));
+        item.style.setProperty("--mx", `${(mouseX * 100).toFixed(2)}%`);
+        item.style.setProperty("--my", `${(mouseY * 100).toFixed(2)}%`);
+      }
+    }, { signal: controller.signal, passive: true });
+    grid.addEventListener("pointerleave", () => {
+      hovered = false;
+      setActive(-1);
+    }, { signal: controller.signal });
+    window.addEventListener("resize", syncStackHeight, { signal: controller.signal });
     applyFilter();
+    visibleItems.forEach((item, index) => {
+      const state = getState(item);
+      state.y = Math.max(0, (grid.clientHeight - ((visibleItems.length - 1) * gap() + cardHeight())) / 2) + index * gap();
+    });
+    frame = window.requestAnimationFrame(animateStack);
 
-    experienceCleanup = () => controller.abort();
+    experienceCleanup = () => {
+      controller.abort();
+      window.cancelAnimationFrame(frame);
+      setActive(-1);
+    };
   };
 
   document.addEventListener("astro:page-load", initExperienceIndex);
