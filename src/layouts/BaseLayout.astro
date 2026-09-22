@@ -603,7 +603,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           }
           if (!shouldRunHomeLoader()) {
             lockPage(); document.body.classList.remove("archive-ready"); loader.classList.remove("hide"); loader.classList.add("welcome-only");
-            showWelcome(); await wait(820); disperseWelcome(); await wait(reduceMotion ? 180 : 1780);
+            showWelcome(); await wait(compactScreen ? 420 : 820); disperseWelcome(); await wait(reduceMotion ? 180 : compactScreen ? 760 : 1780);
             if (cancelled) return; loader.classList.remove("archive-loading", "welcome-only"); loader.classList.add("hide");
             revealHomeInStages();
             return;
@@ -612,10 +612,10 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { folders.forEach((folder) => folder.classList.add("done")); renderProgress(100); if (loadingStatus) loadingStatus.textContent = "project archive ready"; await wait(180); showWelcome(); await wait(520); }
           else {
             if (loadingStatus) loadingStatus.textContent = "loading tech stack";
-            await animateProgress(0, 100, lowPowerDevice ? 620 : 760);
+            await animateProgress(0, 100, compactScreen ? 380 : lowPowerDevice ? 620 : 760);
             folders.forEach((folder) => folder.classList.add("done"));
             if (loadingStatus) loadingStatus.textContent = "project archive ready";
-            await wait(100); showWelcome(); await wait(840); disperseWelcome(); await wait(1780);
+            await wait(compactScreen ? 40 : 100); showWelcome(); await wait(compactScreen ? 430 : 840); disperseWelcome(); await wait(compactScreen ? 760 : 1780);
           }
           if (cancelled) return; rememberHomeLoader(); loader.classList.remove("archive-loading"); loader.classList.add("hide"); revealHomeInStages();
         };
