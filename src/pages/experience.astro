@@ -1,38 +1,104 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { projectExperiences } from "../data/projectExperiences";
+
+const stacks = Array.from(new Set(projectExperiences.flatMap((item) => item.stack))).sort((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout title="项目体验" description="燚燿的项目纯前端模拟体验入口。" sideBarActiveItemID="experience">
   <section class="experience-index">
     <header class="experience-hero">
       <div class="section-label">项目体验</div>
-      <h1>不用后端，也能跑一遍项目流程。</h1>
-      <p>这里把计算机类项目做成统一风格的纯前端模拟界面。每个体验页单独放置，适合快速展示项目功能、业务流程和技术栈。</p>
-      <div class="experience-hero-actions">
-        <a href="/projects/">查看项目文章</a>
-        <a href="#experienceGrid">选择体验</a>
+      <h1>一个卡片，体验完整项目流程</h1>
+      <div class="experience-toolbar" aria-label="项目体验筛选">
+        <label class="experience-search">
+          <span>搜索项目</span>
+          <input id="experienceSearch" type="search" placeholder="输入项目名称、功能或技术栈" autocomplete="off" />
+        </label>
+        <div class="experience-stack-filter" role="list" aria-label="技术栈筛选">
+          <button class="active" type="button" data-experience-filter="all">全部</button>
+          {stacks.map((stack) => <button type="button" data-experience-filter={stack.toLowerCase()}>{stack}</button>)}
+        </div>
       </div>
     </header>
 
     <div id="experienceGrid" class="experience-grid">
       {projectExperiences.map((item, index) => (
-        <article class="experience-card" style={`--experience-color:${item.accent};--experience-index:${index}`}>
+        <a
+          class="experience-card"
+          href={`/experience/${item.slug}/`}
+          style={`--experience-color:${item.accent};--experience-index:${index}`}
+          data-experience-item
+          data-experience-search={`${item.title} ${item.shortTitle} ${item.description} ${item.stack.join(" ")} ${item.roles.map((role) => role.menu.join(" ")).join(" ")}`.toLowerCase()}
+          data-experience-stack={`|${item.stack.map((stack) => stack.toLowerCase()).join("|")}|`}
+          aria-label={`进入${item.title}体验`}
+        >
           <div class="experience-card-top">
             <span>{String(index + 1).padStart(2, "0")}</span>
-            <span>{item.stack[0]}</span>
+            <span>{item.roles.length} 个测试身份</span>
           </div>
           <h2>{item.title}</h2>
           <p>{item.description}</p>
+          <div class="experience-card-summary">
+            {item.panels.slice(0, 2).map((panel) => <span>{panel.title}</span>)}
+          </div>
           <div class="experience-stack">
             {item.stack.slice(0, 4).map((stack) => <span>{stack}</span>)}
           </div>
-          <div class="experience-card-actions">
-            <a class="primary" href={`/experience/${item.slug}/`}>进入体验</a>
-            <a href={item.articleUrl} data-book-transition>阅读文章</a>
-          </div>
-        </article>
+          <div class="experience-card-enter" aria-hidden="true">进入体验 <span>↗</span></div>
+        </a>
       ))}
     </div>
+    <p class="experience-empty" id="experienceEmpty">没有找到对应的项目体验</p>
   </section>
 </BaseLayout>
+
+<script>
+  let experienceCleanup: () => void = () => {};
+
+  const initExperienceIndex = () => {
+    experienceCleanup();
+    const grid = document.getElementById("experienceGrid");
+    if (!grid) return;
+
+    const controller = new AbortController();
+    const items = Array.from(document.querySelectorAll<HTMLElement>("[data-experience-item]"));
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-experience-filter]"));
+    const search = document.getElementById("experienceSearch") as HTMLInputElement | null;
+    const empty = document.getElementById("experienceEmpty");
+    let activeStack = "all";
+
+    const applyFilter = () => {
+      const keyword = search?.value.trim().toLowerCase() ?? "";
+      let visible = 0;
+      items.forEach((item, index) => {
+        const stackMatch = activeStack === "all" || (item.dataset.experienceStack ?? "").includes(`|${activeStack}|`);
+        const searchMatch = !keyword || (item.dataset.experienceSearch ?? "").includes(keyword);
+        const match = stackMatch && searchMatch;
+        item.toggleAttribute("hidden", !match);
+        if (match) {
+          item.style.setProperty("--experience-visible-index", String(visible));
+          visible += 1;
+        } else {
+          item.style.setProperty("--experience-visible-index", String(index));
+        }
+      });
+      empty?.classList.toggle("show", visible === 0);
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeStack = (button.dataset.experienceFilter ?? "all").toLowerCase();
+        buttons.forEach((item) => item.classList.toggle("active", item === button));
+        applyFilter();
+      }, { signal: controller.signal });
+    });
+    search?.addEventListener("input", applyFilter, { signal: controller.signal });
+    applyFilter();
+
+    experienceCleanup = () => controller.abort();
+  };
+
+  document.addEventListener("astro:page-load", initExperienceIndex);
+  if (document.readyState === "complete") initExperienceIndex();
+</script>

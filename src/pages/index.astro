@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import projects from "../data/projects.json";
 import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
+import { projectExperiences } from "../data/projectExperiences";
 
 const techColors = Object.fromEntries(Object.entries(TECH_META).map(([name, meta]) => [name, meta.color]));
 const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s*\d+$/, "")] ?? FALLBACK_TECH_META;
@@ -18,15 +19,16 @@ const CATEGORY_STARS = [
   meta: getTechMeta(category.name),
   count: projects.filter((project) => [project.name, ...project.tags].includes(category.name)).length,
 }));
-const PROJECT_STARS = projects.map((project, index) => {
+const PROJECT_STARS = projectExperiences.map((experience, index) => {
   const angle = (index * 137.508 * Math.PI) / 180;
   const ring = 0.16 + (index % 4) * 0.055;
   return {
-    name: project.title,
+    name: experience.title,
+    url: `/experience/${experience.slug}/`,
     x: 50 + Math.cos(angle) * ring * 100,
     y: 50 + Math.sin(angle) * ring * 68,
-    size: 15 + (index % 4) * 4,
-    color: getTechMeta(project.tags[0] ?? project.name).color,
+    size: 28,
+    color: experience.accent,
     delay: index * -0.73,
     dx: 8 + (index % 4) * 3,
     dy: 5 + ((index + 2) % 4) * 2,
@@ -90,13 +92,19 @@ const PROJECT_STARS = projects.map((project, index) => {
   <section id="constellation" class="constellation-section" aria-label="项目技术分类星图">
     <div class="container">
       <div class="constellation-map reveal" aria-label="项目技术分类星图">
-        <div class="project-star-field" aria-hidden="true">
+        <div class="project-star-field" aria-label="项目体验星球入口">
           {PROJECT_STARS.map((star) => (
-            <i
+            <a
               class="project-satellite"
+              href={star.url}
               title={star.name}
+              aria-label={`进入${star.name}项目体验`}
+              data-experience-star
+              data-entry-label={star.name}
               style={`--satellite-x:${star.x.toFixed(2)}%;--satellite-y:${star.y.toFixed(2)}%;--satellite-size:${star.size}px;--satellite-color:${star.color};--satellite-delay:${star.delay}s;--satellite-dx:${star.dx}px;--satellite-dx-neg:${-star.dx}px;--satellite-dy:${star.dy}px;--satellite-dy-neg:${-star.dy}px;--satellite-duration:${star.duration}s`}
-            ></i>
+            >
+              <span>{star.name}</span>
+            </a>
           ))}
         </div>
         <div class="constellation-core" aria-hidden="true"><span></span><small>PROJECT<br />UNIVERSE</small></div>
@@ -274,7 +282,7 @@ const PROJECT_STARS = projects.map((project, index) => {
       };
       orbitFrame = window.requestAnimationFrame(animateOrbits);
     }
-    document.querySelectorAll<HTMLAnchorElement>("[data-category-star]").forEach((star) => {
+    document.querySelectorAll<HTMLAnchorElement>("[data-category-star], [data-experience-star]").forEach((star) => {
       star.addEventListener("click", (event) => {
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
         event.preventDefault();
@@ -285,7 +293,8 @@ const PROJECT_STARS = projects.map((project, index) => {
         const holeY = rect.top + rect.height / 2;
         blackHoleTransition.style.setProperty("--hole-x", `${holeX}px`);
         blackHoleTransition.style.setProperty("--hole-y", `${holeY}px`);
-        if (blackHoleLabel) blackHoleLabel.textContent = `ENTERING ${(star.dataset.category ?? "ORBIT").toUpperCase()}`;
+        const entryLabel = star.dataset.entryLabel ?? star.dataset.category ?? "PROJECT";
+        if (blackHoleLabel) blackHoleLabel.textContent = `ENTERING ${entryLabel.toUpperCase()}`;
         holeShards.forEach((shard, index) => {
           const angle = (Math.PI * 2 * index) / holeShards.length + (index % 3) * 0.19;
           const distance = Math.max(window.innerWidth, window.innerHeight) * (0.46 + (index % 7) * 0.055);
