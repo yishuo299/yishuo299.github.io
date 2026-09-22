@@ -1,0 +1,209 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projectExperiences } from "../../data/projectExperiences";
+
+export function getStaticPaths() {
+  return projectExperiences.map((experience) => ({
+    params: { slug: experience.slug },
+    props: { experience },
+  }));
+}
+
+const { experience } = Astro.props;
+---
+
+<BaseLayout title={`${experience.title} · 项目体验`} description={experience.description} sideBarActiveItemID="experience">
+  <section class="experience-app" style={`--experience-color:${experience.accent}`}>
+    <aside class="experience-sidebar" aria-label={`${experience.title} 模拟菜单`}>
+      <a class="experience-back" href="/experience/">← 项目体验</a>
+      <div class="experience-brand">
+        <span>{experience.shortTitle.slice(0, 2)}</span>
+        <div>
+          <strong>{experience.shortTitle}</strong>
+          <small>纯前端模拟</small>
+        </div>
+      </div>
+      <nav class="experience-menu">
+        {experience.modules.map((module, index) => (
+          <button class:list={{ active: index === 0 }} type="button" data-experience-panel={module}>
+            <span>{String(index + 1).padStart(2, "0")}</span>{module}
+          </button>
+        ))}
+      </nav>
+      <div class="experience-stack-panel">
+        <small>技术栈</small>
+        <div>{experience.stack.map((item) => <span>{item}</span>)}</div>
+      </div>
+    </aside>
+
+    <main class="experience-console">
+      <header class="experience-console-head">
+        <div>
+          <div class="section-label">项目体验</div>
+          <h1>{experience.title}</h1>
+          <p>{experience.description}</p>
+        </div>
+        <div class="experience-head-actions">
+          <a href={experience.articleUrl} data-book-transition>项目文章</a>
+          <a href={experience.projectUrl} target="_blank" rel="noreferrer">前往项目</a>
+        </div>
+      </header>
+
+      <section class="experience-role-switch" aria-label="角色切换">
+        {experience.roles.map((role, index) => (
+          <button class:list={{ active: index === 0 }} type="button" data-experience-role={role}>{role}</button>
+        ))}
+      </section>
+
+      <section class="experience-metrics" aria-label="项目数据概览">
+        {experience.metrics.map(([label, value, trend]) => (
+          <article>
+            <span>{label}</span>
+            <strong>{value}</strong>
+            <small>{trend}</small>
+          </article>
+        ))}
+      </section>
+
+      <section class="experience-workspace">
+        <article class="experience-spotlight">
+          <div>
+            <span class="experience-status-dot"></span>
+            <small id="experienceActiveRole">当前角色：{experience.roles[0]}</small>
+          </div>
+          <h2>{experience.spotlight.title}</h2>
+          <p>{experience.spotlight.text}</p>
+          <div class="experience-stage-line" aria-label="流程进度">
+            {experience.stages.map((stage, index) => (
+              <button class:list={{ active: index === 0 }} type="button" data-experience-stage={index}>
+                <span>{String(index + 1).padStart(2, "0")}</span>{stage}
+              </button>
+            ))}
+          </div>
+          <div class="experience-progress"><span id="experienceProgress" style={`width:${100 / experience.stages.length}%`}></span></div>
+          <div class="experience-actions">
+            <button type="button" id="experiencePrimaryAction">模拟执行</button>
+            <button type="button" id="experienceResetAction">重置流程</button>
+          </div>
+        </article>
+
+        <article class="experience-board">
+          <header>
+            <div>
+              <span class="section-label">{experience.tableTitle}</span>
+              <h2>运行数据</h2>
+            </div>
+            <input id="experienceSearch" type="search" placeholder="搜索模拟数据..." autocomplete="off" />
+          </header>
+          <div class="experience-table-wrap">
+            <table>
+              <thead>
+                <tr>{experience.columns.map((column) => <th>{column}</th>)}</tr>
+              </thead>
+              <tbody id="experienceTableBody">
+                {experience.rows.map((row) => (
+                  <tr data-experience-row={row.join(" ").toLowerCase()}>
+                    {row.map((cell, cellIndex) => <td><span class:list={{ "state-chip": cellIndex === row.length - 1 }}>{cell}</span></td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="experience-lower">
+        <article class="experience-chart">
+          <header><span class="section-label">模拟趋势</span><h2>业务热度</h2></header>
+          <div class="experience-bars" aria-hidden="true">
+            {experience.metrics.map((metric, index) => <i style={`--bar:${42 + index * 13}%`}></i>)}
+          </div>
+        </article>
+        <article class="experience-log">
+          <header><span class="section-label">运行日志</span><h2>前端模拟事件</h2></header>
+          <div id="experienceLog">
+            {experience.activity.map((item) => <p>{item}</p>)}
+          </div>
+        </article>
+      </section>
+    </main>
+  </section>
+</BaseLayout>
+
+<script>
+  let experienceCleanup: () => void = () => {};
+
+  const initProjectExperience = () => {
+    experienceCleanup();
+    const controller = new AbortController();
+    const roleButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-experience-role]"));
+    const menuButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-experience-panel]"));
+    const stageButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-experience-stage]"));
+    const activeRole = document.getElementById("experienceActiveRole");
+    const progress = document.getElementById("experienceProgress") as HTMLElement | null;
+    const primaryAction = document.getElementById("experiencePrimaryAction");
+    const resetAction = document.getElementById("experienceResetAction");
+    const search = document.getElementById("experienceSearch") as HTMLInputElement | null;
+    const rows = Array.from(document.querySelectorAll<HTMLTableRowElement>("[data-experience-row]"));
+    const log = document.getElementById("experienceLog");
+    let activeStage = 0;
+
+    const setStage = (index: number) => {
+      activeStage = Math.max(0, Math.min(stageButtons.length - 1, index));
+      stageButtons.forEach((button, buttonIndex) => {
+        button.classList.toggle("active", buttonIndex <= activeStage);
+      });
+      if (progress) progress.style.width = `${((activeStage + 1) / Math.max(1, stageButtons.length)) * 100}%`;
+    };
+
+    const pushLog = (message: string) => {
+      if (!log) return;
+      const item = document.createElement("p");
+      item.textContent = `${new Date().toLocaleTimeString("zh-CN", { hour12: false })} · ${message}`;
+      log.prepend(item);
+      while (log.children.length > 6) log.lastElementChild?.remove();
+    };
+
+    roleButtons.forEach((button) => button.addEventListener("click", () => {
+      roleButtons.forEach((item) => item.classList.toggle("active", item === button));
+      if (activeRole) activeRole.textContent = `当前角色：${button.dataset.experienceRole ?? ""}`;
+      pushLog(`切换到 ${button.dataset.experienceRole ?? "演示"} 视角`);
+    }, { signal: controller.signal }));
+
+    menuButtons.forEach((button) => button.addEventListener("click", () => {
+      menuButtons.forEach((item) => item.classList.toggle("active", item === button));
+      pushLog(`打开模块：${button.dataset.experiencePanel ?? "模块"}`);
+    }, { signal: controller.signal }));
+
+    stageButtons.forEach((button, index) => button.addEventListener("click", () => {
+      setStage(index);
+      pushLog(`流程推进到：${button.textContent?.trim() ?? "下一步"}`);
+    }, { signal: controller.signal }));
+
+    primaryAction?.addEventListener("click", () => {
+      const next = activeStage >= stageButtons.length - 1 ? 0 : activeStage + 1;
+      setStage(next);
+      const currentStage = stageButtons[next]?.textContent?.trim() ?? "流程节点";
+      pushLog(`已模拟执行 ${currentStage}`);
+      window.dispatchEvent(new CustomEvent("archive:burst", { detail: { x: window.innerWidth * 0.72, y: window.innerHeight * 0.36, color: getComputedStyle(document.documentElement).getPropertyValue("--accent") || "#8ab4ff" } }));
+    }, { signal: controller.signal });
+
+    resetAction?.addEventListener("click", () => {
+      setStage(0);
+      pushLog("流程已重置为初始状态");
+    }, { signal: controller.signal });
+
+    search?.addEventListener("input", () => {
+      const keyword = search.value.trim().toLowerCase();
+      rows.forEach((row) => {
+        row.hidden = Boolean(keyword) && !(row.dataset.experienceRow ?? "").includes(keyword);
+      });
+    }, { signal: controller.signal });
+
+    setStage(0);
+    experienceCleanup = () => controller.abort();
+  };
+
+  document.addEventListener("astro:page-load", initProjectExperience);
+  if (document.readyState === "complete") initProjectExperience();
+</script>

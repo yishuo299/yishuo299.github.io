@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { projectExperiences } from "../data/projectExperiences";
+---
+
+<BaseLayout title="项目体验" description="燚燿的项目纯前端模拟体验入口。" sideBarActiveItemID="experience">
+  <section class="experience-index">
+    <header class="experience-hero">
+      <div class="section-label">项目体验</div>
+      <h1>不用后端，也能跑一遍项目流程。</h1>
+      <p>这里把计算机类项目做成统一风格的纯前端模拟界面。每个体验页单独放置，适合快速展示项目功能、业务流程和技术栈。</p>
+      <div class="experience-hero-actions">
+        <a href="/projects/">查看项目文章</a>
+        <a href="#experienceGrid">选择体验</a>
+      </div>
+    </header>
+
+    <div id="experienceGrid" class="experience-grid">
+      {projectExperiences.map((item, index) => (
+        <article class="experience-card" style={`--experience-color:${item.accent};--experience-index:${index}`}>
+          <div class="experience-card-top">
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <span>{item.category}</span>
+          </div>
+          <h2>{item.title}</h2>
+          <p>{item.description}</p>
+          <div class="experience-stack">
+            {item.stack.slice(0, 4).map((stack) => <span>{stack}</span>)}
+          </div>
+          <div class="experience-card-actions">
+            <a class="primary" href={`/experience/${item.slug}/`}>进入体验</a>
+            <a href={item.articleUrl} data-book-transition>阅读文章</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

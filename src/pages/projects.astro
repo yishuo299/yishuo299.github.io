@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import projects from "../data/projects.json";
+import { projectExperiences } from "../data/projectExperiences";
 import { FALLBACK_TECH_META, TECH_META } from "../data/techMeta";
 
 const TECH_STACK_FILTERS = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android"];
 const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s*\d+$/, "")] ?? FALLBACK_TECH_META;
+const experienceByArticle = new Map(projectExperiences.map((item) => [item.articleUrl, item]));
 ---
 
 <BaseLayout title="项目宇宙" description="燚燿的全部项目档案，可按名称和技术栈筛选。" sideBarActiveItemID="projects">
@@ -36,6 +38,7 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
       {projects.map((project, index) => {
         const primary = getTechMeta(project.tags[0] ?? project.name);
         const articleUrl = (project as any).articleUrl as string | undefined;
+        const experience = articleUrl ? experienceByArticle.get(articleUrl) : undefined;
         const searchable = `${project.title} ${project.name} ${project.description} ${project.tags.join(" ")}`.toLowerCase();
         const categories = `|${[project.name, ...project.tags].map((tag) => tag.toLowerCase()).join("|")}|`;
         return (
@@ -51,6 +54,7 @@ const getTechMeta = (tag: string) => TECH_META[tag] ?? TECH_META[tag.replace(/\s
             <div class="archive-card-actions">
               {(project as any).projectUrl && <a href={(project as any).projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>}
               {articleUrl && <a class="primary" href={articleUrl} data-book-transition>阅读文章 ↗</a>}
+              {experience && <a href={`/experience/${experience.slug}/`}>项目体验 ↗</a>}
             </div>
           </article>
         );
