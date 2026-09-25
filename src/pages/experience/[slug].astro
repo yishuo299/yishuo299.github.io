@@ -180,5 +180,9 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
   };
 
   document.addEventListener("astro:page-load", initNativeExperience);
-  if (document.readyState === "complete") initNativeExperience();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initNativeExperience, { once: true });
+  } else {
+    initNativeExperience();
+  }
 </script>

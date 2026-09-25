@@ -77,26 +77,46 @@
     equipment: [{ id: 1, name: "光谱检测仪", type: "检测设备", status: "库存", health: 96 }, { id: 2, name: "便携终端", type: "终端设备", status: "服役中", health: 82 }],
     requests: [{ id: 1, equipmentName: "便携终端", applicantName: "普通用户", type: "BORROW", status: "PENDING", progress: 35 }],
     parkingAreas: [
-      { id: 1, areaName: "A 区地面停车区", areaCode: "A", floorNo: "F1", totalSpaces: 12, remark: "靠近入口，适合临停车辆", status: 1 },
-      { id: 2, areaName: "B 区地下停车区", areaCode: "B", floorNo: "B1", totalSpaces: 14, remark: "长停与月卡车辆主要区域", status: 1 },
-      { id: 3, areaName: "C 区新能源车位", areaCode: "C", floorNo: "F1", totalSpaces: 8, remark: "包含充电桩车位", status: 1 },
-      { id: 4, areaName: "D 区综合停车区", areaCode: "D", floorNo: "B2", totalSpaces: 6, remark: "演示维修、预约等状态", status: 1 },
+      { id: 1, areaCode: "A", areaName: "A区·地面综合停车区", areaType: "GROUND", floorName: "地面一层", totalSpaces: 8, description: "靠近东门出入口，普通燃油车为主", status: 1 },
+      { id: 2, areaCode: "B", areaName: "B区·地下负一层停车区", areaType: "UNDERGROUND", floorName: "地下负一层", totalSpaces: 8, description: "紧邻商场电梯厅，车位充裕", status: 1 },
+      { id: 3, areaCode: "C", areaName: "C区·新能源充电专区", areaType: "GROUND", floorName: "地面二层", totalSpaces: 8, description: "新能源与充电桩专用车位", status: 1 },
+      { id: 4, areaCode: "D", areaName: "D区·地下负二层停车区", areaType: "UNDERGROUND", floorName: "地下负二层", totalSpaces: 6, description: "以长租月租车位为主", status: 1 },
+      { id: 5, areaCode: "E", areaName: "E区·临时访客停车区", areaType: "GROUND", floorName: "地面一层", totalSpaces: 6, description: "临停短时停放，靠近西门", status: 1 },
+      { id: 6, areaCode: "F", areaName: "F区·无障碍专用停车区", areaType: "GROUND", floorName: "地面一层", totalSpaces: 4, description: "设无障碍通道", status: 1 },
     ],
     parkingSpaces: [
-      { id: 1, areaId: 1, areaName: "A 区地面停车区", spaceNo: "A-001", spaceType: "NORMAL", status: "OCCUPIED", plateNo: "京A12345" },
-      { id: 2, areaId: 1, areaName: "A 区地面停车区", spaceNo: "A-002", spaceType: "NORMAL", status: "FREE", plateNo: "" },
-      { id: 3, areaId: 1, areaName: "A 区地面停车区", spaceNo: "A-003", spaceType: "DISABLED", status: "FREE", plateNo: "" },
-      { id: 4, areaId: 2, areaName: "B 区地下停车区", spaceNo: "B-012", spaceType: "NORMAL", status: "OCCUPIED", plateNo: "京H23456" },
-      { id: 5, areaId: 2, areaName: "B 区地下停车区", spaceNo: "B-016", spaceType: "NORMAL", status: "FREE", plateNo: "" },
-      { id: 6, areaId: 3, areaName: "C 区新能源车位", spaceNo: "C-006", spaceType: "CHARGING", status: "RESERVED", plateNo: "" },
-      { id: 7, areaId: 3, areaName: "C 区新能源车位", spaceNo: "C-009", spaceType: "NEW_ENERGY", status: "FREE", plateNo: "" },
-      { id: 8, areaId: 4, areaName: "D 区综合停车区", spaceNo: "D-009", spaceType: "NORMAL", status: "MAINTENANCE", plateNo: "" },
-    ],
+      ["A-001",1,"NORMAL","FREE",""],["A-002",1,"NORMAL","OCCUPIED","京F10288"],["A-003",1,"NORMAL","FREE",""],["A-004",1,"NORMAL","OCCUPIED","京A12345"],["A-005",1,"NORMAL","MAINTENANCE",""],["A-006",1,"NORMAL","FREE",""],["A-007",1,"NORMAL","RESERVED",""],["A-008",1,"NORMAL","FREE",""],
+      ["B-101",2,"NORMAL","OCCUPIED","沪A66666"],["B-102",2,"NORMAL","FREE",""],["B-103",2,"NORMAL","OCCUPIED","京E77521"],["B-104",2,"NORMAL","FREE",""],["B-105",2,"NORMAL","OCCUPIED","粤B12345"],["B-106",2,"NORMAL","FREE",""],["B-107",2,"NORMAL","OCCUPIED","京C45000"],["B-108",2,"NORMAL","FREE",""],
+      ["C-201",3,"NEW_ENERGY","OCCUPIED","京AD67890"],["C-202",3,"NEW_ENERGY","OCCUPIED","京AF13579"],["C-203",3,"CHARGING","OCCUPIED","京N88112"],["C-204",3,"CHARGING","OCCUPIED","京AF97531"],["C-205",3,"CHARGING","MAINTENANCE",""],["C-206",3,"NEW_ENERGY","FREE",""],["C-207",3,"NEW_ENERGY","FREE",""],["C-208",3,"NEW_ENERGY","OCCUPIED","京AF24680"],
+      ["D-301",4,"NORMAL","OCCUPIED","京G56789"],["D-302",4,"NORMAL","FREE",""],["D-303",4,"NORMAL","FREE",""],["D-304",4,"NORMAL","RESERVED",""],["D-305",4,"NORMAL","FREE",""],["D-306",4,"NORMAL","FREE",""],
+      ["E-401",5,"NORMAL","OCCUPIED","京H23456"],["E-402",5,"NORMAL","FREE",""],["E-403",5,"NORMAL","OCCUPIED","京D55000"],["E-404",5,"NORMAL","FREE",""],["E-405",5,"NORMAL","FREE",""],["E-406",5,"NORMAL","FREE",""],
+      ["F-501",6,"DISABLED","FREE",""],["F-502",6,"DISABLED","OCCUPIED","京Q88888"],["F-503",6,"DISABLED","OCCUPIED","京B35000"],["F-504",6,"DISABLED","FREE",""]
+    ].map((row, index) => ({ id: index + 1, spaceNo: row[0], areaId: row[1], spaceType: row[2], status: row[3], plateNo: row[4] })),
     parkingRecords: [
-      { id: 1, recordNo: "PR202609220001", plateNo: "京A12345", displayPlateNo: "京A·12345", areaName: "A 区地面停车区", spaceId: 1, spaceNo: "A-001", spaceType: "NORMAL", entryTime: "2026-09-25 08:20:00", exitTime: "", durationMinutes: 0, amount: 0, discountAmount: 0, actualAmount: 0, payType: "", status: "PARKING" },
-      { id: 2, recordNo: "PR202609220002", plateNo: "京H23456", displayPlateNo: "京H·23456", areaName: "B 区地下停车区", spaceId: 4, spaceNo: "B-012", spaceType: "NORMAL", entryTime: "2026-09-25 10:05:00", exitTime: "", durationMinutes: 0, amount: 0, discountAmount: 0, actualAmount: 0, payType: "", status: "PARKING" },
-      { id: 3, recordNo: "PR202609210018", plateNo: "京C45000", displayPlateNo: "京C·45000", areaName: "C 区新能源车位", spaceId: 6, spaceNo: "C-006", spaceType: "CHARGING", entryTime: "2026-09-24 21:30:00", exitTime: "2026-09-25 07:20:00", durationMinutes: 590, amount: 32, discountAmount: 0, actualAmount: 32, payType: "SCAN", status: "PAID" },
-    ],
+      ["PR20260925002","京F10288",2,"A-002",1,"A区·地面综合停车区","NORMAL","2026-09-25 08:30:00"],
+      ["PR20260925003","京H23456",31,"E-401",5,"E区·临时访客停车区","NORMAL","2026-09-25 09:10:00"],
+      ["PR20260925004","京AD67890",17,"C-201",3,"C区·新能源充电专区","NEW_ENERGY","2026-09-25 07:00:00"],
+      ["PR20260925005","京C45000",15,"B-107",2,"B区·地下负一层停车区","NORMAL","2026-09-25 10:20:00"],
+      ["PR20260925006","京D55000",33,"E-403",5,"E区·临时访客停车区","NORMAL","2026-09-25 06:40:00"],
+      ["PR20260925007","京Q88888",38,"F-502",6,"F区·无障碍专用停车区","DISABLED","2026-09-25 11:00:00"],
+      ["PR20260925008","京AF13579",18,"C-202",3,"C区·新能源充电专区","NEW_ENERGY","2026-09-25 12:30:00"],
+      ["PR20260925009","京AF24680",24,"C-208",3,"C区·新能源充电专区","NEW_ENERGY","2026-09-25 13:15:00"],
+      ["PR20260925010","京AF97531",20,"C-204",3,"C区·新能源充电专区","CHARGING","2026-09-25 14:00:00"],
+      ["PR20260925011","沪A66666",9,"B-101",2,"B区·地下负一层停车区","NORMAL","2026-09-25 08:05:00"],
+      ["PR20260925012","京E77521",11,"B-103",2,"B区·地下负一层停车区","NORMAL","2026-09-25 09:45:00"],
+      ["PR20260925013","粤B12345",13,"B-105",2,"B区·地下负一层停车区","NORMAL","2026-09-25 10:50:00"],
+      ["PR20260925014","京N88112",19,"C-203",3,"C区·新能源充电专区","CHARGING","2026-09-25 11:35:00"],
+      ["PR20260925015","京G56789",25,"D-301",4,"D区·地下负二层停车区","NORMAL","2026-09-25 12:10:00"],
+      ["PR20260925016","京B35000",39,"F-503",6,"F区·无障碍专用停车区","DISABLED","2026-09-25 13:40:00"],
+      ["PR20260925017","京A12345",4,"A-004",1,"A区·地面综合停车区","NORMAL","2026-09-25 07:20:00"]
+    ].map((row, index) => ({ id: index + 25, recordNo: row[0], plateNo: row[1], displayPlateNo: String(row[1]).replace(/^(.{2})/, "$1·"), spaceId: row[2], spaceNo: row[3], areaId: row[4], areaName: row[5], spaceType: row[6], entryTime: row[7], exitTime: "", durationMinutes: 0, amount: 0, paidAmount: 0, discountAmount: 0, payType: "UNPAID", payStatus: "UNPAID", status: "PARKING" })).concat([
+      { id: 42, recordNo: "PR20260925019", plateNo: "京C30927", displayPlateNo: "京C·30927", spaceId: 10, spaceNo: "B-102", areaId: 2, areaName: "B区·地下负一层停车区", spaceType: "NORMAL", entryTime: "2026-09-25 12:00:00", exitTime: "2026-09-25 15:10:00", durationMinutes: 190, amount: 11, paidAmount: 11, discountAmount: 0, payType: "BALANCE", payStatus: "PAID", status: "EXITED" },
+      { id: 41, recordNo: "PR20260925018", plateNo: "京D55001", displayPlateNo: "京D·55001", spaceId: 1, spaceNo: "A-001", areaId: 1, areaName: "A区·地面综合停车区", spaceType: "NORMAL", entryTime: "2026-09-25 09:15:00", exitTime: "2026-09-25 11:45:00", durationMinutes: 150, amount: 8, paidAmount: 8, discountAmount: 0, payType: "SCAN", payStatus: "PAID", status: "EXITED" },
+      { id: 24, recordNo: "PR20260925001", plateNo: "京E65000", displayPlateNo: "京E·65000", spaceId: 22, spaceNo: "C-206", areaId: 3, areaName: "C区·新能源充电专区", spaceType: "NEW_ENERGY", entryTime: "2026-09-25 07:50:00", exitTime: "2026-09-25 08:40:00", durationMinutes: 50, amount: 0, paidAmount: 0, discountAmount: 0, payType: "CASH", payStatus: "PAID", status: "EXITED" },
+      { id: 23, recordNo: "PR20260924001", plateNo: "京Q88888", displayPlateNo: "京Q·88888", spaceId: 37, spaceNo: "F-501", areaId: 6, areaName: "F区·无障碍专用停车区", spaceType: "DISABLED", entryTime: "2026-09-24 08:00:00", exitTime: "2026-09-24 14:00:00", durationMinutes: 360, amount: 7.5, paidAmount: 0, discountAmount: 7.5, payType: "MONTH_CARD", payStatus: "PAID", status: "EXITED" },
+      { id: 22, recordNo: "PR20260923001", plateNo: "京G56789", displayPlateNo: "京G·56789", spaceId: 26, spaceNo: "D-302", areaId: 4, areaName: "D区·地下负二层停车区", spaceType: "NORMAL", entryTime: "2026-09-23 18:00:00", exitTime: "2026-09-23 21:40:00", durationMinutes: 220, amount: 14, paidAmount: 0, discountAmount: 14, payType: "MONTH_CARD", payStatus: "PAID", status: "EXITED" },
+      { id: 21, recordNo: "PR20260922001", plateNo: "京AF97531", displayPlateNo: "京AF·97531", spaceId: 20, spaceNo: "C-204", areaId: 3, areaName: "C区·新能源充电专区", spaceType: "CHARGING", entryTime: "2026-09-22 08:30:00", exitTime: "2026-09-22 16:30:00", durationMinutes: 480, amount: 34, paidAmount: 34, discountAmount: 0, payType: "SCAN", payStatus: "PAID", status: "EXITED" }
+    ]),
     billingRules: [
       { id: 1, spaceType: "NORMAL", freeMinutes: 15, firstHourPrice: 5, nextHourPrice: 3, dailyCap: 45, nightDiscount: 0.5, status: 1 },
       { id: 2, spaceType: "NEW_ENERGY", freeMinutes: 20, firstHourPrice: 4, nextHourPrice: 2.5, dailyCap: 40, nightDiscount: 0.5, status: 1 },
@@ -116,12 +136,22 @@
     ],
     rechargeRecords: [{ id: 1, cardNo: "SC2026000001", ownerName: "车主陈晓明", amount: 100, createTime: "2026-09-20 14:22:00", operatorName: "收费员李静" }],
     paymentRecords: [
-      { id: 1, payNo: "PAY202609250001", recordNo: "PR202609210018", plateNo: "京C45000", displayPlateNo: "京C·45000", amount: 32, payType: "SCAN", operatorName: "收费员李静", createTime: "2026-09-25 07:20:00" },
+      { id: 26, paymentNo: "PY20260925003", recordId: 42, recordNo: "PR20260925019", plateNo: "京C30927", displayPlateNo: "京C·30927", amount: 11, paidAmount: 11, discountAmount: 0, payType: "BALANCE", payChannel: "储值卡余额", operatorName: "收费员李静", payTime: "2026-09-25 15:10:00" },
+      { id: 25, paymentNo: "PY20260925002", recordId: 41, recordNo: "PR20260925018", plateNo: "京D55001", displayPlateNo: "京D·55001", amount: 8, paidAmount: 8, discountAmount: 0, payType: "SCAN", payChannel: "扫码支付", operatorName: "收费员李静", payTime: "2026-09-25 11:45:00" },
+      { id: 24, paymentNo: "PY20260925001", recordId: 24, recordNo: "PR20260925001", plateNo: "京E65000", displayPlateNo: "京E·65000", amount: 0, paidAmount: 0, discountAmount: 0, payType: "CASH", payChannel: "现金", operatorName: "收费员李静", payTime: "2026-09-25 08:40:00" },
+      { id: 23, paymentNo: "PY20260924001", recordId: 23, recordNo: "PR20260924001", plateNo: "京Q88888", displayPlateNo: "京Q·88888", amount: 7.5, paidAmount: 0, discountAmount: 7.5, payType: "MONTH_CARD", payChannel: "月卡自动抵扣", operatorName: "收费员李静", payTime: "2026-09-24 14:00:00" },
+      { id: 22, paymentNo: "PY20260923001", recordId: 22, recordNo: "PR20260923001", plateNo: "京G56789", displayPlateNo: "京G·56789", amount: 14, paidAmount: 0, discountAmount: 14, payType: "MONTH_CARD", payChannel: "月卡自动抵扣", operatorName: "收费员李静", payTime: "2026-09-23 21:40:00" },
+      { id: 21, paymentNo: "PY20260922001", recordId: 21, recordNo: "PR20260922001", plateNo: "京AF97531", displayPlateNo: "京AF·97531", amount: 34, paidAmount: 34, discountAmount: 0, payType: "SCAN", payChannel: "扫码支付", operatorName: "收费员李静", payTime: "2026-09-22 16:30:00" },
+      { id: 20, paymentNo: "PY20260920001", recordId: 20, recordNo: "PR20260920001", plateNo: "京B66888", displayPlateNo: "京B·66888", amount: 38, paidAmount: 0, discountAmount: 38, payType: "MONTH_CARD", payChannel: "月卡自动抵扣", operatorName: "收费员李静", payTime: "2026-09-20 20:15:00" }
     ],
     sysConfigs: [{ id: 1, configKey: "free_minutes_default", configValue: "15", configGroup: "billing", remark: "默认免费分钟数", status: 1 }],
   };
 
   const listBy = (key) => db[key] || [];
+  db.parkingSpaces.forEach((space) => {
+    const area = db.parkingAreas.find((item) => Number(item.id) === Number(space.areaId));
+    space.areaName = area?.areaName || "";
+  });
   const addItem = (key, body) => {
     const item = { id: ++idSeq, createTime: new Date().toLocaleString(), status: 1, ...body };
     listBy(key).unshift(item);
@@ -246,10 +276,10 @@
         spaceOccupied: db.parkingSpaces.filter((item) => item.status === "OCCUPIED").length,
         parkingNow: db.parkingRecords.filter((item) => item.status === "PARKING").length,
         occupancyRate: Math.round((db.parkingSpaces.filter((item) => item.status === "OCCUPIED").length / db.parkingSpaces.length) * 100),
-        todayRecords: 28,
-        recordTotal: db.parkingRecords.length + 42,
-        todayIncome: 1286,
-        totalIncome: 38620,
+        todayRecords: db.parkingRecords.filter((item) => String(item.entryTime || "").startsWith("2026-09-25")).length,
+        recordTotal: db.parkingRecords.length,
+        todayIncome: db.paymentRecords.filter((item) => String(item.payTime || "").startsWith("2026-09-25")).reduce((sum, item) => sum + Number(item.paidAmount || 0), 0),
+        totalIncome: db.paymentRecords.reduce((sum, item) => sum + Number(item.paidAmount || 0), 0),
         validMonthCard: db.monthCards.filter((item) => item.status === "VALID").length,
         expiredMonthCard: db.monthCards.filter((item) => item.status === "EXPIRED").length,
         storedBalance: db.storedCards.reduce((sum, item) => sum + Number(item.balance || 0), 0),
@@ -258,7 +288,12 @@
       if (lower.includes("income/trend")) return ok(parkingTrend());
       if (lower.includes("income/month")) return ok({ months: ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09"], amounts: [28600, 30180, 34220, 36100, 38620], counts: [520, 558, 606, 642, 684] });
       if (lower.includes("traffic/hour")) return ok({ labels: ["00", "02", "04", "06", "08", "10", "12", "14", "16", "18", "20", "22"], values: [3, 1, 0, 6, 18, 24, 16, 19, 25, 31, 22, 12] });
-      if (lower.includes("space/type")) return ok({ data: [{ name: "普通车位", value: 28 }, { name: "新能源", value: 6 }, { name: "无障碍", value: 3 }, { name: "充电桩", value: 3 }] });
+      if (lower.includes("space/type")) return ok({ data: [
+        { name: "普通车位", value: db.parkingSpaces.filter((item) => item.spaceType === "NORMAL" && item.status === "OCCUPIED").length },
+        { name: "新能源", value: db.parkingSpaces.filter((item) => item.spaceType === "NEW_ENERGY" && item.status === "OCCUPIED").length },
+        { name: "无障碍", value: db.parkingSpaces.filter((item) => item.spaceType === "DISABLED" && item.status === "OCCUPIED").length },
+        { name: "充电桩", value: db.parkingSpaces.filter((item) => item.spaceType === "CHARGING" && item.status === "OCCUPIED").length },
+      ] });
       if (lower.includes("space/turnover")) return ok({ names: ["A区地面", "B区地下", "C区新能源", "D区综合"], counts: [42, 35, 18, 12], rates: [2.8, 2.1, 1.7, 1.2] });
       if (lower.includes("pay/type")) return ok({ data: [{ name: "月卡抵扣", value: 8 }, { name: "储值卡", value: 10 }, { name: "现金", value: 4 }, { name: "扫码", value: 12 }] });
       if (lower.includes("space/stat")) return ok({ data: [{ name: "普通车位", count: 48, amount: 18600, avgMinutes: 168 }, { name: "新能源车位", count: 18, amount: 6900, avgMinutes: 142 }, { name: "无障碍车位", count: 8, amount: 2100, avgMinutes: 96 }, { name: "充电桩车位", count: 12, amount: 7020, avgMinutes: 188 }] });
@@ -284,6 +319,60 @@
     if (project === "parking-management" && lower.includes("/vehicle/owner/my")) return ok(clone(db.vehicles));
     if (project === "parking-management" && lower.includes("/profile/info")) return ok({ id: 1, username: "demo", realName: "测试用户", phone: "13800000000", role: "ADMIN", avatar: "" });
     if (project === "parking-management" && lower.includes("/admin/user/rolestat")) return ok({ ADMIN: 1, OPERATOR: 2, OWNER: 4 });
+    if (project === "campus-marketplace" && lower.includes("/admin/stats")) return ok({
+      userCount: db.users.length,
+      productCount: db.products.length,
+      orderCount: db.orders.length,
+      salesAmount: db.orders.filter((item) => Number(item.status) === 3).reduce((sum, item) => sum + Number(item.totalAmount || item.amount || 0), 0),
+      statusDist: [{ name: "待付款", value: 1 }, { name: "已完成", value: 1 }],
+      categoryDist: db.categories.map((item) => ({ name: item.name, value: db.products.filter((product) => product.categoryId === item.id).length })),
+      trend: [{ name: "09-20", value: 2 }, { name: "09-21", value: 4 }, { name: "09-22", value: 5 }, { name: "09-23", value: 3 }, { name: "09-24", value: 6 }, { name: "09-25", value: 8 }],
+    });
+    if (project === "clinic-appointment" && lower.includes("/stats/dashboard")) return ok({
+      departmentCount: db.departments.length,
+      doctorCount: db.doctors.length,
+      patientCount: new Set(db.appointments.map((item) => item.patientName)).size + 5,
+      todayAppointments: db.appointments.length,
+    });
+    if (project === "clinic-appointment" && lower.includes("/stats/charts")) return ok({
+      deptVisits: db.departments.map((item, index) => ({ name: item.name, value: [18, 13, 9, 7][index] || 5 })),
+      trend: [{ day: "09-19", cnt: 12 }, { day: "09-20", cnt: 16 }, { day: "09-21", cnt: 9 }, { day: "09-22", cnt: 21 }, { day: "09-23", cnt: 18 }, { day: "09-24", cnt: 24 }, { day: "09-25", cnt: 17 }],
+      doctorWorkload: db.doctors.map((item, index) => ({ name: item.name, value: [26, 19][index] || 12 })),
+    });
+    if (project === "library-management" && lower.includes("/stats/overview")) return ok({
+      totalBooks: db.books.length,
+      totalCopies: db.books.reduce((sum, item) => sum + Number(item.stock || 0), 0),
+      totalReaders: db.readers.length,
+      currentBorrowing: db.borrows.filter((item) => Number(item.status) === 1).length,
+      overdueCount: db.borrows.filter((item) => Number(item.status) === 1 && String(item.dueDate) < "2026-09-25").length,
+      unpaidFineAmount: 6.5,
+    });
+    if (project === "library-management" && lower.includes("/stats/borrow-trend")) return ok([
+      { month: "2026-04", count: 86 }, { month: "2026-05", count: 104 }, { month: "2026-06", count: 128 }, { month: "2026-07", count: 72 }, { month: "2026-08", count: 91 }, { month: "2026-09", count: 116 },
+    ]);
+    if (project === "library-management" && lower.includes("/stats/category-ratio")) return ok([
+      { name: "计算机", cnt: 38 }, { name: "文学", cnt: 27 }, { name: "历史", cnt: 16 }, { name: "经济管理", cnt: 19 },
+    ]);
+    if (project === "library-management" && lower.includes("/stats/hot-books")) return ok(db.books.map((item, index) => ({ title: item.title, cnt: [28, 23][index] || 12 })));
+    if (project === "movie-recommend" && lower.includes("/stats/overview")) return ok({ movies: db.movies.length, users: db.users.length, ratings: 126, reviews: db.reviews.length, genres: db.genres.length, persons: 18 });
+    if (project === "movie-recommend" && lower.includes("/stats/genre-distribution")) return ok([{ name: "科幻", value: 36 }, { name: "悬疑", value: 28 }, { name: "剧情", value: 42 }]);
+    if (project === "movie-recommend" && lower.includes("/stats/score-distribution")) return ok([{ name: "6-7", value: 12 }, { name: "7-8", value: 31 }, { name: "8-9", value: 54 }, { name: "9-10", value: 29 }]);
+    if (project === "movie-recommend" && lower.includes("/stats/year-trend")) return ok([{ year: "2022", value: 18 }, { year: "2023", value: 25 }, { year: "2024", value: 34 }, { year: "2025", value: 42 }, { year: "2026", value: 51 }]);
+    if (project === "movie-recommend" && lower.includes("/stats/top-movies")) return ok(db.movies.map((item) => ({ name: item.title, title: item.title, value: item.score, score: item.score })));
+    if (project === "movie-recommend" && lower.includes("/stats/user-activity")) return ok([{ name: "09-21", value: 32 }, { name: "09-22", value: 46 }, { name: "09-23", value: 39 }, { name: "09-24", value: 58 }, { name: "09-25", value: 61 }]);
+    if (project === "movie-recommend" && lower.includes("/stats/country-distribution")) return ok([{ name: "中国", value: 42 }, { name: "美国", value: 38 }, { name: "日本", value: 20 }]);
+    if (project === "face-attendance" && lower.includes("/stat/overview")) return ok({
+      student_count: db.students.length,
+      teacher_count: db.teachers.length,
+      course_count: db.courses.length,
+      today_sign: db.attendance.length,
+      pending_leave: db.leaves.filter((item) => Number(item.status) === 0).length,
+      attendance_rate: 96,
+      recent: db.attendance.map((item) => ({ student_name: item.studentName, course_name: item.courseName, status: item.status, sign_time: `2026-09-25 ${item.signTime}:00` })),
+    });
+    if (project === "face-attendance" && lower.includes("/stat/trend")) return ok([{ session_name: "软件工程", rate: 96 }, { session_name: "数据库原理", rate: 92 }, { session_name: "Python 程序设计", rate: 94 }]);
+    if (project === "face-attendance" && lower.includes("/stat/class-compare")) return ok([{ class_name: "软件 2401", rate: 96 }, { class_name: "软件 2402", rate: 91 }, { class_name: "计科 2401", rate: 94 }]);
+    if (project === "face-attendance" && lower.includes("/stat/rank")) return ok([{ student_name: "张同学", rate: 100 }, { student_name: "李同学", rate: 96 }]);
     if (lower.includes("/stats") || lower.includes("/stat/")) {
       if (lower.includes("overview") || lower.includes("dashboard")) return ok({ userCount: 128, movieCount: 236, bookCount: 4826, borrowCount: 326, todayCount: 86, attendanceRate: 96, equipmentCount: 623, pendingCount: 13, total: 999 });
       return ok([{ name: "一月", value: 32 }, { name: "二月", value: 58 }, { name: "三月", value: 76 }, { name: "四月", value: 64 }]);
@@ -372,10 +461,10 @@
         const fee = calcParkingFee(record);
         const hasMonth = db.monthCards.some((card) => plateNorm(card.plateNo) === plateNorm(record.plateNo) && card.status === "VALID" && card.spaceType === record.spaceType);
         const actualAmount = hasMonth ? 0 : fee.amount;
-        Object.assign(record, { exitTime: new Date().toLocaleString(), durationMinutes: fee.minutes, amount: fee.amount, discountAmount: fee.amount - actualAmount, actualAmount, payType: hasMonth ? "MONTH_CARD" : (body.payType || "SCAN"), status: "PAID" });
+        Object.assign(record, { exitTime: new Date().toLocaleString(), durationMinutes: fee.minutes, amount: fee.amount, paidAmount: actualAmount, discountAmount: fee.amount - actualAmount, actualAmount, payType: hasMonth ? "MONTH_CARD" : (body.payType || "SCAN"), payStatus: "PAID", status: "EXITED" });
         const space = db.parkingSpaces.find((item) => String(item.id) === String(record.spaceId));
         if (space) Object.assign(space, { status: "FREE", plateNo: "", currentPlateNo: "" });
-        const payment = addItem("paymentRecords", { payNo: "PAY" + Date.now(), recordNo: record.recordNo, plateNo: record.plateNo, displayPlateNo: record.displayPlateNo, amount: actualAmount, payType: record.payType, operatorName: "收费员李静" });
+        const payment = addItem("paymentRecords", { paymentNo: "PY" + Date.now(), recordId: record.id, recordNo: record.recordNo, plateNo: record.plateNo, displayPlateNo: record.displayPlateNo, amount: fee.amount, paidAmount: actualAmount, discountAmount: fee.amount - actualAmount, payType: record.payType, payChannel: record.payType === "MONTH_CARD" ? "月卡自动抵扣" : "现场收款", operatorName: "收费员李静", payTime: new Date().toLocaleString() });
         return ok({ record, payment });
       }
       if (project === "parking-management" && lower.includes("/card/month/renew/")) {
