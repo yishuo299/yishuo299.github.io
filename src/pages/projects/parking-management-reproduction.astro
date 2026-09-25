@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codeSections, dataTables, modules, projectUrl, resultItems, runSteps, techStack } from "../../data/parkingManagementArticleData";
+---
+
+<BaseLayout sideBarActiveItemID="projects">
+  <main class="parking-article">
+    <a class="back-link" href="/#projects">← 返回项目列表</a>
+
+    <section class="hero-card">
+      <p class="eyebrow">工程复现版 · Java Web</p>
+      <div class="title-row">
+        <h1>智慧停车场管理系统复现说明</h1>
+        <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+      </div>
+      <p>这是一套面向商用停车场的前后端分离管理系统。文章会从业务目标、功能模块、项目结构、技术栈、运行步骤、关键代码和运行结果拆解项目，读者可以结合源码复现车辆入场、出场计费、卡片扣费和运营统计等核心流程。</p>
+    </section>
+
+    <section class="section-card">
+      <h2>一、项目介绍：系统解决什么问题</h2>
+      <p>停车场管理系统的核心不只是维护车位列表，而是把车辆、车位、时间、费用、卡片和支付流水串成一条可追踪的业务链路。本项目以 Spring Boot 作为后端服务，Vue 3 作为管理端界面，覆盖管理员、收费员和车主三种角色。</p>
+      <div class="module-grid">
+        {modules.map(([name, desc]) => <article><strong>{name}</strong><span>{desc}</span></article>)}
+      </div>
+    </section>
+
+    <section class="split-section">
+      <div class="section-card">
+        <h2>二、功能介绍</h2>
+        <p>系统围绕停车场日常运营展开。管理员负责区域车位、用户权限、计费规则和系统参数；收费员负责车辆入场、出场结算、卡片办理和流水查询；车主可以查看车辆、停车记录和卡包信息。</p>
+        <ul>
+          <li>车辆入场：车牌格式校验、防重复在场、空闲车位选择、自动占用车位。</li>
+          <li>出场结算：按停车时长计算费用，支持月卡抵扣、储值卡扣费、现金和扫码支付。</li>
+          <li>车位地图：按区域展示车位状态，快速识别空闲、占用、预约和维修车位。</li>
+          <li>统计报表：展示收入趋势、车流高峰、车位类型占比、周转率和支付方式分布。</li>
+        </ul>
+      </div>
+      <div class="section-card">
+        <h2>三、数据表设计</h2>
+        <p>数据库围绕“车位状态”和“停车记录”展开。复现时建议先理解 `parking_record` 与 `parking_space` 的联动，再扩展卡片和支付流水。</p>
+        <div class="table-list">{dataTables.map(([name, desc]) => <article><code>{name}</code><span>{desc}</span></article>)}</div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>四、技术栈介绍</h2>
+      <div class="tech-grid">
+        {techStack.map(([name, desc]) => <article><strong>{name}</strong><p>{desc}</p></article>)}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>五、项目结构</h2>
+      <p>工程分为 `backend`、`frontend` 和 `db`。后端按 Controller、Service、Mapper、Entity 分层；前端按路由、状态、接口、页面拆分；数据库初始化脚本提供完整演示数据。</p>
+      <pre><code>{`parking-management/
+├─ README.md
+├─ start.bat / stop.bat
+├─ db/
+│  └─ init.sql
+├─ backend/
+│  ├─ pom.xml
+│  └─ src/main/
+│     ├─ java/com/grad/parking/
+│     │  ├─ common/      # Result、JwtUtil、PlateUtil、异常处理
+│     │  ├─ config/      # AuthInterceptor、WebConfig、MyBatis-Plus 配置
+│     │  ├─ controller/  # 认证、车位、记录、卡片、报表等接口
+│     │  ├─ service/     # BillingService、ParkingService、CardService
+│     │  ├─ mapper/      # BaseMapper 与统计 SQL
+│     │  └─ entity/ dto/ vo/
+│     └─ resources/
+│        ├─ application.yml
+│        └─ static/
+└─ frontend/
+   ├─ package.json
+   └─ src/
+      ├─ router/
+      ├─ store/
+      ├─ api/
+      ├─ utils/
+      └─ views/`}</code></pre>
+    </section>
+
+    <section class="section-card">
+      <h2>六、复现与运行步骤</h2>
+      <div class="steps">
+        {runSteps.map(([title, desc], index) => <article><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{title}</strong><p>{desc}</p></div></article>)}
+      </div>
+    </section>
+
+    <section class="section-card code-section">
+      <h2>七、关键代码段</h2>
+      <p>下面代码围绕项目的关键业务链路选取。每段都说明“使用方法”和“项目作用”，方便读者对照源码定位实现位置。</p>
+      <div class="code-grid">
+        {codeSections.map((item) => (
+          <article>
+            <header>
+              <h3>{item.title}</h3>
+              <p><b>使用方法：</b>{item.method}</p>
+              <p><b>项目作用：</b>{item.purpose}</p>
+            </header>
+            <pre><code>{item.code}</code></pre>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>八、项目运行结果</h2>
+      <p>项目启动后，可以用管理员、收费员、车主三类账号分别验证完整流程。建议先查看车位地图，再用收费员账号登记一辆车入场，随后进入出场结算页确认扣费结果。</p>
+      <div class="result-grid">
+        {resultItems.map(([title, desc]) => <article><strong>{title}</strong><p>{desc}</p></article>)}
+      </div>
+    </section>
+
+    <section class="final-note">
+      <h2>九、总结</h2>
+      <p>这个项目适合用来理解典型 Java Web 管理系统如何处理真实业务状态：前端负责角色界面与操作反馈，后端负责权限、计费和结算规则，数据库负责保存车位、记录、卡片和流水。继续扩展时，可以加入车牌识别硬件、道闸联动、发票管理、移动端车主缴费和更细的审计日志。</p>
+      <a href={projectUrl} target="_blank" rel="noreferrer">前往项目 ↗</a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .parking-article { position: relative; z-index: 3; width: min(1180px, 92vw); margin: 0 auto; padding: 96px 0; color: var(--ink-1); }
+  .back-link { display: inline-flex; margin-bottom: 24px; color: var(--ink-2); text-decoration: none; }
+  .hero-card, .section-card, .final-note { border: 1px solid var(--article-line); background: var(--article-surface); box-shadow: var(--article-shadow); backdrop-filter: blur(18px) saturate(1.1); border-radius: 30px; }
+  .hero-card { padding: clamp(34px, 6vw, 72px); }
+  .section-card, .final-note { margin-top: 24px; padding: 28px; }
+  .eyebrow { color: #69e6c2; letter-spacing: .22em; text-transform: uppercase; font-size: .78rem; }
+  .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 4.6rem); letter-spacing: -.06em; line-height: .98; }
+  h2 { margin: 0 0 16px; font-size: clamp(1.35rem, 2vw, 2rem); }
+  h3 { margin: 0 0 10px; }
+  p, li, span { line-height: 1.85; color: var(--ink-2); }
+  .title-row a, .final-note a { color: #02130b; background: linear-gradient(135deg, #86efac, #22c55e); border-radius: 999px; padding: 10px 16px; text-decoration: none; font-weight: 800; }
+  .split-section { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; }
+  .module-grid, .tech-grid, .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .module-grid article, .tech-grid article, .result-grid article, .table-list article, .steps article { border: 1px solid rgba(134, 239, 172, .16); background: rgba(5, 20, 24, .44); border-radius: 20px; padding: 18px; }
+  strong { color: var(--ink-1); }
+  .table-list { display: grid; gap: 10px; }
+  code { color: #b7ffdb; }
+  pre { overflow: auto; margin: 16px 0 0; border-radius: 18px; padding: 18px; background: rgba(0, 0, 0, .46); border: 1px solid rgba(134, 239, 172, .12); }
+  pre code { color: #d8ffe9; font-size: .9rem; line-height: 1.7; }
+  .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .steps article { display: flex; gap: 16px; }
+  .steps span { font-size: 1.4rem; font-weight: 900; color: #86efac; }
+  .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .code-grid article { border: 1px solid rgba(134, 239, 172, .14); background: rgba(2, 12, 20, .5); border-radius: 22px; padding: 18px; }
+  .final-note { text-align: center; padding: 40px; }
+  @media (max-width: 900px) {
+    .parking-article { width: min(94vw, 720px); padding-top: 72px; }
+    .split-section, .module-grid, .tech-grid, .result-grid, .steps, .code-grid { grid-template-columns: 1fr; }
+    .section-card, .final-note { padding: 22px; }
+  }
+</style>

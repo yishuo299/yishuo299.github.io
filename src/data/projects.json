@@ -1,6 +1,15 @@
 [
   {
     "name": "Spring Boot",
+    "title": "智慧停车场管理系统 · 工程复现版",
+    "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现车辆入场登记、出场结算、阶梯计费、月卡/储值卡和车位实时地图。",
+    "detail": "项目围绕停车场运营流程展开，覆盖管理员、收费员、车主三类角色。文章按工程复现方式拆解数据库、权限、车牌规范化、计费算法、结算优先级、统计报表和运行验证。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/parking-management-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/parking-management"
+  },
+  {
+    "name": "Spring Boot",
     "title": "校园二手交易平台 · 工程复现版",
     "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现校园闲置商品发布、下单、钱包支付、评价和后台管理。",
     "detail": "项目围绕商品、订单、钱包、评价和后台看板形成交易闭环，重点展示库存防超卖、订单状态机和钱包事务。文章按工程复现方式拆解数据库、接口、关键代码和运行验证。",

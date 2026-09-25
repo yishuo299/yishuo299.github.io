@@ -107,6 +107,14 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
         worker: { path: "/worker", local: { user: { id: 3, username: "worker1", fullName: "维保工程师", role: "WORKER" } } },
       },
     },
+    "parking-management": {
+      mode: "hash",
+      roles: {
+        admin: { hash: "/", local: { token: "demo-token", userInfo: { id: 1, username: "admin", realName: "系统管理员", role: "ADMIN" } } },
+        operator: { hash: "/exit", local: { token: "demo-token", userInfo: { id: 2, username: "operator01", realName: "收费员李静", role: "OPERATOR" } } },
+        owner: { hash: "/owner/vehicles", local: { token: "demo-token", userInfo: { id: 3, username: "owner01", realName: "车主陈晓明", role: "OWNER" } } },
+      },
+    },
     "research-management": {
       mode: "static",
       roles: {

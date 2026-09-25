@@ -13,7 +13,7 @@ export type ProjectExperience = {
   description: string;
   articleUrl: string;
   projectUrl: string;
-  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment";
+  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking";
   accent: string;
   roles: ExperienceRole[];
   stack: string[];
@@ -42,6 +42,29 @@ export type ProjectExperience = {
 };
 
 export const projectExperiences: ProjectExperience[] = [
+  {
+    slug: "parking-management",
+    title: "智慧停车场管理系统",
+    shortTitle: "智慧停车",
+    description: "复刻原项目深色工业科技风：车辆入场、出场结算、阶梯计费、月卡储值卡和车位实时地图。",
+    articleUrl: "/projects/parking-management-reproduction/",
+    projectUrl: "https://github.com/yishuo299/parking-management",
+    ui: "parking",
+    accent: "#22c55e",
+    stack: ["Spring Boot", "MyBatis-Plus", "MySQL", "JWT", "Vue 3", "Element Plus", "ECharts"],
+    roles: [
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "运营仪表盘", menu: ["运营仪表盘", "车位实时地图", "入场登记", "出场结算", "区域与车位", "计费规则", "用户与权限", "统计报表"] },
+      { key: "operator", label: "测试收费员", name: "收费员李静", active: "出场结算", menu: ["运营仪表盘", "车位实时地图", "入场登记", "出场结算", "进出场记录", "缴费流水", "月卡管理", "储值卡管理"] },
+      { key: "owner", label: "测试车主", name: "车主陈晓明", active: "我的车辆", menu: ["我的车辆", "我的停车记录", "我的卡包", "车位实时地图", "公告"] },
+    ],
+    cards: [["总车位", "40"], ["在场车辆", "16"], ["空闲车位", "20"], ["今日收入", "¥1,286"]],
+    panels: [
+      { title: "车位实时地图", subtitle: "模拟区域、车位编号、车位类型和占用状态", type: "cards" },
+      { title: "进出场结算", subtitle: "支持入场登记、出场预结算、月卡/储值卡优先扣费", type: "table" },
+    ],
+    columns: ["车牌", "车位", "入场时间", "状态"],
+    rows: [["京A·12345", "A-001", "08:20", "在场"], ["京H·23456", "B-012", "10:05", "待结算"], ["京C·45000", "C-006", "昨日 21:30", "已缴费"], ["京N·88112", "D-009", "12:18", "在场"]],
+  },
   {
     slug: "campus-marketplace",
     title: "校园二手交易平台",

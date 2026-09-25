@@ -76,6 +76,49 @@
     logs: [{ id: 1, username: "admin", action: "登录系统", ip: "127.0.0.1", createTime: "2026-09-22 09:00" }],
     equipment: [{ id: 1, name: "光谱检测仪", type: "检测设备", status: "库存", health: 96 }, { id: 2, name: "便携终端", type: "终端设备", status: "服役中", health: 82 }],
     requests: [{ id: 1, equipmentName: "便携终端", applicantName: "普通用户", type: "BORROW", status: "PENDING", progress: 35 }],
+    parkingAreas: [
+      { id: 1, areaName: "A 区地面停车区", areaCode: "A", floorNo: "F1", totalSpaces: 12, remark: "靠近入口，适合临停车辆", status: 1 },
+      { id: 2, areaName: "B 区地下停车区", areaCode: "B", floorNo: "B1", totalSpaces: 14, remark: "长停与月卡车辆主要区域", status: 1 },
+      { id: 3, areaName: "C 区新能源车位", areaCode: "C", floorNo: "F1", totalSpaces: 8, remark: "包含充电桩车位", status: 1 },
+      { id: 4, areaName: "D 区综合停车区", areaCode: "D", floorNo: "B2", totalSpaces: 6, remark: "演示维修、预约等状态", status: 1 },
+    ],
+    parkingSpaces: [
+      { id: 1, areaId: 1, areaName: "A 区地面停车区", spaceNo: "A-001", type: "NORMAL", status: "OCCUPIED", currentPlateNo: "京A12345" },
+      { id: 2, areaId: 1, areaName: "A 区地面停车区", spaceNo: "A-002", type: "NORMAL", status: "FREE", currentPlateNo: "" },
+      { id: 3, areaId: 1, areaName: "A 区地面停车区", spaceNo: "A-003", type: "DISABLED", status: "FREE", currentPlateNo: "" },
+      { id: 4, areaId: 2, areaName: "B 区地下停车区", spaceNo: "B-012", type: "NORMAL", status: "OCCUPIED", currentPlateNo: "京H23456" },
+      { id: 5, areaId: 2, areaName: "B 区地下停车区", spaceNo: "B-016", type: "NORMAL", status: "FREE", currentPlateNo: "" },
+      { id: 6, areaId: 3, areaName: "C 区新能源车位", spaceNo: "C-006", type: "CHARGING", status: "RESERVED", currentPlateNo: "" },
+      { id: 7, areaId: 3, areaName: "C 区新能源车位", spaceNo: "C-009", type: "NEW_ENERGY", status: "FREE", currentPlateNo: "" },
+      { id: 8, areaId: 4, areaName: "D 区综合停车区", spaceNo: "D-009", type: "NORMAL", status: "MAINTENANCE", currentPlateNo: "" },
+    ],
+    parkingRecords: [
+      { id: 1, recordNo: "PR202609220001", plateNo: "京A12345", displayPlateNo: "京A·12345", areaName: "A 区地面停车区", spaceId: 1, spaceNo: "A-001", spaceType: "NORMAL", entryTime: "2026-09-25 08:20:00", exitTime: "", durationMinutes: 0, amount: 0, discountAmount: 0, actualAmount: 0, payType: "", status: "PARKING" },
+      { id: 2, recordNo: "PR202609220002", plateNo: "京H23456", displayPlateNo: "京H·23456", areaName: "B 区地下停车区", spaceId: 4, spaceNo: "B-012", spaceType: "NORMAL", entryTime: "2026-09-25 10:05:00", exitTime: "", durationMinutes: 0, amount: 0, discountAmount: 0, actualAmount: 0, payType: "", status: "PARKING" },
+      { id: 3, recordNo: "PR202609210018", plateNo: "京C45000", displayPlateNo: "京C·45000", areaName: "C 区新能源车位", spaceId: 6, spaceNo: "C-006", spaceType: "CHARGING", entryTime: "2026-09-24 21:30:00", exitTime: "2026-09-25 07:20:00", durationMinutes: 590, amount: 32, discountAmount: 0, actualAmount: 32, payType: "SCAN", status: "PAID" },
+    ],
+    billingRules: [
+      { id: 1, spaceType: "NORMAL", freeMinutes: 15, firstHourPrice: 5, nextHourPrice: 3, dailyCap: 45, nightDiscount: 0.5, status: 1 },
+      { id: 2, spaceType: "NEW_ENERGY", freeMinutes: 20, firstHourPrice: 4, nextHourPrice: 2.5, dailyCap: 40, nightDiscount: 0.5, status: 1 },
+      { id: 3, spaceType: "CHARGING", freeMinutes: 10, firstHourPrice: 8, nextHourPrice: 5, dailyCap: 68, nightDiscount: 0.6, status: 1 },
+    ],
+    vehicles: [
+      { id: 1, ownerId: 3, ownerName: "车主陈晓明", plateNo: "京A12345", displayPlateNo: "京A·12345", brand: "比亚迪", color: "白色", vehicleType: "小型汽车", phone: "13800000001", status: 1 },
+      { id: 2, ownerId: 3, ownerName: "车主陈晓明", plateNo: "京H23456", displayPlateNo: "京H·23456", brand: "大众", color: "黑色", vehicleType: "小型汽车", phone: "13800000001", status: 1 },
+    ],
+    monthCards: [
+      { id: 1, cardNo: "MC2026000001", ownerName: "车主陈晓明", plateNo: "京A12345", displayPlateNo: "京A·12345", spaceType: "NORMAL", startDate: "2026-09-01", endDate: "2026-12-31", amount: 600, status: "VALID" },
+      { id: 2, cardNo: "MC2026000002", ownerName: "车主刘洋", plateNo: "京C45000", displayPlateNo: "京C·45000", spaceType: "NORMAL", startDate: "2026-06-01", endDate: "2026-08-31", amount: 500, status: "EXPIRED" },
+    ],
+    storedCards: [
+      { id: 1, cardNo: "SC2026000001", ownerName: "车主陈晓明", plateNo: "京H23456", displayPlateNo: "京H·23456", balance: 128, totalRecharge: 300, totalConsume: 172, status: "NORMAL" },
+      { id: 2, cardNo: "SC2026000002", ownerName: "车主赵丽华", plateNo: "京N88112", displayPlateNo: "京N·88112", balance: 0, totalRecharge: 100, totalConsume: 100, status: "FROZEN" },
+    ],
+    rechargeRecords: [{ id: 1, cardNo: "SC2026000001", ownerName: "车主陈晓明", amount: 100, createTime: "2026-09-20 14:22:00", operatorName: "收费员李静" }],
+    paymentRecords: [
+      { id: 1, payNo: "PAY202609250001", recordNo: "PR202609210018", plateNo: "京C45000", displayPlateNo: "京C·45000", amount: 32, payType: "SCAN", operatorName: "收费员李静", createTime: "2026-09-25 07:20:00" },
+    ],
+    sysConfigs: [{ id: 1, configKey: "free_minutes_default", configValue: "15", configGroup: "billing", remark: "默认免费分钟数", status: 1 }],
   };
 
   const listBy = (key) => db[key] || [];
@@ -108,6 +151,18 @@
 
   const mapResource = (url) => {
     const u = url.toLowerCase();
+    if (project === "parking-management") {
+      if (u.includes("/area")) return "parkingAreas";
+      if (u.includes("/space")) return "parkingSpaces";
+      if (u.includes("/record")) return "parkingRecords";
+      if (u.includes("/rule")) return "billingRules";
+      if (u.includes("monthcard") || u.includes("/card/month")) return "monthCards";
+      if (u.includes("storedcard") || u.includes("/card/stored")) return "storedCards";
+      if (u.includes("recharge")) return "rechargeRecords";
+      if (u.includes("/payment")) return "paymentRecords";
+      if (u.includes("/vehicle")) return "vehicles";
+      if (u.includes("/config")) return "sysConfigs";
+    }
     if (u.includes("grade-appeal")) return "appeals";
     if (u.includes("/grade")) return "grades";
     if (u.includes("course-selection")) return "selections";
@@ -158,15 +213,63 @@
     const key = mapResource(url);
     const current = Number(params.current || params.page || 1);
     const size = Number(params.size || params.pageSize || 10);
+    const plateNorm = (value = "") => String(value).replace(/[·\-\s]/g, "").toUpperCase();
+    const calcParkingFee = (record) => {
+      const entry = new Date(String(record.entryTime).replace(/-/g, "/")).getTime();
+      const minutes = Math.max(30, Math.ceil((Date.now() - entry) / 60000));
+      const rule = db.billingRules.find((item) => item.spaceType === record.spaceType) || db.billingRules[0];
+      const billable = Math.max(0, minutes - Number(rule.freeMinutes || 0));
+      const hours = Math.ceil(billable / 60);
+      const raw = hours <= 0 ? 0 : Number(rule.firstHourPrice || 0) + Math.max(0, hours - 1) * Number(rule.nextHourPrice || 0);
+      return { minutes, amount: Math.min(raw, Number(rule.dailyCap || raw || 0)) };
+    };
 
     if (lower.includes("/auth/login")) {
       const username = body.username || "demo";
-      const role = username.includes("admin") ? "ADMIN" : username.includes("doctor") ? "DOCTOR" : username.includes("worker") ? "WORKER" : username.includes("teacher") ? "TEACHER" : username.includes("student") ? "STUDENT" : username.includes("patient") ? "PATIENT" : "USER";
+      const role = username.includes("admin") ? "ADMIN" : username.includes("operator") ? "OPERATOR" : username.includes("owner") ? "OWNER" : username.includes("doctor") ? "DOCTOR" : username.includes("worker") ? "WORKER" : username.includes("teacher") ? "TEACHER" : username.includes("student") ? "STUDENT" : username.includes("patient") ? "PATIENT" : "USER";
       return ok({ token: "demo-token", userInfo: { id: 1, username, realName: "测试用户", fullName: "测试用户", role, userType: role === "STUDENT" ? 1 : role === "TEACHER" ? 2 : role === "ADMIN" ? 4 : 3, roles: ["ROLE_" + role] }, role, fullName: "测试用户" });
     }
     if (lower.includes("/auth/info") || lower.includes("/auth/me")) return ok({ id: 1, username: "demo", realName: "测试用户", role: "ADMIN", userType: 4, roles: ["ROLE_SYSTEM_ADMIN"] });
     if (lower.includes("/upload") || lower.includes("/file/upload")) return ok({ url: "https://dummyimage.com/480x320/daeafe/334155&text=Mock+Image" });
     if (lower.includes("export")) return ok("mock-export");
+    if (project === "parking-management" && (lower.includes("/stats") || lower.includes("/stat/"))) {
+      if (lower.includes("overview")) return ok({
+        totalSpaces: db.parkingSpaces.length,
+        freeSpaces: db.parkingSpaces.filter((item) => item.status === "FREE").length,
+        occupiedSpaces: db.parkingSpaces.filter((item) => item.status === "OCCUPIED").length,
+        todayEntry: 28,
+        todayExit: 21,
+        todayIncome: 1286,
+        monthIncome: 38620,
+        parkingCount: db.parkingRecords.filter((item) => item.status === "PARKING").length,
+      });
+      if (lower.includes("income/trend")) return ok([{ date: "09-20", amount: 980 }, { date: "09-21", amount: 1260 }, { date: "09-22", amount: 1188 }, { date: "09-23", amount: 1420 }, { date: "09-24", amount: 1106 }, { date: "09-25", amount: 1286 }]);
+      if (lower.includes("income/month")) return ok([{ month: "2026-05", amount: 28600 }, { month: "2026-06", amount: 30180 }, { month: "2026-07", amount: 34220 }, { month: "2026-08", amount: 36100 }, { month: "2026-09", amount: 38620 }]);
+      if (lower.includes("traffic/hour")) return ok([{ hour: "08", count: 18 }, { hour: "10", count: 24 }, { hour: "12", count: 16 }, { hour: "18", count: 31 }, { hour: "21", count: 12 }]);
+      if (lower.includes("space/type")) return ok([{ name: "普通车位", value: 28 }, { name: "新能源", value: 6 }, { name: "无障碍", value: 3 }, { name: "充电桩", value: 3 }]);
+      if (lower.includes("space/turnover")) return ok([{ areaName: "A区", rate: 2.8 }, { areaName: "B区", rate: 2.1 }, { areaName: "C区", rate: 1.7 }, { areaName: "D区", rate: 1.2 }]);
+      if (lower.includes("pay/type")) return ok([{ name: "月卡抵扣", value: 8 }, { name: "储值卡", value: 10 }, { name: "现金", value: 4 }, { name: "扫码", value: 12 }]);
+      if (lower.includes("space/stat")) return ok({ data: [{ type: "FREE", count: db.parkingSpaces.filter((item) => item.status === "FREE").length }, { type: "OCCUPIED", count: db.parkingSpaces.filter((item) => item.status === "OCCUPIED").length }, { type: "RESERVED", count: db.parkingSpaces.filter((item) => item.status === "RESERVED").length }, { type: "MAINTENANCE", count: db.parkingSpaces.filter((item) => item.status === "MAINTENANCE").length }] });
+      return ok([]);
+    }
+    if (project === "parking-management" && lower.includes("/space/map")) {
+      const selected = params.areaId ? db.parkingAreas.filter((area) => String(area.id) === String(params.areaId)) : db.parkingAreas;
+      return ok(selected.map((area) => ({ ...area, spaces: db.parkingSpaces.filter((space) => String(space.areaId) === String(area.id)) })));
+    }
+    if (project === "parking-management" && lower.includes("/operator/record/preview/")) {
+      const id = (url.match(/preview\/(\d+)/) || [])[1];
+      const record = db.parkingRecords.find((item) => String(item.id) === String(id)) || db.parkingRecords[0];
+      const fee = calcParkingFee(record);
+      const hasMonth = db.monthCards.some((card) => plateNorm(card.plateNo) === plateNorm(record.plateNo) && card.status === "VALID" && card.spaceType === record.spaceType);
+      const stored = db.storedCards.find((card) => plateNorm(card.plateNo) === plateNorm(record.plateNo) && card.status === "NORMAL");
+      const payType = hasMonth ? "MONTH_CARD" : stored && Number(stored.balance) >= fee.amount ? "BALANCE" : (params.payType || "SCAN");
+      const actualAmount = hasMonth ? 0 : fee.amount;
+      return ok({ record, durationMinutes: fee.minutes, amount: fee.amount, discountAmount: fee.amount - actualAmount, actualAmount, payType, storedCard: stored || null, monthCardValid: hasMonth });
+    }
+    if (project === "parking-management" && lower.includes("/owner/monthcard")) return ok(clone(db.monthCards));
+    if (project === "parking-management" && lower.includes("/owner/storedcard")) return ok(clone(db.storedCards));
+    if (project === "parking-management" && lower.includes("/owner/recharge")) return ok(clone(db.rechargeRecords));
+    if (project === "parking-management" && lower.includes("/vehicle/owner/my")) return ok(clone(db.vehicles));
     if (lower.includes("/stats") || lower.includes("/stat/")) {
       if (lower.includes("overview") || lower.includes("dashboard")) return ok({ userCount: 128, movieCount: 236, bookCount: 4826, borrowCount: 326, todayCount: 86, attendanceRate: 96, equipmentCount: 623, pendingCount: 13, total: 999 });
       return ok([{ name: "一月", value: 32 }, { name: "二月", value: 58 }, { name: "三月", value: 76 }, { name: "四月", value: 64 }]);
@@ -209,7 +312,15 @@
     if (lower.includes("/user/stats/academic")) return ok({ courseCount: 86, offeringCount: 34, studentCount: 1200, pendingGradeCount: 3 });
 
     if (method === "GET") {
-      const rows = normalizeRows(key, clone(listBy(key)));
+      let rows = normalizeRows(key, clone(listBy(key)));
+      if (project === "parking-management") {
+        if (params.status) rows = rows.filter((item) => String(item.status) === String(params.status));
+        if (params.keyword) {
+          const keyword = String(params.keyword).toLowerCase();
+          rows = rows.filter((item) => JSON.stringify(item).toLowerCase().includes(keyword));
+        }
+        if (params.plateNo) rows = rows.filter((item) => plateNorm(item.plateNo).includes(plateNorm(params.plateNo)));
+      }
       if (lower.includes("/page")) return ok(page(rows, current, size));
       if (lower.includes("/list") || lower.includes("/all") || lower.includes("/mine") || lower.includes("/active")) return ok(rows);
       const id = (url.match(/\/(\d+)(?:\?|$)/) || [])[1];
@@ -218,6 +329,51 @@
     }
 
     if (method === "POST") {
+      if (project === "parking-management" && lower.includes("/record/calc")) {
+        const fake = { entryTime: body.entryTime || new Date(Date.now() - 3 * 3600000).toLocaleString(), spaceType: body.spaceType || "NORMAL" };
+        const fee = calcParkingFee(fake);
+        return ok({ durationMinutes: fee.minutes, amount: fee.amount });
+      }
+      if (project === "parking-management" && lower.includes("/operator/record/entry")) {
+        const space = db.parkingSpaces.find((item) => String(item.id) === String(body.spaceId)) || db.parkingSpaces.find((item) => item.status === "FREE") || db.parkingSpaces[0];
+        const plateNo = plateNorm(body.plateNo || "京Z99999");
+        space.status = "OCCUPIED";
+        space.currentPlateNo = plateNo;
+        const record = addItem("parkingRecords", {
+          recordNo: "PR" + Date.now(),
+          plateNo,
+          displayPlateNo: plateNo.replace(/^(.{2})/, "$1·"),
+          areaName: space.areaName,
+          spaceId: space.id,
+          spaceNo: space.spaceNo,
+          spaceType: space.type,
+          entryTime: new Date().toLocaleString(),
+          status: "PARKING",
+        });
+        return ok(record);
+      }
+      if (project === "parking-management" && lower.includes("/operator/record/exit")) {
+        const record = db.parkingRecords.find((item) => String(item.id) === String(body.recordId || body.id)) || db.parkingRecords.find((item) => item.status === "PARKING");
+        const fee = calcParkingFee(record);
+        const hasMonth = db.monthCards.some((card) => plateNorm(card.plateNo) === plateNorm(record.plateNo) && card.status === "VALID" && card.spaceType === record.spaceType);
+        const actualAmount = hasMonth ? 0 : fee.amount;
+        Object.assign(record, { exitTime: new Date().toLocaleString(), durationMinutes: fee.minutes, amount: fee.amount, discountAmount: fee.amount - actualAmount, actualAmount, payType: hasMonth ? "MONTH_CARD" : (body.payType || "SCAN"), status: "PAID" });
+        const space = db.parkingSpaces.find((item) => String(item.id) === String(record.spaceId));
+        if (space) Object.assign(space, { status: "FREE", currentPlateNo: "" });
+        const payment = addItem("paymentRecords", { payNo: "PAY" + Date.now(), recordNo: record.recordNo, plateNo: record.plateNo, displayPlateNo: record.displayPlateNo, amount: actualAmount, payType: record.payType, operatorName: "收费员李静" });
+        return ok({ record, payment });
+      }
+      if (project === "parking-management" && lower.includes("/card/month/renew/")) {
+        return ok(updateItem("monthCards", (url.match(/renew\/(\d+)/) || [])[1], { endDate: "2027-03-31", status: "VALID" }));
+      }
+      if (project === "parking-management" && lower.includes("/card/stored/recharge")) {
+        const card = db.storedCards.find((item) => String(item.id) === String(body.cardId || body.id)) || db.storedCards[0];
+        const amount = Number(body.amount || 100);
+        card.balance = Number(card.balance || 0) + amount;
+        card.totalRecharge = Number(card.totalRecharge || 0) + amount;
+        db.rechargeRecords.unshift({ id: ++idSeq, cardNo: card.cardNo, ownerName: card.ownerName, amount, createTime: new Date().toLocaleString(), operatorName: "收费员李静" });
+        return ok(card);
+      }
       if (lower.includes("/course-selection/select/")) {
         const id = Number((url.match(/select\/(\d+)/) || [])[1]);
         const offering = db.offerings.find((item) => item.id === id);
