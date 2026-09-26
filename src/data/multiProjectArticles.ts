@@ -182,6 +182,159 @@ export const multiProjectArticles = [
     ],
     result: "运行后管理员可维护基础数据，教师可管理场次和审批请假，学生可进行人脸签到；统计页可以展示出勤率趋势、班级对比和个人考勤详情。",
   },
+  {
+    slug: "personal-finance-reproduction",
+    projectUrl: "https://github.com/yishuo299/personal-finance",
+    eyebrow: "工程复现版 · Django",
+    title: "个人财务记账管理系统复现说明",
+    intro: "个人财务记账管理系统以账户和账单为数据核心，用 Django 负责鉴权、数据隔离与财务规则，用 Vue 3 构建薄荷绿风格的交互界面。系统不止完成收支增删查改，还把余额重算、两级分类、标签、预算预警、周期补单、资产负债和统计报表连接为完整闭环。本文按“先理解数据，再跑通业务”的顺序拆解工程，读者可以配合项目源码完成本地复现。",
+    modules: [
+      ["资产账户", "维护现金、银行卡、电子钱包和信用卡，统一计算余额、欠款与可用额度。"],
+      ["收支记账", "使用二级分类、账户、日期、金额、备注和多标签记录账单，支持组合筛选、批量删除与 CSV 导出。"],
+      ["预算预警", "设置月度总预算或分类预算，实时聚合当月支出并输出正常、接近超支和已超支三级状态。"],
+      ["周期账单", "配置日、周、月、年规则，自动补生成程序停机期间错过的房租、会员或保险等账单。"],
+      ["分析与管理", "资产看板和七类报表展示收支趋势、分类占比、账户构成与排行，管理员另可维护用户、日志和系统配置。"],
+    ],
+    stack: ["Python", "Django 5.2", "PyMySQL", "PyJWT", "MySQL", "Vue 3", "Pinia", "Element Plus", "ECharts", "Vite"],
+    structure: `personal-finance/
+├─ backend/
+│  ├─ apps/system/          # 登录、用户、配置、登录日志
+│  ├─ apps/finance/         # 账户、分类、账单、预算、周期规则、报表
+│  ├─ utils/                # JWT、中间件、响应和数据权限
+│  ├─ config/               # Django 配置和总路由
+│  └─ static/               # Vue 构建产物
+├─ frontend/src/
+│  ├─ api/                  # Axios 接口定义
+│  ├─ router/               # Hash 路由与登录守卫
+│  ├─ store/                # Pinia 用户状态
+│  ├─ layout/               # 顶部导航布局
+│  └─ views/                # 12 个业务页面
+├─ db/init.sql              # 11 张表和演示数据
+├─ .env.example             # 环境变量模板
+└─ start.bat                # Windows 启动入口`,
+    run: [
+      "准备 Python 3.10+、Node.js 18+ 和 MySQL 8，克隆项目后进入项目根目录。",
+      "执行 mysql -u root -p --default-character-set=utf8mb4 < db/init.sql，创建 personal_finance 数据库和演示数据。",
+      "参考 .env.example 设置 PF_DB_PASSWORD、DJANGO_SECRET_KEY 与 PF_JWT_SECRET；生产环境还应关闭 DEBUG 并限制 ALLOWED_HOSTS。",
+      "创建 Python 虚拟环境并执行 pip install -r backend/requirements.txt。",
+      "项目已包含前端构建结果；修改 Vue 源码后，在 frontend 目录执行 npm install 与 npm run build。",
+      "进入 backend 执行 python manage.py runserver 0.0.0.0:8003，访问 http://localhost:8003/。",
+      "先用普通用户验证记账、余额、预算和周期账单，再用管理员验证用户、登录日志与系统配置。",
+    ],
+    snippets: [
+      ["环境变量配置", "使用 os.environ.get 读取数据库与签名配置，开发环境仅提供无敏感信息的默认值。", "公开仓库不保存真实密码，同时让不同电脑无需修改源码即可连接各自的 MySQL。", `DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('PF_DB_NAME', 'personal_finance'),
+        'USER': os.environ.get('PF_DB_USER', 'root'),
+        'PASSWORD': os.environ.get('PF_DB_PASSWORD', ''),
+        'HOST': os.environ.get('PF_DB_HOST', 'localhost'),
+    }
+}`],
+      ["JWT 鉴权中间件", "中间件统一解析 Bearer Token，并把用户编号、账号和角色写入 request.user_info。", "除登录白名单外的所有 API 都在进入视图前完成身份校验，失效令牌统一返回 401。", `if not any(path.startswith(p) for p in settings.AUTH_WHITELIST):
+    header = request.META.get(settings.JWT_HEADER) or ''
+    token = header[7:].strip() if header.lower().startswith('bearer ') else header.strip()
+    payload = parse_token(token)
+    if not payload:
+        return unauthorized('token 无效或已过期，请重新登录')
+    request.user_info = {'id': int(payload['uid']), 'role': payload.get('role')}`],
+      ["后端数据隔离", "resolve_user_id 会忽略普通用户提交的 userId，只允许管理员选择用户或查看全部。", "即使用户手动篡改请求参数，也不能读取其他人的账户、账单、预算和周期规则。", `def resolve_user_id(request, param='userId'):
+    if not is_admin(request):
+        return own_user_id(request)
+    raw = get_param(request, param)
+    if raw in (None, '', 'null'):
+        return None
+    return int(raw)`],
+      ["账户余额重算", "使用 Django 聚合分别求收入与支出，再按初始余额重新计算当前余额。", "账单新增、修改、删除或周期补单后都调用同一方法，避免前端累加造成余额漂移。", `agg = BillRecord.objects.filter(account_id=account_id, deleted=0).aggregate(
+    income=Sum('amount', filter=Q(type='INCOME')),
+    expense=Sum('amount', filter=Q(type='EXPENSE')),
+)
+acc.balance = Decimal(acc.initial_balance) + (agg['income'] or 0) - (agg['expense'] or 0)
+acc.save(update_fields=['balance', 'update_time'])`],
+      ["两级分类树", "先取当前用户可见的系统分类和自定义分类，再把 parent_id 相同的子项组装到父节点。", "记账页能够按收入或支出展示清晰的两级选择，一级分类又可用于预算汇总。", `parents = [c for c in items if c.parent_id is None]
+children = {}
+for c in items:
+    if c.parent_id is not None:
+        children.setdefault(c.parent_id, []).append(c)
+tree = [{'id': p.id, 'name': p.name, 'children': children.get(p.id, [])} for p in parents]`],
+      ["记账输入校验", "保存前检查类型、金额、日期、账户、二级分类以及分类和收支类型是否一致。", "防止负金额、一级分类直接入账或收入记录误用支出分类，保证后续统计口径稳定。", `if amount is None or amount <= 0:
+    return fail('金额必须大于 0', code=400)
+if cat.parent_id is None:
+    return fail('请选择二级分类', code=400)
+if cat.type != btype:
+    return fail('分类与收支类型不匹配', code=400)`],
+      ["账单与标签关联", "修改账单时先清空旧关联，再过滤并写入新的 tagIds。", "一条账单可挂多个标签，标签筛选与标签使用次数统计都有稳定的中间表来源。", `BillTag.objects.filter(bill_id=bill_id).delete()
+for tid in tag_ids or []:
+    if Tag.objects.filter(id=tid, deleted=0).exists():
+        BillTag.objects.create(bill_id=bill_id, tag_id=tid,
+                               create_time=now, update_time=now)`],
+      ["父子分类预算范围", "category_scope_ids 返回当前分类和它的全部直接子分类编号。", "给“餐饮”等一级分类设置预算时，早餐、午餐、晚餐等二级分类支出都会被计入。", `def category_scope_ids(category_id):
+    ids = [category_id]
+    ids += list(Category.objects.filter(parent_id=category_id, deleted=0)
+                .values_list('id', flat=True))
+    return ids`],
+      ["预算使用额聚合", "根据月份区间筛选有效支出，分类预算额外应用父子分类范围。", "预算不保存容易过期的“已用金额”，每次读取都从真实账单重新聚合。", `qs = BillRecord.objects.filter(
+    user_id=user_id, type='EXPENSE', deleted=0,
+    record_date__gte=start, record_date__lte=end)
+if category_id:
+    qs = qs.filter(category_id__in=category_scope_ids(category_id))
+return float(qs.aggregate(s=Sum('amount'))['s'] or 0)`],
+      ["预算状态分级", "用已用金额除以预算金额得到百分比，再与用户配置的 warn_ratio 和 100% 比较。", "前端进度条、看板提醒和预警记录使用同一套 NORMAL、WARN、DANGER 规则。", `ratio = round(used / amount * 100, 2) if amount > 0 else 0.0
+warn = budget.warn_ratio or 80
+if ratio > 100:
+    level = 'DANGER'
+elif ratio >= warn:
+    level = 'WARN'
+else:
+    level = 'NORMAL'`],
+      ["预警记录幂等更新", "按用户、预算和月份查找既有预警，存在则更新，不存在才新增。", "反复打开看板不会产生重复预警行，同时账单变化后预警金额仍能刷新。", `log = BudgetAlertLog.objects.filter(
+    user_id=user_id, budget_id=b.id, period_month=period_month).first()
+if log:
+    log.used_amount = Decimal(str(st['used_amount']))
+    log.alert_level = st['alert_level']
+    log.save()
+else:
+    BudgetAlertLog.objects.create(user_id=user_id, budget_id=b.id, ...)`],
+      ["月末日期推进", "add_months 使用目标月份的最大天数截断原日期。", "1 月 31 日的月度账单推进到 2 月时会落在 2 月 28 或 29 日，而不会抛出日期错误。", `month_index = d.month - 1 + n
+year = d.year + month_index // 12
+month = month_index % 12 + 1
+day = min(d.day, calendar.monthrange(year, month)[1])
+return datetime.date(year, month, day)`],
+      ["周期类型推进", "根据 DAILY、WEEKLY、MONTHLY、YEARLY 分别增加天、周或月。", "同一个周期账单引擎可以处理房租、会员、保险和日常固定开支。", `if cycle_type == 'DAILY':
+    return d + datetime.timedelta(days=cycle_value)
+if cycle_type == 'WEEKLY':
+    return d + datetime.timedelta(weeks=cycle_value)
+if cycle_type == 'MONTHLY':
+    return add_months(d, cycle_value)
+if cycle_type == 'YEARLY':
+    return add_months(d, 12 * cycle_value)`],
+      ["错过周期补生成", "从 next_run_date 开始逐期创建账单，直到日期超过今天，并把规则推进到下一个未到期日期。", "服务停机或用户多日未登录时不会漏账；MAX_CATCHUP 又限制单次最多生成 500 条，避免错误配置死循环。", `cursor = rule.next_run_date
+count = 0
+while cursor <= on_date and count < MAX_CATCHUP:
+    BillRecord.objects.create(
+        user_id=rule.user_id, account_id=rule.account_id,
+        amount=rule.amount, record_date=cursor,
+        source='RECURRING', rule_id=rule.id)
+    count += 1
+    cursor = advance(cursor, rule.cycle_type, rule.cycle_value)
+rule.next_run_date = cursor`],
+      ["前端响应拦截", "Axios 在响应成功时只返回业务 data，失败时统一展示后端 msg。", "各 Vue 页面无需重复判断响应结构，调用账户、账单和报表接口时保持一致。", `request.interceptors.response.use(
+  response => {
+    const body = response.data
+    if (body.code === 200) return body.data
+    return Promise.reject(new Error(body.msg || '请求失败'))
+  },
+  error => Promise.reject(error)
+)`],
+      ["Hash 路由守卫", "路由切换前检查 pf_token，公开登录页直接放行，其他页面缺少令牌时跳回登录。", "静态文件由 Django 单端口托管时，Hash 模式刷新不会产生服务器 404。", `router.beforeEach((to) => {
+  const token = localStorage.getItem('pf_token')
+  if (to.meta.public) return true
+  if (!token) return { path: '/login' }
+  return true
+})`],
+    ],
+    result: "完成复现后，普通用户可以从账户初始化开始，新增带分类和标签的收支记录，观察余额同步更新；设置预算后，新增支出会触发预警计算；执行周期规则能够补齐遗漏账单；看板与报表会基于同一批数据展示净资产、月度结余、消费分类和趋势。管理员还可以维护账号、查看登录日志和系统配置。建议验证时使用“新增账单—修改金额—删除账单—预算预警—周期补单—报表核对”的顺序，重点确认各页面数字始终一致。",
+  },
 ];
 
 export const getMultiProjectArticle = (slug: string) => multiProjectArticles.find((item) => item.slug === slug);

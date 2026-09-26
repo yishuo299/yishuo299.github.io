@@ -13,7 +13,7 @@ export type ProjectExperience = {
   description: string;
   articleUrl: string;
   projectUrl: string;
-  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking";
+  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking" | "finance";
   accent: string;
   roles: ExperienceRole[];
   stack: string[];
@@ -42,6 +42,29 @@ export type ProjectExperience = {
 };
 
 export const projectExperiences: ProjectExperience[] = [
+  {
+    slug: "personal-finance",
+    title: "个人财务记账管理系统",
+    shortTitle: "个人财务",
+    description: "复刻原项目薄荷绿财务工作台：多账户记账、预算预警、周期账单、资产负债看板与统计报表。",
+    articleUrl: "/projects/personal-finance-reproduction/",
+    projectUrl: "https://github.com/yishuo299/personal-finance",
+    ui: "finance",
+    accent: "#10b981",
+    stack: ["Python", "Django", "MySQL", "JWT", "Vue 3", "Pinia", "Element Plus", "ECharts"],
+    roles: [
+      { key: "zhangsan", label: "测试用户·张伟", name: "张伟", active: "资产看板", menu: ["资产看板", "收支记账", "账户管理", "分类管理", "预算管理", "周期账单", "统计报表", "标签管理", "个人中心"] },
+      { key: "lisi", label: "测试用户·李娜", name: "李娜", active: "收支记账", menu: ["资产看板", "收支记账", "账户管理", "分类管理", "预算管理", "周期账单", "统计报表", "标签管理", "个人中心"] },
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "用户管理", menu: ["资产看板", "收支记账", "账户管理", "预算管理", "统计报表", "用户管理", "登录日志", "系统配置"] },
+    ],
+    cards: [["净资产", "¥31,147.40"], ["本月收入", "¥13,220.00"], ["本月支出", "¥8,872.60"], ["预算预警", "5 项"]],
+    panels: [
+      { title: "资产负债看板", subtitle: "总资产、信用卡欠款、净资产和本月结余保持联动", type: "chart" },
+      { title: "近期收支记录", subtitle: "支持分类、账户、标签、金额与日期组合筛选", type: "table" },
+    ],
+    columns: ["日期", "分类", "账户", "金额", "状态"],
+    rows: [["09-25", "餐饮 / 午餐", "招商银行卡", "- ¥32.00", "已入账"], ["09-24", "工资 / 月薪", "招商银行卡", "+ ¥12,800.00", "已入账"], ["09-23", "交通 / 地铁公交", "支付宝", "- ¥8.00", "已入账"], ["09-22", "居住 / 房租", "微信钱包", "- ¥2,600.00", "预算预警"]],
+  },
   {
     slug: "parking-management",
     title: "智慧停车场管理系统",

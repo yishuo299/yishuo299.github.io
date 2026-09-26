@@ -1,5 +1,14 @@
 [
   {
+    "name": "Django",
+    "title": "个人财务记账管理系统 · 工程复现版",
+    "description": "基于 Django、MySQL 与 Vue 3，实现多账户记账、两级分类、预算预警、周期账单和多维统计报表。",
+    "detail": "项目围绕账户余额、账单流水、预算执行和周期规则建立数据闭环。文章按工程复现顺序说明数据库、JWT 权限、数据隔离、余额重算、预算预警、周期补单、前端状态管理与运行验证。",
+    "tags": ["Python", "Django", "Vue"],
+    "articleUrl": "/projects/personal-finance-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/personal-finance"
+  },
+  {
     "name": "Spring Boot",
     "title": "智慧停车场管理系统 · 工程复现版",
     "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现车辆入场登记、出场结算、阶梯计费、月卡/储值卡和车位实时地图。",

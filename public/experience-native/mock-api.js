@@ -144,6 +144,85 @@
       { id: 21, paymentNo: "PY20260922001", recordId: 21, recordNo: "PR20260922001", plateNo: "京AF97531", displayPlateNo: "京AF·97531", amount: 34, paidAmount: 34, discountAmount: 0, payType: "SCAN", payChannel: "扫码支付", operatorName: "收费员李静", payTime: "2026-09-22 16:30:00" },
       { id: 20, paymentNo: "PY20260920001", recordId: 20, recordNo: "PR20260920001", plateNo: "京B66888", displayPlateNo: "京B·66888", amount: 38, paidAmount: 0, discountAmount: 38, payType: "MONTH_CARD", payChannel: "月卡自动抵扣", operatorName: "收费员李静", payTime: "2026-09-20 20:15:00" }
     ],
+    financeAccounts: [
+      { id: 201, userId: 2, name: "招商银行卡", type: "BANK", typeLabel: "银行卡", initialBalance: 5000, balance: 27279.9, creditLimit: 0, usedCredit: 0, availableCredit: 0, icon: "CreditCard", color: "#10b981", remark: "工资与主要储蓄账户", status: 1, isCredit: false },
+      { id: 202, userId: 2, name: "支付宝", type: "ALIPAY", typeLabel: "支付宝", initialBalance: 4000, balance: 3226, creditLimit: 0, usedCredit: 0, availableCredit: 0, icon: "Wallet", color: "#1677ff", remark: "日常小额消费", status: 1, isCredit: false },
+      { id: 203, userId: 2, name: "微信钱包", type: "WECHAT", typeLabel: "微信", initialBalance: 7000, balance: 1502, creditLimit: 0, usedCredit: 0, availableCredit: 0, icon: "Wallet", color: "#07c160", remark: "生活缴费", status: 1, isCredit: false },
+      { id: 204, userId: 2, name: "交通信用卡", type: "CREDIT", typeLabel: "信用卡", initialBalance: 0, balance: -1650, creditLimit: 20000, usedCredit: 1650, availableCredit: 18350, icon: "CreditCard", color: "#ef4444", remark: "账单日每月 12 日", status: 1, isCredit: true },
+      { id: 205, userId: 2, name: "现金", type: "CASH", typeLabel: "现金", initialBalance: 800, balance: 787.5, creditLimit: 0, usedCredit: 0, availableCredit: 0, icon: "Money", color: "#f59e0b", remark: "随身现金", status: 1, isCredit: false },
+    ],
+    financeUsers: [
+      { id: 1, username: "admin", realName: "系统管理员", role: "ADMIN", avatar: "", email: "admin@example.com", phone: "13800000001", status: 1, createTime: "2026-07-01 09:00:00" },
+      { id: 2, username: "zhangsan", realName: "张伟", role: "USER", avatar: "", email: "zhangsan@example.com", phone: "13800000002", status: 1, createTime: "2026-07-02 10:20:00" },
+      { id: 3, username: "lisi", realName: "李娜", role: "USER", avatar: "", email: "lisi@example.com", phone: "13800000003", status: 1, createTime: "2026-07-03 11:30:00" },
+    ],
+    financeCategories: [
+      { id: 301, name: "餐饮", type: "EXPENSE", icon: "Food", color: "#f97316", parentId: null, parentName: null, fullName: "餐饮", isSystem: true, sort: 1 },
+      { id: 302, name: "早餐", type: "EXPENSE", icon: "Coffee", color: "#fb923c", parentId: 301, parentName: "餐饮", fullName: "餐饮 / 早餐", isSystem: true, sort: 1 },
+      { id: 303, name: "午餐", type: "EXPENSE", icon: "Food", color: "#fb923c", parentId: 301, parentName: "餐饮", fullName: "餐饮 / 午餐", isSystem: true, sort: 2 },
+      { id: 304, name: "聚餐", type: "EXPENSE", icon: "Dish", color: "#f97316", parentId: 301, parentName: "餐饮", fullName: "餐饮 / 聚餐", isSystem: true, sort: 3 },
+      { id: 305, name: "交通", type: "EXPENSE", icon: "Van", color: "#3b82f6", parentId: null, parentName: null, fullName: "交通", isSystem: true, sort: 2 },
+      { id: 306, name: "地铁公交", type: "EXPENSE", icon: "Guide", color: "#60a5fa", parentId: 305, parentName: "交通", fullName: "交通 / 地铁公交", isSystem: true, sort: 1 },
+      { id: 307, name: "打车", type: "EXPENSE", icon: "Van", color: "#3b82f6", parentId: 305, parentName: "交通", fullName: "交通 / 打车", isSystem: true, sort: 2 },
+      { id: 308, name: "居住", type: "EXPENSE", icon: "House", color: "#8b5cf6", parentId: null, parentName: null, fullName: "居住", isSystem: true, sort: 3 },
+      { id: 309, name: "房租", type: "EXPENSE", icon: "House", color: "#a78bfa", parentId: 308, parentName: "居住", fullName: "居住 / 房租", isSystem: true, sort: 1 },
+      { id: 310, name: "购物", type: "EXPENSE", icon: "ShoppingBag", color: "#ec4899", parentId: null, parentName: null, fullName: "购物", isSystem: true, sort: 4 },
+      { id: 311, name: "日用品", type: "EXPENSE", icon: "ShoppingCart", color: "#f472b6", parentId: 310, parentName: "购物", fullName: "购物 / 日用品", isSystem: true, sort: 1 },
+      { id: 312, name: "工资", type: "INCOME", icon: "Money", color: "#10b981", parentId: null, parentName: null, fullName: "工资", isSystem: true, sort: 1 },
+      { id: 313, name: "月薪", type: "INCOME", icon: "Wallet", color: "#34d399", parentId: 312, parentName: "工资", fullName: "工资 / 月薪", isSystem: true, sort: 1 },
+      { id: 314, name: "理财", type: "INCOME", icon: "TrendCharts", color: "#14b8a6", parentId: null, parentName: null, fullName: "理财", isSystem: true, sort: 2 },
+      { id: 315, name: "基金收益", type: "INCOME", icon: "DataLine", color: "#2dd4bf", parentId: 314, parentName: "理财", fullName: "理财 / 基金收益", isSystem: true, sort: 1 },
+    ],
+    financeTags: [
+      { id: 401, name: "日常", color: "#10b981", remark: "日常生活", usedCount: 4 },
+      { id: 402, name: "必要支出", color: "#ef4444", remark: "固定或必要开支", usedCount: 3 },
+      { id: 403, name: "通勤", color: "#3b82f6", remark: "上下班交通", usedCount: 2 },
+      { id: 404, name: "可报销", color: "#8b5cf6", remark: "保留凭证", usedCount: 1 },
+    ],
+    financeBills: [
+      { id: 501, userId: 2, accountId: 201, accountName: "招商银行卡", accountType: "BANK", categoryId: 313, categoryName: "月薪", parentCategoryName: "工资", categoryIcon: "Wallet", categoryColor: "#34d399", type: "INCOME", amount: 12800, recordDate: "2026-09-24", remark: "九月工资", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 401, name: "日常", color: "#10b981" }] },
+      { id: 502, userId: 2, accountId: 202, accountName: "支付宝", accountType: "ALIPAY", categoryId: 303, categoryName: "午餐", parentCategoryName: "餐饮", categoryIcon: "Food", categoryColor: "#fb923c", type: "EXPENSE", amount: 32, recordDate: "2026-09-25", remark: "工作日午餐", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 401, name: "日常", color: "#10b981" }] },
+      { id: 503, userId: 2, accountId: 202, accountName: "支付宝", accountType: "ALIPAY", categoryId: 306, categoryName: "地铁公交", parentCategoryName: "交通", categoryIcon: "Guide", categoryColor: "#60a5fa", type: "EXPENSE", amount: 8, recordDate: "2026-09-23", remark: "地铁通勤", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 403, name: "通勤", color: "#3b82f6" }] },
+      { id: 504, userId: 2, accountId: 203, accountName: "微信钱包", accountType: "WECHAT", categoryId: 309, categoryName: "房租", parentCategoryName: "居住", categoryIcon: "House", categoryColor: "#a78bfa", type: "EXPENSE", amount: 2600, recordDate: "2026-09-22", remark: "九月房租", source: "RECURRING", sourceLabel: "周期账单", ruleId: 701, tags: [{ id: 402, name: "必要支出", color: "#ef4444" }] },
+      { id: 505, userId: 2, accountId: 204, accountName: "交通信用卡", accountType: "CREDIT", categoryId: 304, categoryName: "聚餐", parentCategoryName: "餐饮", categoryIcon: "Dish", categoryColor: "#f97316", type: "EXPENSE", amount: 568, recordDate: "2026-09-20", remark: "朋友聚餐", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 401, name: "日常", color: "#10b981" }] },
+      { id: 506, userId: 2, accountId: 201, accountName: "招商银行卡", accountType: "BANK", categoryId: 315, categoryName: "基金收益", parentCategoryName: "理财", categoryIcon: "DataLine", categoryColor: "#2dd4bf", type: "INCOME", amount: 420, recordDate: "2026-09-18", remark: "基金定投收益", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [] },
+      { id: 507, userId: 2, accountId: 205, accountName: "现金", accountType: "CASH", categoryId: 302, categoryName: "早餐", parentCategoryName: "餐饮", categoryIcon: "Coffee", categoryColor: "#fb923c", type: "EXPENSE", amount: 12.5, recordDate: "2026-09-18", remark: "包子豆浆", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 401, name: "日常", color: "#10b981" }] },
+      { id: 508, userId: 2, accountId: 204, accountName: "交通信用卡", accountType: "CREDIT", categoryId: 311, categoryName: "日用品", parentCategoryName: "购物", categoryIcon: "ShoppingCart", categoryColor: "#f472b6", type: "EXPENSE", amount: 1080, recordDate: "2026-09-16", remark: "家居用品", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 402, name: "必要支出", color: "#ef4444" }] },
+      { id: 509, userId: 2, accountId: 201, accountName: "招商银行卡", accountType: "BANK", categoryId: 303, categoryName: "午餐", parentCategoryName: "餐饮", categoryIcon: "Food", categoryColor: "#fb923c", type: "EXPENSE", amount: 420, recordDate: "2026-09-12", remark: "部门聚餐垫付", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 404, name: "可报销", color: "#8b5cf6" }] },
+      { id: 510, userId: 2, accountId: 202, accountName: "支付宝", accountType: "ALIPAY", categoryId: 307, categoryName: "打车", parentCategoryName: "交通", categoryIcon: "Van", categoryColor: "#3b82f6", type: "EXPENSE", amount: 86, recordDate: "2026-09-10", remark: "加班打车", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 403, name: "通勤", color: "#3b82f6" }] },
+      { id: 511, userId: 2, accountId: 203, accountName: "微信钱包", accountType: "WECHAT", categoryId: 304, categoryName: "聚餐", parentCategoryName: "餐饮", categoryIcon: "Dish", categoryColor: "#f97316", type: "EXPENSE", amount: 298, recordDate: "2026-09-08", remark: "家庭聚餐", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [{ id: 402, name: "必要支出", color: "#ef4444" }] },
+      { id: 512, userId: 2, accountId: 201, accountName: "招商银行卡", accountType: "BANK", categoryId: 311, categoryName: "日用品", parentCategoryName: "购物", categoryIcon: "ShoppingCart", categoryColor: "#f472b6", type: "EXPENSE", amount: 3120.1, recordDate: "2026-09-05", remark: "换季用品", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [] },
+      { id: 513, userId: 2, accountId: 202, accountName: "支付宝", accountType: "ALIPAY", categoryId: 303, categoryName: "午餐", parentCategoryName: "餐饮", categoryIcon: "Food", categoryColor: "#fb923c", type: "EXPENSE", amount: 648, recordDate: "2026-09-03", remark: "本月餐费集中记录", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [] },
+      { id: 514, userId: 2, accountId: 201, accountName: "招商银行卡", accountType: "BANK", categoryId: 313, categoryName: "月薪", parentCategoryName: "工资", categoryIcon: "Wallet", categoryColor: "#34d399", type: "INCOME", amount: 12600, recordDate: "2026-08-24", remark: "八月工资", source: "MANUAL", sourceLabel: "手工记账", ruleId: null, tags: [] },
+      { id: 515, userId: 2, accountId: 203, accountName: "微信钱包", accountType: "WECHAT", categoryId: 309, categoryName: "房租", parentCategoryName: "居住", categoryIcon: "House", categoryColor: "#a78bfa", type: "EXPENSE", amount: 2600, recordDate: "2026-08-22", remark: "八月房租", source: "RECURRING", sourceLabel: "周期账单", ruleId: 701, tags: [] },
+    ],
+    financeBudgets: [
+      { id: 601, userId: 2, categoryId: null, categoryName: "总预算", periodMonth: "2026-09", amount: 9000, warnRatio: 80, remark: "控制本月总支出", usedAmount: 8872.6, remaining: 127.4, usedRatio: 98.58, alertLevel: "WARN", alertText: "接近超支" },
+      { id: 602, userId: 2, categoryId: 301, categoryName: "餐饮", periodMonth: "2026-09", amount: 1800, warnRatio: 80, remark: "含工作餐和聚餐", usedAmount: 1978.5, remaining: -178.5, usedRatio: 109.92, alertLevel: "DANGER", alertText: "已超支" },
+      { id: 603, userId: 2, categoryId: 305, categoryName: "交通", periodMonth: "2026-09", amount: 100, warnRatio: 80, remark: "通勤预算", usedAmount: 94, remaining: 6, usedRatio: 94, alertLevel: "WARN", alertText: "接近超支" },
+      { id: 604, userId: 2, categoryId: 308, categoryName: "居住", periodMonth: "2026-09", amount: 2600, warnRatio: 80, remark: "固定房租", usedAmount: 2600, remaining: 0, usedRatio: 100, alertLevel: "WARN", alertText: "接近超支" },
+      { id: 605, userId: 2, categoryId: 310, categoryName: "购物", periodMonth: "2026-09", amount: 3800, warnRatio: 80, remark: "非必要消费重点控制", usedAmount: 4200.1, remaining: -400.1, usedRatio: 110.53, alertLevel: "DANGER", alertText: "已超支" },
+    ],
+    financeRecurring: [
+      { id: 701, userId: 2, name: "每月房租", accountId: 203, accountName: "微信钱包", categoryId: 309, categoryName: "房租", categoryIcon: "House", type: "EXPENSE", amount: 2600, cycleType: "MONTHLY", cycleLabel: "每月", cycleValue: 1, nextRunDate: "2026-10-22", lastRunDate: "2026-09-22", autoGenerate: 1, status: 1, remark: "每月固定房租", overdueDays: 0, isOverdue: false, pendingCount: 0, pendingDates: [] },
+      { id: 702, userId: 2, name: "视频会员", accountId: 202, accountName: "支付宝", categoryId: 311, categoryName: "日用品", categoryIcon: "ShoppingCart", type: "EXPENSE", amount: 25, cycleType: "MONTHLY", cycleLabel: "每月", cycleValue: 1, nextRunDate: "2026-09-20", lastRunDate: "2026-08-20", autoGenerate: 1, status: 1, remark: "会员自动续费", overdueDays: 6, isOverdue: true, pendingCount: 1, pendingDates: ["2026-09-20"] },
+      { id: 703, userId: 2, name: "年度保险", accountId: 201, accountName: "招商银行卡", categoryId: 311, categoryName: "日用品", categoryIcon: "ShoppingCart", type: "EXPENSE", amount: 860, cycleType: "YEARLY", cycleLabel: "每年", cycleValue: 1, nextRunDate: "2027-03-08", lastRunDate: "2026-03-08", autoGenerate: 1, status: 1, remark: "年度保险", overdueDays: 0, isOverdue: false, pendingCount: 0, pendingDates: [] },
+    ],
+    financeAlerts: [
+      { id: 801, userId: 2, budgetId: 602, periodMonth: "2026-09", categoryName: "餐饮", budgetAmount: 1800, usedAmount: 1978.5, usedRatio: 109.92, alertLevel: "DANGER", message: "餐饮预算已超支 9.9%，超出 178.50 元", isRead: 0, createTime: "2026-09-25 18:30:00" },
+      { id: 802, userId: 2, budgetId: 605, periodMonth: "2026-09", categoryName: "购物", budgetAmount: 3800, usedAmount: 4200.1, usedRatio: 110.53, alertLevel: "DANGER", message: "购物预算已超支 10.5%，超出 400.10 元", isRead: 0, createTime: "2026-09-25 18:30:00" },
+      { id: 803, userId: 2, budgetId: 601, periodMonth: "2026-09", categoryName: "总预算", budgetAmount: 9000, usedAmount: 8872.6, usedRatio: 98.58, alertLevel: "WARN", message: "总预算已使用 98.6%，仅剩 127.40 元", isRead: 0, createTime: "2026-09-25 18:30:00" },
+    ],
+    financeConfigs: [
+      { id: 901, configKey: "budget.warn.ratio", configValue: "80", configName: "预算预警比例", remark: "达到该比例时提醒" },
+      { id: 902, configKey: "recurring.auto.enabled", configValue: "true", configName: "周期账单自动生成", remark: "登录和打开看板时检查" },
+      { id: 903, configKey: "bill.export.max", configValue: "5000", configName: "账单导出上限", remark: "单次最多导出条数" },
+    ],
+    financeLogs: [
+      { id: 1001, userId: 2, username: "zhangsan", ip: "127.0.0.1", userAgent: "Chrome / Windows", status: 1, message: "登录成功", loginTime: "2026-09-26 09:18:00" },
+      { id: 1002, userId: 1, username: "admin", ip: "127.0.0.1", userAgent: "Chrome / Windows", status: 1, message: "登录成功", loginTime: "2026-09-25 20:36:00" },
+      { id: 1003, userId: null, username: "unknown", ip: "127.0.0.1", userAgent: "Chrome / Windows", status: 0, message: "用户名或密码错误", loginTime: "2026-09-25 19:42:00" },
+    ],
     sysConfigs: [{ id: 1, configKey: "free_minutes_default", configValue: "15", configGroup: "billing", remark: "默认免费分钟数", status: 1 }],
   };
 
@@ -169,6 +248,82 @@
     if (index >= 0) rows.splice(index, 1);
     return true;
   };
+
+  const financeTypeLabel = { CASH: "现金", BANK: "银行卡", ALIPAY: "支付宝", WECHAT: "微信", CREDIT: "信用卡" };
+  const financeUser = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("pf_user") || "null");
+      return stored || db.financeUsers[1];
+    } catch {
+      return db.financeUsers[1];
+    }
+  };
+  const financeCategory = (id) => db.financeCategories.find((item) => String(item.id) === String(id));
+  const financeAccount = (id) => db.financeAccounts.find((item) => String(item.id) === String(id));
+  const financeMonth = (date) => String(date || "").slice(0, 7);
+  const financeMoney = (value) => Number(Number(value || 0).toFixed(2));
+  const recalcFinanceAccounts = () => {
+    db.financeAccounts.forEach((account) => {
+      const related = db.financeBills.filter((bill) => String(bill.accountId) === String(account.id));
+      const income = related.filter((bill) => bill.type === "INCOME").reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
+      const expense = related.filter((bill) => bill.type === "EXPENSE").reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
+      account.balance = financeMoney(Number(account.initialBalance || 0) + income - expense);
+      account.isCredit = account.type === "CREDIT";
+      account.typeLabel = financeTypeLabel[account.type] || account.type;
+      account.usedCredit = account.isCredit ? financeMoney(Math.max(0, -account.balance)) : 0;
+      account.availableCredit = account.isCredit ? financeMoney(Math.max(0, Number(account.creditLimit || 0) - account.usedCredit)) : 0;
+    });
+  };
+  const financeAccountSummary = () => {
+    recalcFinanceAccounts();
+    const totalAssets = financeMoney(db.financeAccounts.filter((item) => item.balance > 0).reduce((sum, item) => sum + item.balance, 0));
+    const totalDebt = financeMoney(db.financeAccounts.filter((item) => item.balance < 0).reduce((sum, item) => sum - item.balance, 0));
+    const creditUsed = financeMoney(db.financeAccounts.filter((item) => item.isCredit).reduce((sum, item) => sum + item.usedCredit, 0));
+    const creditLimit = financeMoney(db.financeAccounts.filter((item) => item.isCredit).reduce((sum, item) => sum + Number(item.creditLimit || 0), 0));
+    return { accounts: clone(db.financeAccounts), totalAssets, totalDebt, netAssets: financeMoney(totalAssets - totalDebt), creditUsed, creditLimit, accountCount: db.financeAccounts.length };
+  };
+  const financeBillRows = (params = {}) => db.financeBills.filter((bill) => {
+    if (params.type && bill.type !== params.type) return false;
+    if (params.accountId && String(bill.accountId) !== String(params.accountId)) return false;
+    if (params.categoryId) {
+      const selected = financeCategory(params.categoryId);
+      const current = financeCategory(bill.categoryId);
+      if (String(bill.categoryId) !== String(params.categoryId) && String(current?.parentId) !== String(selected?.id)) return false;
+    }
+    if (params.tagId && !(bill.tags || []).some((tag) => String(tag.id) === String(params.tagId))) return false;
+    if (params.startDate && bill.recordDate < params.startDate) return false;
+    if (params.endDate && bill.recordDate > params.endDate) return false;
+    if (params.minAmount && Number(bill.amount) < Number(params.minAmount)) return false;
+    if (params.maxAmount && Number(bill.amount) > Number(params.maxAmount)) return false;
+    if (params.source && bill.source !== params.source) return false;
+    if (params.keyword && !String(bill.remark || "").toLowerCase().includes(String(params.keyword).toLowerCase())) return false;
+    return true;
+  }).sort((a, b) => String(b.recordDate).localeCompare(String(a.recordDate)) || Number(b.id) - Number(a.id));
+  const refreshFinanceBudgets = (month = "2026-09") => {
+    const expenses = db.financeBills.filter((bill) => bill.type === "EXPENSE" && financeMonth(bill.recordDate) === month);
+    db.financeBudgets.filter((budget) => budget.periodMonth === month).forEach((budget) => {
+      let selected = expenses;
+      if (budget.categoryId) {
+        selected = expenses.filter((bill) => {
+          const category = financeCategory(bill.categoryId);
+          return String(bill.categoryId) === String(budget.categoryId) || String(category?.parentId) === String(budget.categoryId);
+        });
+      }
+      budget.usedAmount = financeMoney(selected.reduce((sum, bill) => sum + Number(bill.amount || 0), 0));
+      budget.remaining = financeMoney(Number(budget.amount || 0) - budget.usedAmount);
+      budget.usedRatio = Number(budget.amount) > 0 ? Number((budget.usedAmount / Number(budget.amount) * 100).toFixed(2)) : 0;
+      budget.alertLevel = budget.usedRatio > 100 ? "DANGER" : budget.usedRatio >= Number(budget.warnRatio || 80) ? "WARN" : "NORMAL";
+      budget.alertText = { DANGER: "已超支", WARN: "接近超支", NORMAL: "正常" }[budget.alertLevel];
+    });
+    return db.financeBudgets.filter((budget) => budget.periodMonth === month);
+  };
+  const financeMonthSummary = (month) => {
+    const rows = db.financeBills.filter((bill) => financeMonth(bill.recordDate) === month);
+    const income = financeMoney(rows.filter((bill) => bill.type === "INCOME").reduce((sum, bill) => sum + Number(bill.amount || 0), 0));
+    const expense = financeMoney(rows.filter((bill) => bill.type === "EXPENSE").reduce((sum, bill) => sum + Number(bill.amount || 0), 0));
+    return { month, income, expense, balance: financeMoney(income - expense), count: rows.length };
+  };
+  recalcFinanceAccounts();
 
   const bodyOf = (body) => {
     if (!body) return {};
@@ -260,6 +415,195 @@
       amounts: [860, 980, 1260, 1188, 1420, 1106, 1286],
       counts: [18, 21, 26, 24, 31, 22, 28],
     });
+
+    if (project === "personal-finance") {
+      const month = params.periodMonth || "2026-09";
+      const user = financeUser();
+      const financePage = (rows) => page(rows, current, size);
+      const treeFor = (type) => {
+        const rows = db.financeCategories.filter((item) => !type || item.type === type);
+        return rows.filter((item) => item.parentId == null).map((parent) => ({
+          ...clone(parent),
+          children: rows.filter((item) => String(item.parentId) === String(parent.id)).map((item) => ({ ...clone(item), children: [] })),
+        }));
+      };
+      const saveSimple = (keyName, defaults = {}) => {
+        const id = body.id;
+        if (id) return updateItem(keyName, id, { ...body });
+        return addItem(keyName, { ...defaults, ...body });
+      };
+      const removeSimple = (keyName) => {
+        removeItem(keyName, body.id || params.id);
+        return ok(true);
+      };
+
+      if (lower.includes("/auth/login")) {
+        const matched = db.financeUsers.find((item) => item.username === body.username) || db.financeUsers[1];
+        localStorage.setItem("pf_user", JSON.stringify(matched));
+        localStorage.setItem("pf_token", "demo-token");
+        return ok({ token: "demo-token", userInfo: clone(matched), recurringGenerated: [], recurringCount: 0 });
+      }
+      if (lower.includes("/auth/info") || lower.includes("/auth/me")) return ok({ ...clone(user), permissions: user.role === "ADMIN" ? ["*"] : ["finance"] });
+      if (lower.includes("/auth/logout") || lower.includes("/auth/changepassword")) return ok(true);
+      if (lower.includes("/user/uploadavatar")) return ok({ url: "https://dummyimage.com/160x160/d1fae5/047857&text=PF" });
+
+      if (method === "GET" && lower.includes("/user/page")) return ok(financePage(clone(db.financeUsers)));
+      if (method === "GET" && lower.includes("/user/list")) return ok(clone(db.financeUsers).map(({ id, username, realName, role }) => ({ id, username, realName, role })));
+      if (method === "POST" && lower.includes("/user/save")) return ok(saveSimple("financeUsers", { role: "USER", status: 1, avatar: "", createTime: new Date().toLocaleString() }));
+      if (method === "POST" && lower.includes("/user/delete")) return removeSimple("financeUsers");
+      if (method === "POST" && lower.includes("/user/resetpassword")) return ok(true);
+
+      if (method === "GET" && lower.includes("/config/list")) return ok(clone(db.financeConfigs));
+      if (method === "POST" && lower.includes("/config/save")) return ok(saveSimple("financeConfigs"));
+      if (method === "GET" && lower.includes("/log/page")) {
+        let rows = clone(db.financeLogs);
+        if (params.username) rows = rows.filter((item) => item.username.includes(params.username));
+        if (params.status !== undefined && params.status !== "") rows = rows.filter((item) => String(item.status) === String(params.status));
+        return ok(financePage(rows));
+      }
+
+      if (method === "GET" && lower.includes("/account/page")) {
+        recalcFinanceAccounts();
+        let rows = clone(db.financeAccounts);
+        if (params.keyword) rows = rows.filter((item) => `${item.name}${item.remark}`.includes(params.keyword));
+        if (params.type) rows = rows.filter((item) => item.type === params.type);
+        return ok(financePage(rows));
+      }
+      if (method === "GET" && lower.includes("/account/list")) { recalcFinanceAccounts(); return ok(clone(db.financeAccounts.filter((item) => item.status === 1))); }
+      if (method === "POST" && lower.includes("/account/save")) {
+        const item = body.id ? updateItem("financeAccounts", body.id, body) : addItem("financeAccounts", { userId: 2, status: 1, initialBalance: 0, balance: 0, creditLimit: 0, icon: "Wallet", color: "#10b981", ...body });
+        item.typeLabel = financeTypeLabel[item.type] || item.type;
+        item.isCredit = item.type === "CREDIT";
+        recalcFinanceAccounts();
+        return ok({ id: item.id });
+      }
+      if (method === "POST" && lower.includes("/account/delete")) return removeSimple("financeAccounts");
+
+      if (method === "GET" && lower.includes("/category/tree")) return ok(treeFor(params.type));
+      if (method === "GET" && lower.includes("/category/list")) return ok(clone(db.financeCategories.filter((item) => !params.type || item.type === params.type)));
+      if (method === "POST" && lower.includes("/category/save")) {
+        const item = saveSimple("financeCategories", { isSystem: false, parentId: null, icon: "PriceTag", color: "#10b981", sort: 99 });
+        const parent = financeCategory(item.parentId);
+        item.parentName = parent?.name || null;
+        item.fullName = parent ? `${parent.name} / ${item.name}` : item.name;
+        return ok({ id: item.id });
+      }
+      if (method === "POST" && lower.includes("/category/delete")) return removeSimple("financeCategories");
+
+      if (method === "GET" && lower.includes("/bill/page")) {
+        const rows = financeBillRows(params);
+        const result = financePage(clone(rows));
+        result.sumIncome = financeMoney(rows.filter((item) => item.type === "INCOME").reduce((sum, item) => sum + Number(item.amount || 0), 0));
+        result.sumExpense = financeMoney(rows.filter((item) => item.type === "EXPENSE").reduce((sum, item) => sum + Number(item.amount || 0), 0));
+        return ok(result);
+      }
+      if (method === "GET" && lower.includes("/bill/detail")) return ok(clone(db.financeBills.find((item) => String(item.id) === String(params.id)) || db.financeBills[0]));
+      if (method === "POST" && lower.includes("/bill/save")) {
+        const account = financeAccount(body.accountId);
+        const category = financeCategory(body.categoryId);
+        const parent = financeCategory(category?.parentId);
+        const tags = (body.tagIds || []).map((id) => db.financeTags.find((tag) => String(tag.id) === String(id))).filter(Boolean);
+        const fields = {
+          userId: 2, accountId: Number(body.accountId), accountName: account?.name || "未命名账户", accountType: account?.type || "CASH",
+          categoryId: Number(body.categoryId), categoryName: category?.name || "其他", parentCategoryName: parent?.name || null,
+          categoryIcon: category?.icon || "PriceTag", categoryColor: category?.color || "#10b981", type: body.type || "EXPENSE",
+          amount: Number(body.amount || 0), recordDate: body.recordDate || "2026-09-26", remark: body.remark || "",
+          source: body.source || "MANUAL", sourceLabel: body.source === "RECURRING" ? "周期账单" : "手工记账", ruleId: body.ruleId || null, tags: clone(tags),
+        };
+        const item = body.id ? updateItem("financeBills", body.id, fields) : addItem("financeBills", fields);
+        recalcFinanceAccounts(); refreshFinanceBudgets(financeMonth(item.recordDate));
+        return ok({ id: item.id });
+      }
+      if (method === "POST" && lower.includes("/bill/batchdelete")) {
+        const ids = Array.isArray(body.ids) ? body.ids : [];
+        ids.forEach((id) => removeItem("financeBills", id));
+        recalcFinanceAccounts(); refreshFinanceBudgets(month);
+        return ok({ count: ids.length });
+      }
+      if (method === "POST" && lower.includes("/bill/delete")) { removeItem("financeBills", body.id); recalcFinanceAccounts(); refreshFinanceBudgets(month); return ok(true); }
+      if (lower.includes("/bill/export")) return ok("日期,类型,分类,金额,账户,备注\n2026-09-25,支出,餐饮/午餐,32,支付宝,工作日午餐");
+
+      if (method === "GET" && lower.includes("/tag/list")) return ok(clone(db.financeTags));
+      if (method === "POST" && lower.includes("/tag/save")) return ok(saveSimple("financeTags", { color: "#10b981", remark: "", usedCount: 0 }));
+      if (method === "POST" && lower.includes("/tag/delete")) return removeSimple("financeTags");
+
+      if (method === "GET" && lower.includes("/budget/page")) return ok(financePage(clone(refreshFinanceBudgets(month))));
+      if (method === "GET" && lower.includes("/budget/status")) {
+        const items = clone(refreshFinanceBudgets(month));
+        const totalBudget = items.find((item) => item.categoryId == null) || null;
+        const categoryBudgets = items.filter((item) => item.categoryId != null).sort((a, b) => b.usedRatio - a.usedRatio);
+        return ok({ periodMonth: month, items, totalBudget, categoryBudgets, dangerCount: items.filter((item) => item.alertLevel === "DANGER").length, warnCount: items.filter((item) => item.alertLevel === "WARN").length, usedTotal: financeMoney(items.filter((item) => item.alertLevel !== "NORMAL").reduce((sum, item) => sum + item.amount, 0)) });
+      }
+      if (method === "GET" && lower.includes("/budget/checkalert")) return ok(clone(refreshFinanceBudgets(month).filter((item) => !params.categoryId || item.categoryId == null || String(item.categoryId) === String(params.categoryId))));
+      if (method === "POST" && lower.includes("/budget/save")) {
+        const category = financeCategory(body.categoryId);
+        const item = body.id ? updateItem("financeBudgets", body.id, { ...body, categoryName: category?.name || "总预算" }) : addItem("financeBudgets", { userId: 2, periodMonth: month, warnRatio: 80, remark: "", categoryName: category?.name || "总预算", ...body, categoryId: body.categoryId || null });
+        refreshFinanceBudgets(item.periodMonth || month);
+        return ok({ id: item.id, status: clone(item) });
+      }
+      if (method === "POST" && lower.includes("/budget/delete")) return removeSimple("financeBudgets");
+
+      if (method === "GET" && lower.includes("/recurring/page")) return ok(financePage(clone(db.financeRecurring)));
+      if (method === "GET" && lower.includes("/recurring/preview")) {
+        const items = db.financeRecurring.filter((item) => item.pendingCount > 0).map((item) => ({ ruleId: item.id, ruleName: item.name, userId: item.userId, nextRunDate: item.nextRunDate, overdueDays: item.overdueDays, count: item.pendingCount, dates: item.pendingDates }));
+        return ok({ items: clone(items), totalCount: items.reduce((sum, item) => sum + item.count, 0) });
+      }
+      if (method === "POST" && (lower.includes("/recurring/check") || lower.includes("/recurring/run"))) {
+        const rows = lower.includes("/run") ? db.financeRecurring.filter((item) => String(item.id) === String(body.id)) : db.financeRecurring.filter((item) => item.pendingCount > 0);
+        const generated = [];
+        rows.forEach((rule) => {
+          (rule.pendingDates || []).forEach((date) => {
+            const account = financeAccount(rule.accountId); const category = financeCategory(rule.categoryId); const parent = financeCategory(category?.parentId);
+            addItem("financeBills", { userId: 2, accountId: rule.accountId, accountName: account?.name, accountType: account?.type, categoryId: rule.categoryId, categoryName: category?.name, parentCategoryName: parent?.name, categoryIcon: category?.icon, categoryColor: category?.color, type: rule.type, amount: rule.amount, recordDate: date, remark: `${rule.name}（周期账单自动生成）`, source: "RECURRING", sourceLabel: "周期账单", ruleId: rule.id, tags: [] });
+          });
+          if (rule.pendingCount) generated.push({ rule_id: rule.id, rule_name: rule.name, count: rule.pendingCount, next_run_date: "2026-10-20", account_id: rule.accountId });
+          rule.lastRunDate = rule.pendingDates?.at(-1) || rule.lastRunDate; rule.nextRunDate = "2026-10-20"; rule.pendingCount = 0; rule.pendingDates = []; rule.overdueDays = 0; rule.isOverdue = false;
+        });
+        recalcFinanceAccounts(); refreshFinanceBudgets(month);
+        return ok({ generated, totalCount: generated.reduce((sum, item) => sum + item.count, 0), today: "2026-09-26" });
+      }
+      if (method === "POST" && lower.includes("/recurring/save")) {
+        const account = financeAccount(body.accountId); const category = financeCategory(body.categoryId);
+        const labels = { DAILY: "每天", WEEKLY: "每周", MONTHLY: "每月", YEARLY: "每年" };
+        const item = saveSimple("financeRecurring", { userId: 2, accountName: account?.name, categoryName: category?.name, categoryIcon: category?.icon, cycleLabel: labels[body.cycleType] || "每月", lastRunDate: null, overdueDays: 0, isOverdue: false, pendingCount: 0, pendingDates: [] });
+        return ok({ id: item.id });
+      }
+      if (method === "POST" && lower.includes("/recurring/delete")) return removeSimple("financeRecurring");
+
+      if (method === "GET" && lower.includes("/dashboard/overview")) {
+        const summary = financeAccountSummary();
+        const ms = financeMonthSummary(month);
+        const budgets = refreshFinanceBudgets(month);
+        const alerts = clone(budgets.filter((item) => item.alertLevel !== "NORMAL").sort((a, b) => b.usedRatio - a.usedRatio));
+        const days = Array.from({ length: 30 }, (_, index) => String(index + 1).padStart(2, "0"));
+        const daily = days.map((day) => financeMoney(db.financeBills.filter((bill) => bill.type === "EXPENSE" && bill.recordDate === `${month}-${day}`).reduce((sum, bill) => sum + Number(bill.amount || 0), 0)));
+        return ok({ month, summary, monthSummary: ms, todayExpense: 32, monthIncome: ms.income, monthExpense: ms.expense, budgetAlerts: alerts, dangerCount: alerts.filter((item) => item.alertLevel === "DANGER").length, warnCount: alerts.filter((item) => item.alertLevel === "WARN").length, recentBills: clone(financeBillRows({}).slice(0, 8)), dailyExpense: { labels: days, values: daily }, overdueRules: clone(db.financeRecurring.filter((item) => item.isOverdue)), autoGenerated: [], autoGeneratedCount: 0 });
+      }
+      if (method === "GET" && (lower.includes("/stat/trend") || lower.includes("/stat/monthcompare"))) {
+        const months = ["2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09"];
+        const fallbackIncome = [11800, 12100, 12400, 12600, 12600, 13220];
+        const fallbackExpense = [7200, 6890, 7540, 8010, 7900, 8872.6];
+        const items = months.map((label, index) => {
+          const actual = financeMonthSummary(label);
+          const income = actual.count ? actual.income : fallbackIncome[index]; const expense = actual.count ? actual.expense : fallbackExpense[index];
+          return { month: label, income, expense, balance: financeMoney(income - expense), count: actual.count || 18 + index };
+        });
+        return ok({ labels: months, income: items.map((item) => item.income), expense: items.map((item) => item.expense), balance: items.map((item) => item.balance), items });
+      }
+      if (method === "GET" && lower.includes("/stat/category")) {
+        const type = params.type || "EXPENSE"; const rows = db.financeBills.filter((bill) => bill.type === type && financeMonth(bill.recordDate) === month); const groups = {};
+        rows.forEach((bill) => { const category = financeCategory(bill.categoryId); const parent = financeCategory(category?.parentId) || category; if (!parent) return; groups[parent.id] ||= { name: parent.name, value: 0, color: parent.color }; groups[parent.id].value += Number(bill.amount || 0); });
+        const items = Object.values(groups).map((item) => ({ ...item, value: financeMoney(item.value) })).sort((a, b) => b.value - a.value); const total = financeMoney(items.reduce((sum, item) => sum + item.value, 0)); items.forEach((item) => { item.percent = total ? Number((item.value / total * 100).toFixed(2)) : 0; });
+        return ok({ periodMonth: month, type, total, items });
+      }
+      if (method === "GET" && lower.includes("/stat/budgetrate")) { const items = clone(refreshFinanceBudgets(month).sort((a, b) => b.usedRatio - a.usedRatio)); return ok({ periodMonth: month, labels: items.map((item) => item.categoryName), ratios: items.map((item) => item.usedRatio), amounts: items.map((item) => item.amount), usedAmounts: items.map((item) => item.usedAmount), levels: items.map((item) => item.alertLevel), items }); }
+      if (method === "GET" && lower.includes("/stat/account")) { const summary = financeAccountSummary(); return ok({ items: summary.accounts.filter((item) => Math.abs(item.balance) > 0).map((item) => ({ name: item.name, value: Math.abs(item.balance), color: item.color, typeLabel: item.typeLabel, raw: item.balance })).sort((a, b) => b.value - a.value), summary }); }
+      if (method === "GET" && lower.includes("/stat/daily")) { const labels = Array.from({ length: 30 }, (_, index) => `${index + 1} 日`); const income = Array(30).fill(0); const expense = Array(30).fill(0); db.financeBills.filter((bill) => financeMonth(bill.recordDate) === month).forEach((bill) => { const index = Number(bill.recordDate.slice(8, 10)) - 1; (bill.type === "INCOME" ? income : expense)[index] += Number(bill.amount || 0); }); return ok({ periodMonth: month, labels, income: income.map(financeMoney), expense: expense.map(financeMoney) }); }
+      if (method === "GET" && lower.includes("/stat/ranking")) { const groups = {}; db.financeBills.filter((bill) => bill.type === "EXPENSE" && financeMonth(bill.recordDate) === month).forEach((bill) => { groups[bill.categoryName] = (groups[bill.categoryName] || 0) + Number(bill.amount || 0); }); return ok({ periodMonth: month, items: Object.entries(groups).map(([name, value]) => ({ name, value: financeMoney(value) })).sort((a, b) => b.value - a.value).slice(0, 10) }); }
+
+      if (method === "GET" && lower.includes("/alert/list")) return ok(financePage(clone(db.financeAlerts.filter((item) => !params.alertLevel || item.alertLevel === params.alertLevel))));
+      if (method === "POST" && lower.includes("/alert/read")) { db.financeAlerts.forEach((item) => { if (!body.id || String(item.id) === String(body.id)) item.isRead = 1; }); return ok(true); }
+    }
 
     if (lower.includes("/auth/login")) {
       const username = body.username || "demo";
