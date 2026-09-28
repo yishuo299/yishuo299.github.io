@@ -223,6 +223,93 @@
       { id: 1002, userId: 1, username: "admin", ip: "127.0.0.1", userAgent: "Chrome / Windows", status: 1, message: "登录成功", loginTime: "2026-09-25 20:36:00" },
       { id: 1003, userId: null, username: "unknown", ip: "127.0.0.1", userAgent: "Chrome / Windows", status: 0, message: "用户名或密码错误", loginTime: "2026-09-25 19:42:00" },
     ],
+    hrDepartments: [
+      { id: 1, deptName: "总公司", parentId: 0, managerId: null, sortOrder: 1, status: 1, remark: "集团总部" },
+      { id: 2, deptName: "技术研发部", parentId: 1, managerId: 1, sortOrder: 1, status: 1, remark: "负责产品研发与技术平台" },
+      { id: 3, deptName: "平台开发组", parentId: 2, managerId: 1, sortOrder: 1, status: 1, remark: "后端与平台开发" },
+      { id: 4, deptName: "数据智能组", parentId: 2, managerId: 3, sortOrder: 2, status: 1, remark: "数据工程与智能应用" },
+      { id: 5, deptName: "质量保障部", parentId: 2, managerId: 6, sortOrder: 3, status: 1, remark: "测试与质量保障" },
+      { id: 6, deptName: "财务部", parentId: 1, managerId: 5, sortOrder: 2, status: 1, remark: "财务核算" },
+      { id: 7, deptName: "人力资源部", parentId: 1, managerId: 4, sortOrder: 3, status: 1, remark: "人事与招聘" },
+      { id: 8, deptName: "市场运营部", parentId: 1, managerId: 8, sortOrder: 4, status: 1, remark: "市场与运营" },
+    ],
+    hrPositions: [
+      { id: 1, positionName: "研发经理", positionCode: "RD-MGR", deptId: 2, deptName: "技术研发部", baseSalary: 28000, level: "P7", headcount: 2, status: 1, remark: "研发管理" },
+      { id: 2, positionName: "Java 工程师", positionCode: "RD-JAVA", deptId: 3, deptName: "平台开发组", baseSalary: 18000, level: "P5", headcount: 8, status: 1, remark: "服务端开发" },
+      { id: 3, positionName: "数据工程师", positionCode: "RD-DATA", deptId: 4, deptName: "数据智能组", baseSalary: 19000, level: "P5", headcount: 5, status: 1, remark: "数据平台" },
+      { id: 4, positionName: "测试工程师", positionCode: "QA-TEST", deptId: 5, deptName: "质量保障部", baseSalary: 15000, level: "P4", headcount: 5, status: 1, remark: "质量保障" },
+      { id: 5, positionName: "人事专员", positionCode: "HR-SPEC", deptId: 7, deptName: "人力资源部", baseSalary: 12000, level: "P4", headcount: 4, status: 1, remark: "员工关系" },
+      { id: 6, positionName: "财务经理", positionCode: "FI-MGR", deptId: 6, deptName: "财务部", baseSalary: 22000, level: "P6", headcount: 2, status: 1, remark: "财务管理" },
+      { id: 7, positionName: "运营专员", positionCode: "OP-SPEC", deptId: 8, deptName: "市场运营部", baseSalary: 11000, level: "P3", headcount: 6, status: 1, remark: "用户运营" },
+    ],
+    hrEmployees: [
+      { id: 1, empNo: "EMP2021001", name: "李建", gender: "男", phone: "13800000001", email: "lijian@example.com", deptId: 2, deptName: "技术研发部", positionId: 1, positionName: "研发经理", education: "硕士", school: "示例大学", major: "软件工程", hireDate: "2021-05-10", regularDate: "2021-08-10", status: "ACTIVE", remark: "研发负责人" },
+      { id: 2, empNo: "EMP2022001", name: "张伟", gender: "男", phone: "13800000002", email: "zhangwei@example.com", deptId: 3, deptName: "平台开发组", positionId: 2, positionName: "Java 工程师", education: "本科", school: "示例理工大学", major: "计算机科学", hireDate: "2022-03-15", regularDate: "2022-06-15", status: "ACTIVE", remark: "核心服务开发" },
+      { id: 3, empNo: "EMP2024001", name: "刘洋", gender: "男", phone: "13800000003", email: "liuyang@example.com", deptId: 4, deptName: "数据智能组", positionId: 3, positionName: "数据工程师", education: "硕士", school: "示例科技大学", major: "数据科学", hireDate: "2024-07-01", regularDate: "2024-10-01", status: "ACTIVE", remark: "数据平台" },
+      { id: 4, empNo: "EMP2023001", name: "王雅", gender: "女", phone: "13800000004", email: "wangya@example.com", deptId: 7, deptName: "人力资源部", positionId: 5, positionName: "人事专员", education: "本科", school: "示例大学", major: "人力资源管理", hireDate: "2023-02-06", regularDate: "2023-05-06", status: "ACTIVE", remark: "员工关系" },
+      { id: 5, empNo: "EMP2020001", name: "赵峰", gender: "男", phone: "13800000005", email: "zhaofeng@example.com", deptId: 6, deptName: "财务部", positionId: 6, positionName: "财务经理", education: "本科", school: "示例财经大学", major: "会计学", hireDate: "2020-09-18", regularDate: "2020-12-18", status: "ACTIVE", remark: "财务负责人" },
+      { id: 6, empNo: "EMP2025001", name: "周宁", gender: "女", phone: "13800000006", email: "zhouning@example.com", deptId: 5, deptName: "质量保障部", positionId: 4, positionName: "测试工程师", education: "本科", school: "示例学院", major: "软件工程", hireDate: "2025-04-12", regularDate: "2025-07-12", status: "LEAVE", remark: "自动化测试" },
+      { id: 7, empNo: "EMP2026001", name: "林晓", gender: "女", phone: "13800000007", email: "linxiao@example.com", deptId: 5, deptName: "质量保障部", positionId: 4, positionName: "测试工程师", education: "本科", school: "示例大学", major: "计算机科学", hireDate: "2026-09-01", regularDate: null, status: "PROBATION", remark: "试用期" },
+      { id: 8, empNo: "EMP2023002", name: "陈静", gender: "女", phone: "13800000008", email: "chenjing@example.com", deptId: 8, deptName: "市场运营部", positionId: 7, positionName: "运营专员", education: "本科", school: "示例大学", major: "市场营销", hireDate: "2023-05-18", regularDate: "2023-08-18", status: "ACTIVE", remark: "内容运营" },
+    ],
+    hrAttendance: [
+      { id: 1, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", attendDate: "2026-09-28", checkInTime: "09:12:08", checkOutTime: "18:21:15", workHours: 9.15, status: "NORMAL", appealStatus: "NONE", appealReason: "", appealReply: "" },
+      { id: 2, employeeId: 3, employeeName: "刘洋", empNo: "EMP2024001", deptName: "数据智能组", attendDate: "2026-09-28", checkInTime: "09:42:30", checkOutTime: "18:18:00", workHours: 8.59, status: "LATE", appealStatus: "PENDING", appealReason: "地铁临时故障", appealReply: "" },
+      { id: 3, employeeId: 4, employeeName: "王雅", empNo: "EMP2023001", deptName: "人力资源部", attendDate: "2026-09-28", checkInTime: "09:08:10", checkOutTime: "17:38:20", workHours: 8.5, status: "EARLY_LEAVE", appealStatus: "APPROVED", appealReason: "外出办理员工社保", appealReply: "情况属实" },
+      { id: 4, employeeId: 6, employeeName: "周宁", empNo: "EMP2025001", deptName: "质量保障部", attendDate: "2026-09-28", checkInTime: "", checkOutTime: "", workHours: 0, status: "LEAVE", appealStatus: "NONE", appealReason: "", appealReply: "" },
+      { id: 5, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", attendDate: "2026-09-27", checkInTime: "09:25:10", checkOutTime: "18:12:06", workHours: 8.78, status: "NORMAL", appealStatus: "NONE", appealReason: "", appealReply: "" },
+      { id: 6, employeeId: 7, employeeName: "林晓", empNo: "EMP2026001", deptName: "质量保障部", attendDate: "2026-09-27", checkInTime: "", checkOutTime: "", workHours: 0, status: "ABSENT", appealStatus: "NONE", appealReason: "", appealReply: "" },
+    ],
+    hrLeaveQuotas: [
+      { id: 1, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", year: 2026, leaveType: "ANNUAL", totalDays: 10, usedDays: 3, remainDays: 7 },
+      { id: 2, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", year: 2026, leaveType: "SICK", totalDays: 10, usedDays: 1, remainDays: 9 },
+      { id: 3, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", year: 2026, leaveType: "PERSONAL", totalDays: 5, usedDays: 0, remainDays: 5 },
+      { id: 4, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", year: 2026, leaveType: "COMPENSATORY", totalDays: 3, usedDays: 1, remainDays: 2 },
+      { id: 5, employeeId: 6, employeeName: "周宁", empNo: "EMP2025001", deptName: "质量保障部", year: 2026, leaveType: "ANNUAL", totalDays: 5, usedDays: 2, remainDays: 3 },
+      { id: 6, employeeId: 3, employeeName: "刘洋", empNo: "EMP2024001", deptName: "数据智能组", year: 2026, leaveType: "ANNUAL", totalDays: 5, usedDays: 1, remainDays: 4 },
+    ],
+    hrLeaves: [
+      { id: 1, applyNo: "LA20260928001", employeeId: 3, employeeName: "刘洋", empNo: "EMP2024001", deptName: "数据智能组", leaveType: "ANNUAL", startDate: "2026-10-08", endDate: "2026-10-09", leaveDays: 2, reason: "家庭事务", status: "PENDING_MANAGER", statusText: "待经理审批", managerRemark: "", hrRemark: "", applyTime: "2026-09-28 09:15:00" },
+      { id: 2, applyNo: "LA20260927002", employeeId: 6, employeeName: "周宁", empNo: "EMP2025001", deptName: "质量保障部", leaveType: "SICK", startDate: "2026-09-28", endDate: "2026-09-29", leaveDays: 2, reason: "身体不适", status: "PENDING_HR", statusText: "待 HR 审批", managerRemark: "同意", hrRemark: "", applyTime: "2026-09-27 17:20:00" },
+      { id: 3, applyNo: "LA20260920003", employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", leaveType: "ANNUAL", startDate: "2026-09-23", endDate: "2026-09-25", leaveDays: 3, reason: "个人事务", status: "APPROVED", statusText: "已通过", managerRemark: "同意", hrRemark: "额度确认", applyTime: "2026-09-20 10:00:00" },
+      { id: 4, applyNo: "LA20260918004", employeeId: 8, employeeName: "陈静", empNo: "EMP2023002", deptName: "市场运营部", leaveType: "PERSONAL", startDate: "2026-09-21", endDate: "2026-09-21", leaveDays: 1, reason: "个人事务", status: "REJECTED", statusText: "已驳回", managerRemark: "活动期间暂不批准", hrRemark: "", applyTime: "2026-09-18 14:20:00" },
+    ],
+    hrSalaryRules: [
+      { id: 1, employeeId: 1, employeeName: "李建", empNo: "EMP2021001", deptName: "技术研发部", positionName: "研发经理", baseSalary: 15400, postSalary: 7840, performanceSalary: 4760, subsidy: 2000, effectiveDate: "2026-01-01", status: 1, remark: "年度薪资标准" },
+      { id: 2, employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", positionName: "Java 工程师", baseSalary: 9900, postSalary: 5040, performanceSalary: 3060, subsidy: 1000, effectiveDate: "2026-01-01", status: 1, remark: "年度薪资标准" },
+      { id: 3, employeeId: 3, employeeName: "刘洋", empNo: "EMP2024001", deptName: "数据智能组", positionName: "数据工程师", baseSalary: 10450, postSalary: 5320, performanceSalary: 3230, subsidy: 1000, effectiveDate: "2026-01-01", status: 1, remark: "年度薪资标准" },
+      { id: 4, employeeId: 4, employeeName: "王雅", empNo: "EMP2023001", deptName: "人力资源部", positionName: "人事专员", baseSalary: 6600, postSalary: 3360, performanceSalary: 2040, subsidy: 800, effectiveDate: "2026-01-01", status: 1, remark: "年度薪资标准" },
+    ],
+    hrSalaries: [
+      { id: 1, salaryMonth: "2026-09", employeeId: 1, employeeName: "李建", empNo: "EMP2021001", deptName: "技术研发部", positionName: "研发经理", baseSalary: 15400, postSalary: 7840, performanceSalary: 4760, subsidy: 2000, grossSalary: 30000, absentDays: 1, absentDeduct: 1379.31, socialPersonal: 3150, fundPersonal: 3600, totalDeduct: 8129.31, taxableIncome: 18250, taxLevel: 3, taxRate: 0.2, taxAmount: 2240, netSalary: 19630.69, status: "CONFIRMED" },
+      { id: 2, salaryMonth: "2026-09", employeeId: 2, employeeName: "张伟", empNo: "EMP2022001", deptName: "平台开发组", positionName: "Java 工程师", baseSalary: 9900, postSalary: 5040, performanceSalary: 3060, subsidy: 1000, grossSalary: 19000, absentDays: 0, absentDeduct: 0, socialPersonal: 1995, fundPersonal: 2280, totalDeduct: 4275, taxableIncome: 9725, taxLevel: 2, taxRate: 0.1, taxAmount: 762.5, netSalary: 13962.5, status: "CONFIRMED" },
+      { id: 3, salaryMonth: "2026-09", employeeId: 3, employeeName: "刘洋", empNo: "EMP2024001", deptName: "数据智能组", positionName: "数据工程师", baseSalary: 10450, postSalary: 5320, performanceSalary: 3230, subsidy: 1000, grossSalary: 20000, absentDays: 0, absentDeduct: 0, socialPersonal: 2100, fundPersonal: 2400, totalDeduct: 4500, taxableIncome: 10500, taxLevel: 2, taxRate: 0.1, taxAmount: 840, netSalary: 14660, status: "CONFIRMED" },
+      { id: 4, salaryMonth: "2026-09", employeeId: 4, employeeName: "王雅", empNo: "EMP2023001", deptName: "人力资源部", positionName: "人事专员", baseSalary: 6600, postSalary: 3360, performanceSalary: 2040, subsidy: 800, grossSalary: 12800, absentDays: 0, absentDeduct: 0, socialPersonal: 1344, fundPersonal: 1536, totalDeduct: 2880, taxableIncome: 4920, taxLevel: 2, taxRate: 0.1, taxAmount: 282, netSalary: 9638, status: "PAID" },
+    ],
+    hrSocial: [{ id: 1, configName: "2026 年度演示方案", pensionRate: 0.08, medicalRate: 0.02, unemploymentRate: 0.005, fundRate: 0.12, pensionCompanyRate: 0.16, medicalCompanyRate: 0.1, unemploymentCompanyRate: 0.005, fundCompanyRate: 0.12, socialBaseMin: 7350, socialBaseMax: 37800, effectiveDate: "2026-01-01", status: 1 }],
+    hrTaxRates: [
+      { id: 1, levelNo: 1, minIncome: 0, maxIncome: 3000, taxRate: 0.03, quickDeduct: 0, threshold: 5000 },
+      { id: 2, levelNo: 2, minIncome: 3000, maxIncome: 12000, taxRate: 0.1, quickDeduct: 210, threshold: 5000 },
+      { id: 3, levelNo: 3, minIncome: 12000, maxIncome: 25000, taxRate: 0.2, quickDeduct: 1410, threshold: 5000 },
+      { id: 4, levelNo: 4, minIncome: 25000, maxIncome: 35000, taxRate: 0.25, quickDeduct: 2660, threshold: 5000 },
+      { id: 5, levelNo: 5, minIncome: 35000, maxIncome: 55000, taxRate: 0.3, quickDeduct: 4410, threshold: 5000 },
+      { id: 6, levelNo: 6, minIncome: 55000, maxIncome: 80000, taxRate: 0.35, quickDeduct: 7160, threshold: 5000 },
+      { id: 7, levelNo: 7, minIncome: 80000, maxIncome: null, taxRate: 0.45, quickDeduct: 15160, threshold: 5000 },
+    ],
+    hrRecruitPositions: [
+      { id: 1, positionName: "高级 Java 工程师", deptId: 3, deptName: "平台开发组", headcount: 2, hiredCount: 0, education: "本科", experience: "3 年以上", salaryRange: "18K-26K", status: "OPEN", publishDate: "2026-09-10", deadline: "2026-10-31", description: "负责核心业务服务设计与开发" },
+      { id: 2, positionName: "数据分析师", deptId: 4, deptName: "数据智能组", headcount: 1, hiredCount: 0, education: "硕士", experience: "2 年以上", salaryRange: "16K-23K", status: "OPEN", publishDate: "2026-09-15", deadline: "2026-10-20", description: "负责数据分析与指标体系" },
+      { id: 3, positionName: "测试工程师", deptId: 5, deptName: "质量保障部", headcount: 1, hiredCount: 1, education: "本科", experience: "1 年以上", salaryRange: "12K-18K", status: "FILLED", publishDate: "2026-08-01", deadline: "2026-09-15", description: "负责接口和自动化测试" },
+    ],
+    hrResumes: [
+      { id: 1, recruitId: 1, positionName: "高级 Java 工程师", deptName: "平台开发组", candidateName: "候选人甲", gender: "男", age: 28, phone: "13900000001", email: "candidate1@example.com", education: "本科", school: "示例理工大学", major: "软件工程", workYears: 5, currentCompany: "示例科技", expectSalary: "22K", source: "招聘网站", status: "INTERVIEW", selfEval: "熟悉 Spring Boot 与分布式系统", interviewCount: 1 },
+      { id: 2, recruitId: 2, positionName: "数据分析师", deptName: "数据智能组", candidateName: "候选人乙", gender: "女", age: 26, phone: "13900000002", email: "candidate2@example.com", education: "硕士", school: "示例大学", major: "统计学", workYears: 2, currentCompany: "示例数据", expectSalary: "19K", source: "内部推荐", status: "PENDING", selfEval: "熟悉 SQL、Python 与业务分析", interviewCount: 0 },
+      { id: 3, recruitId: 3, positionName: "测试工程师", deptName: "质量保障部", candidateName: "候选人丙", gender: "女", age: 24, phone: "13900000003", email: "candidate3@example.com", education: "本科", school: "示例学院", major: "计算机科学", workYears: 1, currentCompany: "", expectSalary: "14K", source: "校园招聘", status: "HIRED", selfEval: "熟悉自动化测试", interviewCount: 2 },
+    ],
+    hrInterviews: [
+      { id: 1, resumeId: 1, candidateName: "候选人甲", interviewRound: "一面", interviewTime: "2026-09-29 14:00:00", interviewer: "李建", score: 86, result: "PASS", comment: "基础扎实，项目经验匹配" },
+      { id: 2, resumeId: 3, candidateName: "候选人丙", interviewRound: "终面", interviewTime: "2026-09-08 10:00:00", interviewer: "王雅", score: 88, result: "PASS", comment: "通过录用" },
+    ],
     sysConfigs: [{ id: 1, configKey: "free_minutes_default", configValue: "15", configGroup: "billing", remark: "默认免费分钟数", status: 1 }],
   };
 
@@ -389,6 +476,233 @@
   const detailVO = (item) => ({ product: item, seller: { id: 2, username: "seller", realName: "测试卖家" }, favorite: false });
   const normalizeRows = (key, rows) => key === "products" && project === "campus-marketplace" ? rows.map(detailVO) : rows;
 
+  const hrCurrentUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("hr_user") || "null") || { userId: 1, username: "admin", realName: "系统管理员", role: "ADMIN", employeeId: null, deptId: null };
+    } catch {
+      return { userId: 1, username: "admin", realName: "系统管理员", role: "ADMIN", employeeId: null, deptId: null };
+    }
+  };
+  const hrStatusText = { PENDING_MANAGER: "待经理审批", PENDING_HR: "待 HR 审批", APPROVED: "已通过", REJECTED: "已驳回", CANCELLED: "已取消" };
+  const hrDepartmentTree = (parentId = 0) => db.hrDepartments
+    .filter((item) => Number(item.parentId || 0) === Number(parentId))
+    .sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0))
+    .map((item) => ({ ...clone(item), children: hrDepartmentTree(item.id) }));
+  const hrEmployee = (id) => db.hrEmployees.find((item) => String(item.id) === String(id));
+  const hrEnrichEmployee = (employee) => {
+    const dept = db.hrDepartments.find((item) => String(item.id) === String(employee.deptId));
+    const position = db.hrPositions.find((item) => String(item.id) === String(employee.positionId));
+    return { ...employee, deptName: dept?.deptName || employee.deptName || "-", positionName: position?.positionName || employee.positionName || "-" };
+  };
+  const hrFilter = (rows, params) => rows.filter((item) => {
+    if (params.status && String(item.status) !== String(params.status)) return false;
+    if (params.deptId && String(item.deptId) !== String(params.deptId) && String(item.departmentId) !== String(params.deptId)) return false;
+    if (params.employeeId && String(item.employeeId) !== String(params.employeeId)) return false;
+    if (params.leaveType && String(item.leaveType) !== String(params.leaveType)) return false;
+    if (params.month && !String(item.attendDate || item.salaryMonth || "").startsWith(params.month)) return false;
+    if (params.keyword && !JSON.stringify(item).toLowerCase().includes(String(params.keyword).toLowerCase())) return false;
+    return true;
+  });
+  const hrTax = (taxable) => {
+    const value = Math.max(0, Number(taxable || 0));
+    const rate = db.hrTaxRates.find((item) => value > item.minIncome && (item.maxIncome == null || value <= item.maxIncome)) || db.hrTaxRates[0];
+    return { taxableIncome: value, levelNo: rate.levelNo, taxRate: rate.taxRate, quickDeduct: rate.quickDeduct, taxAmount: Math.max(0, Number((value * rate.taxRate - rate.quickDeduct).toFixed(2))) };
+  };
+  const hrOverview = () => {
+    const latestMonth = db.hrSalaries.map((item) => item.salaryMonth).sort().reverse()[0] || "-";
+    const latest = db.hrSalaries.filter((item) => item.salaryMonth === latestMonth);
+    const sum = (field) => Number(latest.reduce((total, item) => total + Number(item[field] || 0), 0).toFixed(2));
+    return {
+      totalEmployee: db.hrEmployees.length,
+      activeEmployee: db.hrEmployees.filter((item) => item.status === "ACTIVE").length,
+      probationEmployee: db.hrEmployees.filter((item) => item.status === "PROBATION").length,
+      leaveEmployee: db.hrEmployees.filter((item) => item.status === "LEAVE").length,
+      resignedEmployee: db.hrEmployees.filter((item) => item.status === "RESIGNED").length,
+      deptCount: db.hrDepartments.length,
+      openPosition: db.hrRecruitPositions.filter((item) => item.status === "OPEN").length,
+      resumeCount: db.hrResumes.length,
+      pendingLeave: db.hrLeaves.filter((item) => ["PENDING_MANAGER", "PENDING_HR"].includes(item.status)).length,
+      pendingAppeal: db.hrAttendance.filter((item) => item.appealStatus === "PENDING").length,
+      salaryMonth: latestMonth,
+      totalNetSalary: sum("netSalary"),
+      totalTax: sum("taxAmount"),
+      totalGrossSalary: sum("grossSalary"),
+      avgNetSalary: latest.length ? Number((sum("netSalary") / latest.length).toFixed(2)) : 0,
+    };
+  };
+  const hrMonthly = (month = "2026-09") => {
+    const rows = db.hrAttendance.filter((item) => String(item.attendDate).startsWith(month));
+    const employeeDetail = db.hrEmployees.filter((item) => item.status !== "RESIGNED").map((employee) => {
+      const own = rows.filter((item) => String(item.employeeId) === String(employee.id));
+      const count = (status) => own.filter((item) => item.status === status).length;
+      return { employeeId: employee.id, employeeName: employee.name, empNo: employee.empNo, deptName: employee.deptName, normal: count("NORMAL"), late: count("LATE"), early: count("EARLY_LEAVE"), absent: count("ABSENT"), leave: count("LEAVE"), totalDays: own.length };
+    });
+    const count = (status) => rows.filter((item) => item.status === status).length;
+    const byDay = {};
+    rows.forEach((item) => { const day = String(item.attendDate).slice(8, 10); byDay[day] ||= { normal: 0, late: 0, early: 0, absent: 0, leave: 0 }; const key = { NORMAL: "normal", LATE: "late", EARLY_LEAVE: "early", ABSENT: "absent", LEAVE: "leave" }[item.status]; if (key) byDay[day][key] += 1; });
+    return { month, normal: count("NORMAL"), late: count("LATE"), early: count("EARLY_LEAVE"), absent: count("ABSENT"), leave: count("LEAVE"), byDay, employeeDetail };
+  };
+  const hrSalaryDetail = (salary) => ({
+    salary,
+    items: [
+      { itemName: "基本工资", amount: salary.baseSalary, remark: "固定发放" }, { itemName: "岗位工资", amount: salary.postSalary, remark: "按岗位标准" },
+      { itemName: "绩效工资", amount: salary.performanceSalary, remark: "按绩效核算" }, { itemName: "补贴", amount: salary.subsidy, remark: "餐补、交通与通讯" },
+      { itemName: "缺勤扣款", amount: -Number(salary.absentDeduct || 0), remark: `缺勤 ${salary.absentDays || 0} 天` }, { itemName: "社保个人部分", amount: -Number(salary.socialPersonal || 0), remark: "养老、医疗与失业" },
+      { itemName: "公积金个人部分", amount: -Number(salary.fundPersonal || 0), remark: "个人缴费" }, { itemName: "个人所得税", amount: -Number(salary.taxAmount || 0), remark: "七级超额累进税率" },
+    ],
+    socialConfig: clone(db.hrSocial[0]), threshold: 5000, taxLevel: salary.taxLevel, taxRate: salary.taxRate,
+    quickDeduct: db.hrTaxRates.find((item) => item.levelNo === salary.taxLevel)?.quickDeduct || 0,
+  });
+
+  const handleHr = (method, lower, url, params, body, current, size) => {
+    const user = hrCurrentUser();
+    const employeeId = user.employeeId || 2;
+    const paged = (rows) => ok(page(clone(rows), current, size));
+    const idFromUrl = () => (url.match(/\/(\d+)(?:\?|$)/) || [])[1];
+    const removeAt = (key, id) => { removeItem(key, id); return ok(true); };
+
+    if (lower.includes("/auth/login")) {
+      const username = body.username || "admin";
+      const map = username.startsWith("hr") ? { role: "HR", employeeId: 4, deptId: 7, realName: "人事专员王雅" }
+        : username.startsWith("mgr") ? { role: "MANAGER", employeeId: 1, deptId: 2, realName: "研发经理李建" }
+        : username.startsWith("emp") ? { role: "EMPLOYEE", employeeId: 2, deptId: 3, realName: "员工张伟" }
+        : { role: "ADMIN", employeeId: null, deptId: null, realName: "系统管理员" };
+      return ok({ token: "demo-token", userInfo: { userId: 1, username, ...map } });
+    }
+    if (lower.includes("/auth/info")) return ok(clone(user));
+    if (lower.includes("/auth/logout")) return ok(true);
+    if (lower.includes("/file/upload")) return ok({ url: "https://dummyimage.com/240x240/e2e8f0/1e3a8a&text=HR" });
+    if (lower.includes("/export")) return ok("mock-export");
+
+    if (method === "GET" && lower.includes("/dept/tree")) return ok(hrDepartmentTree());
+    if (method === "GET" && (lower.includes("/dept/list") || lower.includes("/dept/parent-options"))) return ok(clone(db.hrDepartments));
+    if (method === "POST" && lower.includes("/dept/save")) {
+      const item = body.id ? updateItem("hrDepartments", body.id, body) : addItem("hrDepartments", { parentId: 1, sortOrder: 99, status: 1, ...body });
+      return ok(item);
+    }
+    if (method === "DELETE" && lower.includes("/dept/")) return removeAt("hrDepartments", idFromUrl());
+
+    if (method === "GET" && lower.includes("/position/page")) return paged(hrFilter(db.hrPositions, params));
+    if (method === "GET" && lower.includes("/position/list")) return ok(clone(db.hrPositions.filter((item) => item.status === 1)));
+    if (method === "POST" && lower.includes("/position/save")) {
+      const dept = db.hrDepartments.find((item) => String(item.id) === String(body.deptId));
+      const fields = { status: 1, ...body, deptName: dept?.deptName || body.deptName || "-" };
+      return ok(body.id ? updateItem("hrPositions", body.id, fields) : addItem("hrPositions", fields));
+    }
+    if (method === "DELETE" && lower.includes("/position/")) return removeAt("hrPositions", idFromUrl());
+
+    if (method === "GET" && lower.includes("/employee/me")) return ok(clone(hrEnrichEmployee(hrEmployee(employeeId) || db.hrEmployees[0])));
+    if (method === "GET" && lower.includes("/employee/page")) return paged(hrFilter(db.hrEmployees.map(hrEnrichEmployee), params));
+    if (method === "GET" && /\/employee\/\d+/.test(lower)) return ok(clone(hrEnrichEmployee(hrEmployee(idFromUrl()) || db.hrEmployees[0])));
+    if (method === "POST" && lower.includes("/employee/save")) {
+      const hireDate = body.hireDate || "2026-09-28";
+      const fields = hrEnrichEmployee({ id: ++idSeq, empNo: `EMP${String(hireDate).slice(0, 4)}${String(db.hrEmployees.length + 1).padStart(3, "0")}`, regularDate: null, status: "PROBATION", ...body });
+      db.hrEmployees.unshift(fields);
+      ["ANNUAL", "SICK", "PERSONAL", "COMPENSATORY"].forEach((leaveType, index) => db.hrLeaveQuotas.push({ id: ++idSeq, employeeId: fields.id, employeeName: fields.name, empNo: fields.empNo, deptName: fields.deptName, year: 2026, leaveType, totalDays: [0, 10, 5, 3][index], usedDays: 0, remainDays: [0, 10, 5, 3][index] }));
+      return ok(fields);
+    }
+    if (method === "POST" && lower.includes("/employee/update")) return ok(updateItem("hrEmployees", body.id, hrEnrichEmployee(body)));
+    if (method === "POST" && lower.includes("/employee/regular")) return ok(updateItem("hrEmployees", body.id, { status: "ACTIVE", regularDate: body.regularDate || "2026-09-28" }));
+    if (method === "POST" && lower.includes("/employee/transfer")) return ok(updateItem("hrEmployees", body.id, hrEnrichEmployee(body)));
+    if (method === "POST" && lower.includes("/employee/resign")) return ok(updateItem("hrEmployees", body.id, { status: "RESIGNED", resignDate: body.resignDate || "2026-09-28", remark: body.remark || "办理离职" }));
+    if (method === "DELETE" && lower.includes("/employee/")) return removeAt("hrEmployees", idFromUrl());
+
+    if (method === "GET" && lower.includes("/attendance/monthly")) return ok(hrMonthly(params.month || "2026-09"));
+    if (method === "GET" && lower.includes("/attendance/appeal/page")) return paged(hrFilter(db.hrAttendance.filter((item) => item.appealStatus !== "NONE"), params));
+    if (method === "GET" && lower.includes("/attendance/me")) return paged(hrFilter(db.hrAttendance.filter((item) => String(item.employeeId) === String(employeeId)), params));
+    if (method === "GET" && lower.includes("/attendance/page")) return paged(hrFilter(db.hrAttendance, params));
+    if (method === "POST" && lower.includes("/attendance/punch")) {
+      let row = db.hrAttendance.find((item) => String(item.employeeId) === String(employeeId) && item.attendDate === "2026-09-28");
+      const emp = hrEmployee(employeeId) || db.hrEmployees[0];
+      if (!row) row = addItem("hrAttendance", { employeeId, employeeName: emp.name, empNo: emp.empNo, deptName: emp.deptName, attendDate: "2026-09-28", checkInTime: "09:18:00", checkOutTime: "", workHours: 0, status: "NORMAL", appealStatus: "NONE" });
+      else if (!row.checkOutTime) Object.assign(row, { checkOutTime: "18:16:00", workHours: 8.97 });
+      return ok(clone(row));
+    }
+    if (method === "POST" && lower.includes("/attendance/appeal/handle")) return ok(updateItem("hrAttendance", body.id, { appealStatus: body.pass ? "APPROVED" : "REJECTED", appealReply: body.reply || body.remark || "已处理" }));
+    if (method === "POST" && lower.includes("/attendance/appeal")) return ok(updateItem("hrAttendance", body.id, { appealStatus: "PENDING", appealReason: body.reason || "申请复核" }));
+
+    if (method === "GET" && lower.includes("/leave/quota/my")) return ok(clone(db.hrLeaveQuotas.filter((item) => String(item.employeeId) === String(employeeId))));
+    if (method === "GET" && lower.includes("/leave/quota/page")) return paged(hrFilter(db.hrLeaveQuotas, params));
+    if (method === "POST" && lower.includes("/leave/quota/save")) {
+      const existing = db.hrLeaveQuotas.find((item) => String(item.employeeId) === String(body.employeeId) && item.leaveType === body.leaveType && String(item.year) === String(body.year || 2026));
+      const emp = hrEmployee(body.employeeId) || db.hrEmployees[0];
+      const fields = { ...body, year: body.year || 2026, employeeName: emp.name, empNo: emp.empNo, deptName: emp.deptName, remainDays: Number(body.totalDays || 0) - Number(body.usedDays || existing?.usedDays || 0) };
+      return ok(existing ? updateItem("hrLeaveQuotas", existing.id, fields) : addItem("hrLeaveQuotas", { usedDays: 0, ...fields }));
+    }
+    if (method === "GET" && lower.includes("/leave/todo")) return paged(hrFilter(db.hrLeaves.filter((item) => user.role === "MANAGER" ? item.status === "PENDING_MANAGER" : item.status === "PENDING_HR"), params));
+    if (method === "GET" && lower.includes("/leave/my")) return paged(hrFilter(db.hrLeaves.filter((item) => String(item.employeeId) === String(employeeId)), params));
+    if (method === "GET" && lower.includes("/leave/page")) return paged(hrFilter(db.hrLeaves, params));
+    if (method === "POST" && lower.includes("/leave/apply")) {
+      const emp = hrEmployee(employeeId) || db.hrEmployees[0];
+      const item = addItem("hrLeaves", { applyNo: "LA" + Date.now(), employeeId, employeeName: emp.name, empNo: emp.empNo, deptName: emp.deptName, status: "PENDING_MANAGER", statusText: hrStatusText.PENDING_MANAGER, applyTime: new Date().toLocaleString(), ...body });
+      return ok(item);
+    }
+    if (method === "POST" && lower.includes("/leave/approve")) {
+      const item = db.hrLeaves.find((row) => String(row.id) === String(body.id)) || db.hrLeaves[0];
+      if (!body.pass) item.status = "REJECTED";
+      else if (item.status === "PENDING_MANAGER") item.status = "PENDING_HR";
+      else item.status = "APPROVED";
+      item.statusText = hrStatusText[item.status];
+      if (item.status === "APPROVED") {
+        const quota = db.hrLeaveQuotas.find((row) => String(row.employeeId) === String(item.employeeId) && row.leaveType === item.leaveType);
+        if (quota) { quota.usedDays = Number(quota.usedDays) + Number(item.leaveDays || 0); quota.remainDays = Number(quota.totalDays) - Number(quota.usedDays); }
+      }
+      return ok(clone(item));
+    }
+    if (method === "POST" && lower.includes("/leave/cancel")) return ok(updateItem("hrLeaves", body.id, { status: "CANCELLED", statusText: hrStatusText.CANCELLED }));
+
+    if (method === "GET" && lower.includes("/salary/tax/rates")) return ok(clone(db.hrTaxRates));
+    if (method === "POST" && lower.includes("/salary/tax/calc")) {
+      const grossSalary = Number(body.baseSalary || 0) + Number(body.postSalary || 0) + Number(body.performanceSalary || 0) + Number(body.subsidy || 0);
+      const absentDeduct = Number((grossSalary / 21.75 * Number(body.absentDays || 0)).toFixed(2));
+      const socialBase = Math.min(37800, Math.max(7350, grossSalary));
+      const socialPersonal = Number((socialBase * 0.105).toFixed(2));
+      const fundPersonal = Number((socialBase * 0.12).toFixed(2));
+      const taxableIncome = Math.max(0, Number((grossSalary - socialPersonal - fundPersonal - 5000).toFixed(2)));
+      const tax = hrTax(taxableIncome);
+      const totalDeduct = Number((absentDeduct + socialPersonal + fundPersonal).toFixed(2));
+      return ok({ grossSalary, absentDeduct, socialPersonal, fundPersonal, totalDeduct, threshold: 5000, ...tax, netSalary: Number((grossSalary - totalDeduct - tax.taxAmount).toFixed(2)) });
+    }
+    if (method === "GET" && lower.includes("/salary/social/list")) return ok(clone(db.hrSocial));
+    if (method === "POST" && lower.includes("/salary/social/save")) return ok(body.id ? updateItem("hrSocial", body.id, body) : addItem("hrSocial", body));
+    if (method === "GET" && lower.includes("/salary/rule/page")) return paged(hrFilter(db.hrSalaryRules, params));
+    if (method === "POST" && lower.includes("/salary/rule/save")) return ok(body.id ? updateItem("hrSalaryRules", body.id, body) : addItem("hrSalaryRules", body));
+    if (method === "GET" && lower.includes("/salary/my")) return paged(db.hrSalaries.filter((item) => String(item.employeeId) === String(employeeId)));
+    if (method === "GET" && /\/salary\/\d+/.test(lower)) return ok(hrSalaryDetail(clone(db.hrSalaries.find((item) => String(item.id) === String(idFromUrl())) || db.hrSalaries[0])));
+    if (method === "GET" && lower.includes("/salary/page")) return paged(hrFilter(db.hrSalaries, params));
+    if (method === "POST" && lower.includes("/salary/generate")) return ok({ created: 0, updated: db.hrSalaries.length, skipped: 0, month: body.month || body.salaryMonth || "2026-09" });
+    if (method === "POST" && lower.includes("/salary/status")) { (body.ids || []).forEach((id) => updateItem("hrSalaries", id, { status: body.status })); return ok({ updated: (body.ids || []).length }); }
+
+    if (method === "GET" && lower.includes("/recruit/board")) return ok({ openPositions: db.hrRecruitPositions.filter((item) => item.status === "OPEN").length, totalPositions: db.hrRecruitPositions.length, totalResumes: db.hrResumes.length, interviewing: db.hrResumes.filter((item) => item.status === "INTERVIEW").length, hired: db.hrResumes.filter((item) => item.status === "HIRED").length, pendingResumes: db.hrResumes.filter((item) => item.status === "PENDING").length, statusDistribution: { PENDING: 1, INTERVIEW: 1, HIRED: 1 }, sourceDistribution: { 招聘网站: 1, 内部推荐: 1, 校园招聘: 1 } });
+    if (method === "GET" && lower.includes("/recruit/position/page")) return paged(hrFilter(db.hrRecruitPositions, params));
+    if (method === "POST" && lower.includes("/recruit/position/save")) { const dept = db.hrDepartments.find((item) => String(item.id) === String(body.deptId)); return ok(body.id ? updateItem("hrRecruitPositions", body.id, { ...body, deptName: dept?.deptName || body.deptName }) : addItem("hrRecruitPositions", { hiredCount: 0, status: "OPEN", ...body, deptName: dept?.deptName || "-" })); }
+    if (method === "DELETE" && lower.includes("/recruit/position/")) return removeAt("hrRecruitPositions", idFromUrl());
+    if (method === "GET" && lower.includes("/recruit/interview/list")) return ok(clone(db.hrInterviews.filter((item) => !params.resumeId || String(item.resumeId) === String(params.resumeId))));
+    if (method === "POST" && lower.includes("/recruit/interview/save")) { const resume = db.hrResumes.find((item) => String(item.id) === String(body.resumeId)); const item = body.id ? updateItem("hrInterviews", body.id, body) : addItem("hrInterviews", { candidateName: resume?.candidateName || "候选人", ...body }); if (resume) { resume.status = "INTERVIEW"; resume.interviewCount = db.hrInterviews.filter((row) => String(row.resumeId) === String(resume.id)).length; } return ok(item); }
+    if (method === "DELETE" && lower.includes("/recruit/interview/")) return removeAt("hrInterviews", idFromUrl());
+    if (method === "GET" && lower.includes("/recruit/resume/page")) return paged(hrFilter(db.hrResumes, params));
+    if (method === "GET" && /\/recruit\/resume\/\d+/.test(lower)) return ok(clone(db.hrResumes.find((item) => String(item.id) === String(idFromUrl())) || db.hrResumes[0]));
+    if (method === "POST" && lower.includes("/recruit/resume/save")) { const recruit = db.hrRecruitPositions.find((item) => String(item.id) === String(body.recruitId)); return ok(body.id ? updateItem("hrResumes", body.id, body) : addItem("hrResumes", { status: "PENDING", interviewCount: 0, positionName: recruit?.positionName || "-", deptName: recruit?.deptName || "-", ...body })); }
+    if (method === "DELETE" && lower.includes("/recruit/resume/")) return removeAt("hrResumes", idFromUrl());
+    if (method === "POST" && lower.includes("/recruit/hire")) {
+      const resume = db.hrResumes.find((item) => String(item.id) === String(body.resumeId)) || db.hrResumes[0];
+      const employee = hrEnrichEmployee({ id: ++idSeq, empNo: `EMP2026${String(db.hrEmployees.length + 1).padStart(3, "0")}`, name: resume.candidateName, gender: resume.gender, phone: resume.phone, email: resume.email, education: resume.education, school: resume.school, major: resume.major, deptId: body.deptId, positionId: body.positionId, hireDate: body.hireDate || "2026-10-08", regularDate: null, status: "PROBATION", remark: "由招聘录用转入" });
+      db.hrEmployees.unshift(employee); resume.status = "HIRED"; const recruit = db.hrRecruitPositions.find((item) => String(item.id) === String(resume.recruitId)); if (recruit) recruit.hiredCount = Number(recruit.hiredCount || 0) + 1;
+      return ok(employee);
+    }
+
+    if (method === "GET" && lower.includes("/stats/overview")) return ok(hrOverview());
+    if (method === "GET" && lower.includes("/stats/dept-distribution")) return ok(db.hrDepartments.map((dept) => ({ name: dept.deptName, value: db.hrEmployees.filter((employee) => String(employee.deptId) === String(dept.id) && employee.status !== "RESIGNED").length })).filter((item) => item.value > 0));
+    if (method === "GET" && lower.includes("/stats/education")) return ok(["博士", "硕士", "本科", "大专"].map((name) => ({ name, value: db.hrEmployees.filter((item) => item.education === name && item.status !== "RESIGNED").length })).filter((item) => item.value > 0));
+    if (method === "GET" && lower.includes("/stats/tenure")) return ok([{ name: "1年以内", value: 1 }, { name: "1-3年", value: 3 }, { name: "3-5年", value: 2 }, { name: "5-10年", value: 2 }, { name: "10年以上", value: 0 }]);
+    if (method === "GET" && lower.includes("/stats/attendance-trend")) return ok({ months: ["2026-07", "2026-08", "2026-09"], series: [{ name: "正常", data: [128, 136, db.hrAttendance.filter((item) => item.status === "NORMAL").length] }, { name: "迟到", data: [8, 6, db.hrAttendance.filter((item) => item.status === "LATE").length] }, { name: "早退", data: [3, 4, db.hrAttendance.filter((item) => item.status === "EARLY_LEAVE").length] }, { name: "缺勤", data: [2, 1, db.hrAttendance.filter((item) => item.status === "ABSENT").length] }, { name: "请假", data: [5, 7, db.hrAttendance.filter((item) => item.status === "LEAVE").length] }] });
+    if (method === "GET" && lower.includes("/stats/leave-type")) return ok(["ANNUAL", "SICK", "PERSONAL", "COMPENSATORY"].map((type) => ({ name: { ANNUAL: "年假", SICK: "病假", PERSONAL: "事假", COMPENSATORY: "调休" }[type], value: db.hrLeaves.filter((item) => item.leaveType === type).length })));
+    if (method === "GET" && lower.includes("/stats/salary-range")) return ok([{ name: "8000元以下", value: 0 }, { name: "8000-12000元", value: 1 }, { name: "12000-16000元", value: 2 }, { name: "16000-20000元", value: 1 }, { name: "20000-30000元", value: 0 }, { name: "30000元以上", value: 0 }]);
+    if (method === "GET" && lower.includes("/stats/dept-salary")) return ok(Object.values(db.hrSalaries.reduce((acc, item) => { acc[item.deptName] ||= { name: item.deptName, value: 0 }; acc[item.deptName].value += Number(item.netSalary || 0); return acc; }, {})));
+
+    return ok(null);
+  };
+
   const handle = (method, rawUrl, requestBody) => {
     const urlObj = new URL(rawUrl, location.origin);
     const url = urlObj.pathname + urlObj.search;
@@ -398,6 +712,7 @@
     const key = mapResource(url);
     const current = Number(params.current || params.page || 1);
     const size = Number(params.size || params.pageSize || 10);
+    if (project === "hr-management") return handleHr(method, lower, url, params, body, current, size);
     const plateNorm = (value = "") => String(value).replace(/[·\-\s]/g, "").toUpperCase();
     const calcParkingFee = (record) => {
       const entry = new Date(String(record.entryTime).replace(/-/g, "/")).getTime();

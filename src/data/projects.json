@@ -1,5 +1,14 @@
 [
   {
+    "name": "Spring Boot",
+    "title": "企业人事管理系统 · 工程复现版",
+    "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现组织架构、员工档案、考勤、请假、薪资、招聘和统计分析。",
+    "detail": "项目围绕企业人事全流程建立业务闭环，覆盖四类角色、部门数据范围、员工生命周期、考勤申诉、两级请假审批、七级累进个税及招聘录用。文章按工程复现顺序说明数据模型、权限边界、核心算法、关键代码与运行验证。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/hr-management-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/hr-management"
+  },
+  {
     "name": "Django",
     "title": "个人财务记账管理系统 · 工程复现版",
     "description": "基于 Django、MySQL 与 Vue 3，实现多账户记账、两级分类、预算预警、周期账单和多维统计报表。",

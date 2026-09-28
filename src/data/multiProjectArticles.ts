@@ -335,6 +335,179 @@ rule.next_run_date = cursor`],
     ],
     result: "完成复现后，普通用户可以从账户初始化开始，新增带分类和标签的收支记录，观察余额同步更新；设置预算后，新增支出会触发预警计算；执行周期规则能够补齐遗漏账单；看板与报表会基于同一批数据展示净资产、月度结余、消费分类和趋势。管理员还可以维护账号、查看登录日志和系统配置。建议验证时使用“新增账单—修改金额—删除账单—预算预警—周期补单—报表核对”的顺序，重点确认各页面数字始终一致。",
   },
+  {
+    slug: "hr-management-reproduction",
+    projectUrl: "https://github.com/yishuo299/hr-management",
+    eyebrow: "工程复现版 · Spring Boot",
+    title: "企业人事管理系统：从组织架构到薪资招聘的完整复现",
+    intro: "这是一个覆盖企业人力资源主要业务流程的前后端分离项目。系统以部门树和员工档案为基础，向外连接考勤、请假、薪资和招聘模块，并通过 JWT、角色权限和部门数据范围保证不同岗位只能处理职责内的数据。本文按可以落地复现的顺序，说明工程结构、数据库、运行配置、核心设计与关键实现。",
+    modules: [
+      ["登录与权限", "JWT 认证覆盖管理员、人事、部门经理和普通员工四类角色，并在后端完成接口与数据范围校验。"],
+      ["组织架构", "维护多级部门树与岗位标准，移动部门时检测循环引用，删除前检查下级部门、岗位和员工。"],
+      ["员工档案", "完成入职、转正、调岗、离职全生命周期；入职自动生成工号、请假额度和薪资规则。"],
+      ["考勤管理", "自动识别上下班打卡，根据时间判定正常、迟到和早退，支持月度汇总与异常申诉复核。"],
+      ["请假审批", "提交时校验额度与日期重叠，按经理、HR 两级流转；最终通过后扣减额度并回写考勤。"],
+      ["薪资核算", "联动缺勤天数、社保公积金上下限和七级累进税率，生成应发、扣款、个税与实发明细。"],
+      ["招聘闭环", "覆盖招聘职位、候选人简历、面试记录和录用；录用后直接建立员工档案与薪资规则。"],
+      ["统计报表", "汇总人员结构、学历司龄、考勤趋势、请假类型、薪资区间和部门薪资等管理指标。"],
+      ["导出与文件", "员工和薪资支持 Excel 导出，头像与简历附件通过统一上传接口管理，并限制文件类型和大小。"],
+    ],
+    structure: `hr-management/
+├─ db/
+│  └─ init.sql                       # 14 张业务表与可重置演示数据
+├─ backend/
+│  ├─ pom.xml                        # Spring Boot / MyBatis-Plus / JWT / POI
+│  └─ src/main/
+│     ├─ java/com/grad/hr/
+│     │  ├─ common/                  # 响应体、JWT、用户上下文、异常与 Excel
+│     │  ├─ config/                  # 拦截器、跨域、分页配置
+│     │  ├─ controller/              # REST 接口与角色入口
+│     │  ├─ entity/                  # 组织、员工、考勤、请假、薪资、招聘实体
+│     │  ├─ mapper/                  # MyBatis-Plus Mapper
+│     │  └─ service/                 # 审批、薪资、招聘等业务规则
+│     └─ resources/
+│        ├─ application.yml          # 环境变量化数据库配置
+│        └─ static/                  # Vue 构建产物
+├─ frontend/
+│  ├─ src/api/                       # Axios 请求与下载封装
+│  ├─ src/router/                    # Hash 路由和角色守卫
+│  ├─ src/store/                     # Pinia 登录状态
+│  └─ src/views/                     # 组织、人事、考勤、薪资、招聘、报表页面
+├─ .env.example                      # 不含真实凭据的配置样例
+├─ start.bat
+└─ stop.bat`,
+    stack: [
+      "Java 8", "Spring Boot 2.7.18", "MyBatis-Plus 3.5.3.1", "MySQL", "java-jwt 4.4",
+      "Apache POI", "Hutool", "Vue 3.5", "Vue Router", "Pinia", "Element Plus", "Axios", "ECharts", "Day.js", "Vite 5"
+    ],
+    run: [
+      "准备 JDK 8、Maven 3.6+、Node.js 18+ 和 MySQL 8+，克隆项目后进入根目录。",
+      "执行 mysql -u root -p --default-character-set=utf8mb4 < db/init.sql，初始化 hr_management 数据库与完整演示数据；该脚本会重建数据库。",
+      "参考 .env.example 设置 HR_DB_USERNAME、HR_DB_PASSWORD 与至少 32 位的 HR_JWT_SECRET，不要把真实凭据写入仓库。",
+      "如需修改页面，进入 frontend 执行 npm install 和 npm run build；Vite 会把产物写入后端 static 目录。",
+      "进入 backend 执行 mvn spring-boot:run，或在 Windows 下从根目录运行 start.bat。",
+      "浏览器访问 http://localhost:8085/，使用登录页的演示角色入口进入对应工作台。",
+      "先用人事角色验证入职、转正与调岗，再用员工、经理、人事依次验证请假申请和两级审批。",
+      "最后生成月度薪资，核对应发、缺勤扣款、社保公积金、个税和实发结果，并验证招聘录用是否新增员工。",
+    ],
+    snippets: [
+      ["环境变量化数据库连接", "在 application.yml 中用 Spring 占位符读取运行环境变量，并保留仅适合本地开发的无密码默认值。", "避免把数据库密码写入公开仓库，同时让不同部署环境无需改动源码。", `spring:
+  datasource:
+    url: \${HR_DB_URL:jdbc:mysql://localhost:3306/hr_management}
+    username: \${HR_DB_USERNAME:root}
+    password: \${HR_DB_PASSWORD:}`],
+      ["JWT 创建与校验", "登录成功后把用户、角色、员工和部门编号写入 Token；拦截器验证签名后建立当前请求的用户上下文。", "后续服务可以统一读取身份并实施角色权限和部门数据范围控制。", `return JWT.create()
+    .withClaim("userId", userId)
+    .withClaim("role", role)
+    .withClaim("employeeId", employeeId)
+    .withClaim("deptId", deptId)
+    .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE_MILLIS))
+    .sign(Algorithm.HMAC256(SECRET));`],
+      ["部门树组装", "先按 parentId 对部门分组，再从根部门开始递归装配 children。", "数据库仍保持简单的自关联结构，前端却能直接渲染多级组织树。", `Map<Long, List<SysDepartment>> groups = all.stream()
+    .collect(Collectors.groupingBy(d -> d.getParentId() == null ? 0L : d.getParentId()));
+return buildTree(groups, 0L);`],
+      ["部门循环引用检测", "编辑部门父级前沿 parentId 向上遍历，并使用 visited 集合防止已有异常数据造成死循环。", "阻止把部门移动到自身或后代节点下，保证组织树始终为无环结构。", `Set<Long> visited = new HashSet<>();
+Long cursor = parentId;
+while (cursor != null && cursor != 0) {
+    if (cursor.equals(id) || !visited.add(cursor)) {
+        throw new BusinessException("部门层级存在循环引用");
+    }
+    SysDepartment parent = departmentMapper.selectById(cursor);
+    cursor = parent == null ? 0L : parent.getParentId();
+}`],
+      ["员工编号自动生成", "用入职年份组成 EMPyyyy 前缀，再根据已有记录寻找三位流水号，并在写入前再次确认唯一。", "入职登记不依赖人工维护工号，年度内编号连续且可读。", `String prefix = "EMP" + hireDate.format(DateTimeFormatter.ofPattern("yyyy"));
+long seq = employeeMapper.selectCount(
+    Wrappers.<HrEmployee>lambdaQuery().likeRight(HrEmployee::getEmpNo, prefix)) + 1;
+do {
+    no = prefix + String.format("%03d", seq++);
+} while (employeeMapper.selectCount(
+    Wrappers.<HrEmployee>lambdaQuery().eq(HrEmployee::getEmpNo, no)) > 0);`],
+      ["入职事务初始化", "员工写入后，在同一事务内初始化当年四类请假额度和薪资规则。", "确保员工档案、额度和薪资标准要么全部建立，要么整体回滚，不留下半成品数据。", `@Transactional(rollbackFor = Exception.class)
+public HrEmployee onboard(HrEmployee emp) {
+    emp.setEmpNo(generateEmpNo(emp.getHireDate()));
+    employeeMapper.insert(emp);
+    initQuota(emp);
+    initSalaryRule(emp);
+    return emp;
+}`],
+      ["年假额度按司龄计算", "用入职日期到当前日期的完整年数划分四个区间。", "新员工额度初始化和后续额度管理都遵循同一套规则。", `long years = ChronoUnit.YEARS.between(hireDate, LocalDate.now());
+if (years < 1) return BigDecimal.ZERO;
+if (years < 3) return new BigDecimal("5");
+if (years < 5) return new BigDecimal("10");
+return new BigDecimal("15");`],
+      ["打卡状态自动判定", "首次打卡写入上班时间并和 09:30 比较，第二次写入下班时间并和 18:00 比较。", "考勤状态来自统一规则而非前端选择，为月度汇总和薪资缺勤扣款提供可信输入。", `if (record.getCheckInTime() == null) {
+    record.setCheckInTime(now.format(HM));
+    record.setStatus(now.toLocalTime().isAfter(WORK_START) ? "LATE" : "NORMAL");
+} else {
+    record.setCheckOutTime(now.format(HM));
+    if (now.toLocalTime().isBefore(WORK_END) && "NORMAL".equals(record.getStatus())) {
+        record.setStatus("EARLY_LEAVE");
+    }
+}`],
+      ["请假冲突与额度校验", "提交申请前查询同一员工日期区间有交集的有效申请，并读取对应年度和类型的剩余额度。", "避免重复请假和超额请假进入审批流，减少后续撤销和人工核对。", `long overlap = leaveMapper.selectCount(Wrappers.<HrLeaveApply>lambdaQuery()
+    .eq(HrLeaveApply::getEmployeeId, employeeId)
+    .le(HrLeaveApply::getStartDate, endDate)
+    .ge(HrLeaveApply::getEndDate, startDate)
+    .notIn(HrLeaveApply::getStatus, "REJECTED", "CANCELLED"));
+if (overlap > 0) throw new BusinessException("请假日期与已有申请重叠");
+if (remain.compareTo(days) < 0) throw new BusinessException("请假额度不足");`],
+      ["经理到 HR 的两级审批", "根据当前申请状态和登录角色决定下一状态；经理只处理本部门范围，HR 才能完成最终审批。", "审批职责清晰，不能跳级或重复审批，并为驳回、取消保留完整状态。", `if ("PENDING_MANAGER".equals(apply.getStatus())) {
+    requireRole("MANAGER", "ADMIN");
+    apply.setStatus(approved ? "PENDING_HR" : "REJECTED");
+} else if ("PENDING_HR".equals(apply.getStatus())) {
+    requireRole("HR", "ADMIN");
+    apply.setStatus(approved ? "APPROVED" : "REJECTED");
+    if (approved) approveFinal(apply);
+}`],
+      ["审批通过联动考勤", "HR 最终同意后扣减请假额度，并逐日为工作日写入 LEAVE 考勤记录。", "请假、考勤和后续薪资核算共享同一事实，避免三个模块的天数不一致。", `quota.setUsedDays(quota.getUsedDays().add(apply.getLeaveDays()));
+quotaMapper.updateById(quota);
+for (LocalDate d = apply.getStartDate(); !d.isAfter(apply.getEndDate()); d = d.plusDays(1)) {
+    if (d.getDayOfWeek().getValue() <= 5) {
+        saveLeaveAttendance(apply.getEmployeeId(), d, apply.getId());
+    }
+}`],
+      ["缺勤扣款与社保基数", "先计算应发工资，再按 21.75 个计薪日扣除缺勤；社保基数限制在配置的上下限内。", "薪资结果能够真实反映考勤变化，并避免缴费基数低于下限或超过上限。", `BigDecimal gross = base.add(post).add(performance).add(subsidy);
+BigDecimal absentDeduct = gross.divide(new BigDecimal("21.75"), 8, RoundingMode.HALF_UP)
+    .multiply(absentDays).setScale(2, RoundingMode.HALF_UP);
+BigDecimal socialBase = gross.max(config.getSocialBaseMin()).min(config.getSocialBaseMax());`],
+      ["七级累进个税", "按应纳税所得额从税率表匹配适用区间，再计算税率乘所得额减速算扣除数。", "工资跨度较大时仍按标准税率表计算，而不是使用简单固定比例。", `for (HrTaxRate rate : rates) {
+    boolean aboveMin = taxable.compareTo(rate.getMinIncome()) > 0;
+    boolean belowMax = rate.getMaxIncome() == null || taxable.compareTo(rate.getMaxIncome()) <= 0;
+    if (aboveMin && belowMax) {
+        return taxable.multiply(rate.getTaxRate()).subtract(rate.getQuickDeduct())
+            .max(BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+    }
+}`],
+      ["调岗同步薪资规则", "员工部门和岗位更新后，查询当前启用的薪资规则并按新岗位标准重新计算岗位工资。", "组织调整不仅改变档案展示，也会同步影响后续薪资生成。", `e.setDeptId(deptId);
+e.setPositionId(positionId);
+employeeMapper.updateById(e);
+HrSalaryRule rule = findActiveRule(id);
+if (rule != null) {
+    rule.setPostSalary(scale(pos.getBaseSalary().multiply(new BigDecimal("0.28"))));
+    salaryRuleMapper.updateById(rule);
+}`],
+      ["招聘录用转员工", "录用时把候选人基础资料、目标部门、岗位和入职日期映射为员工实体，再调用统一 onboard 服务。", "招聘不止修改简历状态，而是与员工、请假额度和薪资规则形成真正业务闭环。", `HrEmployee emp = new HrEmployee();
+emp.setName(resume.getCandidateName());
+emp.setDeptId(finalDept);
+emp.setPositionId(finalPosition);
+emp.setHireDate(hireDate);
+emp.setStatus("PROBATION");
+HrEmployee created = employeeService.onboard(emp);
+resume.setStatus("HIRED");
+resumeMapper.updateById(resume);`],
+      ["前端统一响应处理", "Axios 请求拦截器携带 hr_token，响应拦截器检查业务 code，401 时清理状态并返回登录页。", "所有业务页面共享一致的认证、错误提示和登录失效处理。", `request.interceptors.request.use(config => {
+  const token = localStorage.getItem('hr_token')
+  if (token) config.headers.Authorization = 'Bearer ' + token
+  return config
+})
+request.interceptors.response.use(res => {
+  const body = res.data
+  if (body.code !== 200) return Promise.reject(new Error(body.msg))
+  return body
+})`],
+    ],
+    result: "完成复现后，管理员和人事可以维护组织、岗位和员工档案，处理考勤申诉、请假审批、薪资生成与招聘流程；部门经理只能查看本部门及下属部门并完成经理级审批；普通员工可以打卡、提交申诉与请假、查看个人薪资和档案。建议按“新员工入职—建立额度与薪资规则—每日打卡—提交请假—经理审批—HR 审批—生成薪资—候选人录用”的顺序验证，重点核对员工数量、额度、考勤、薪资和招聘人数是否同步变化。",
+  },
 ];
 
 export const getMultiProjectArticle = (slug: string) => multiProjectArticles.find((item) => item.slug === slug);

@@ -13,7 +13,7 @@ export type ProjectExperience = {
   description: string;
   articleUrl: string;
   projectUrl: string;
-  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking" | "finance";
+  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking" | "finance" | "hr";
   accent: string;
   roles: ExperienceRole[];
   stack: string[];
@@ -42,6 +42,30 @@ export type ProjectExperience = {
 };
 
 export const projectExperiences: ProjectExperience[] = [
+  {
+    slug: "hr-management",
+    title: "企业人事管理系统",
+    shortTitle: "人事管理",
+    description: "复刻原项目藏青商务后台：组织架构、员工全生命周期、考勤申诉、两级请假审批、薪资核算与招聘录用闭环。",
+    articleUrl: "/projects/hr-management-reproduction/",
+    projectUrl: "https://github.com/yishuo299/hr-management",
+    ui: "hr",
+    accent: "#1e3a8a",
+    stack: ["Java", "Spring Boot", "MyBatis-Plus", "MySQL", "JWT", "Vue 3", "Pinia", "Element Plus", "ECharts"],
+    roles: [
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "数据概览", menu: ["数据概览", "组织架构", "员工档案", "考勤管理", "请假审批", "薪资核算", "招聘管理", "统计报表"] },
+      { key: "hr", label: "测试人事专员", name: "人事专员王雅", active: "员工档案", menu: ["数据概览", "组织架构", "员工档案", "考勤管理", "请假审批", "薪资核算", "招聘管理", "统计报表"] },
+      { key: "manager", label: "测试部门经理", name: "研发经理李建", active: "待我审批", menu: ["数据概览", "部门员工", "部门考勤", "待我审批", "招聘面试"] },
+      { key: "employee", label: "测试普通员工", name: "员工张伟", active: "我的考勤", menu: ["数据概览", "我的考勤", "我的请假", "我的薪资", "我的档案"] },
+    ],
+    cards: [["在职员工", "26"], ["试用期", "3"], ["待审批请假", "5"], ["开放职位", "6"]],
+    panels: [
+      { title: "人力资源数据概览", subtitle: "员工、考勤、薪资、招聘数据由同一组前端演示数据联动计算", type: "chart" },
+      { title: "员工全生命周期", subtitle: "支持入职、转正、调岗、离职及薪资规则同步", type: "table" },
+    ],
+    columns: ["员工", "部门 / 岗位", "入职日期", "状态"],
+    rows: [["张伟", "平台开发组 / Java 工程师", "2022-03-15", "在职"], ["刘洋", "数据智能组 / 数据工程师", "2024-07-01", "在职"], ["林晓", "质量保障部 / 测试工程师", "2026-09-01", "试用期"], ["陈静", "人力资源部 / 招聘专员", "2023-05-18", "休假中"]],
+  },
   {
     slug: "personal-finance",
     title: "个人财务记账管理系统",

@@ -123,6 +123,15 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
         admin: { hash: "/users", local: { pf_token: "demo-token", pf_user: { id: 1, username: "admin", realName: "系统管理员", role: "ADMIN", status: 1 } } },
       },
     },
+    "hr-management": {
+      mode: "hash",
+      roles: {
+        admin: { hash: "/dashboard", local: { hr_token: "demo-token", hr_user: { userId: 1, username: "admin", realName: "系统管理员", role: "ADMIN", employeeId: null, deptId: null } } },
+        hr: { hash: "/employee/list", local: { hr_token: "demo-token", hr_user: { userId: 2, username: "hr01", realName: "人事专员王雅", role: "HR", employeeId: 4, deptId: 7 } } },
+        manager: { hash: "/leave/todo", local: { hr_token: "demo-token", hr_user: { userId: 3, username: "mgr01", realName: "研发经理李建", role: "MANAGER", employeeId: 1, deptId: 2 } } },
+        employee: { hash: "/my/attendance", local: { hr_token: "demo-token", hr_user: { userId: 4, username: "emp01", realName: "员工张伟", role: "EMPLOYEE", employeeId: 2, deptId: 3 } } },
+      },
+    },
     "research-management": {
       mode: "static",
       roles: {
@@ -168,7 +177,7 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
       if (!roleConfig) return;
       buttons.forEach((item) => item.classList.toggle("active", item === button));
       if (current) current.textContent = button.textContent ?? "";
-      ["token", "userInfo", "user", "rolePermissionMap", "roleEdits", "pf_token", "pf_user"].forEach((name) => {
+      ["token", "userInfo", "user", "rolePermissionMap", "roleEdits", "pf_token", "pf_user", "hr_token", "hr_user"].forEach((name) => {
         window.localStorage.removeItem(name);
         window.sessionStorage.removeItem(name);
       });
