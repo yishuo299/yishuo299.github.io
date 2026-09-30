@@ -1,4 +1,8 @@
+import { hotelBookingArticle, propertyManagementArticle } from "./hotelPropertyArticleData";
+
 export const multiProjectArticles = [
+  hotelBookingArticle,
+  propertyManagementArticle,
   {
     slug: "campus-marketplace-reproduction",
     projectUrl: "https://github.com/yishuo299/campus-marketplace",

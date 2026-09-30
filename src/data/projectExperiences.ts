@@ -13,7 +13,7 @@ export type ProjectExperience = {
   description: string;
   articleUrl: string;
   projectUrl: string;
-  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking" | "finance" | "hr";
+  ui: "market" | "medical" | "library" | "movie" | "face" | "course" | "equipment" | "parking" | "finance" | "hr" | "hotel" | "property";
   accent: string;
   roles: ExperienceRole[];
   stack: string[];
@@ -42,6 +42,34 @@ export type ProjectExperience = {
 };
 
 export const projectExperiences: ProjectExperience[] = [
+  {
+    slug: "hotel-booking", title: "酒店客房预订管理系统", shortTitle: "酒店预订", ui: "hotel", accent: "#b8860b",
+    description: "完整模拟房型定价、客房房态、预订冲突检查、入住换房、消费结算、退房清洁与经营报表。",
+    articleUrl: "/projects/hotel-booking-reproduction/", projectUrl: "https://github.com/yishuo299/hotel-booking",
+    stack: ["Java", "Spring Boot", "MyBatis-Plus", "MySQL", "JWT", "Vue 3", "Element Plus", "ECharts"],
+    roles: [
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "经营概览", menu: ["经营概览", "房态日历图", "预订管理", "入住 / 退房", "账单与收费", "客房管理", "房型与房价", "价格日历", "客人档案", "清洁管理", "统计报表"] },
+      { key: "frontdesk", label: "测试前台", name: "前台王秀兰", active: "预订管理", menu: ["经营概览", "房态日历图", "预订管理", "入住 / 退房", "账单与收费", "客房管理", "客人档案", "清洁管理", "统计报表"] },
+      { key: "guest", label: "测试客人", name: "客人张伟", active: "房型浏览", menu: ["经营概览", "房型浏览", "我的预订", "我的账单"] }
+    ],
+    cards: [["客房总数", "7"], ["在住房间", "1"], ["今日预订", "3"], ["今日营收", "¥12,860"]],
+    panels: [{ title: "房态日历", subtitle: "按日期检查空闲、预订、入住、清洁与维护状态", type: "chart" }, { title: "预订与入住闭环", subtitle: "预订、分房、入住、消费、结算和清洁状态同步", type: "table" }],
+    columns: ["预订单", "客人", "房间", "状态"], rows: [["BK20260930001", "张伟", "302", "已预订"], ["BK20260929002", "刘芳", "303", "已入住"], ["BK20260928003", "陈晓明", "401", "已预订"]]
+  },
+  {
+    slug: "property-management", title: "社区物业管理与报修系统", shortTitle: "物业管理", ui: "property", accent: "#16a34a",
+    description: "完整模拟楼栋房屋、业主绑定、报修工单、物业费、停车位、公告通知、访客预约与统计分析。",
+    articleUrl: "/projects/property-management-reproduction/", projectUrl: "https://github.com/yishuo299/property-management",
+    stack: ["Python", "Django", "MySQL", "JWT", "Vue 3", "Pinia", "Element Plus", "ECharts"],
+    roles: [
+      { key: "admin", label: "测试管理员", name: "系统管理员", active: "统计报表", menu: ["首页", "统计报表", "楼栋单元", "房屋管理", "业主管理", "报修工单", "物业费", "停车位", "公告管理", "访客登记"] },
+      { key: "staff", label: "测试物业员工", name: "维修员王师傅", active: "我的工单", menu: ["首页", "我的工单", "公告通知", "个人中心"] },
+      { key: "owner", label: "测试业主", name: "业主张伟", active: "我的报修", menu: ["首页", "我的报修", "在线报修", "我的账单", "我的车位", "公告通知", "访客预约"] }
+    ],
+    cards: [["楼栋", "2"], ["房屋", "3"], ["待处理报修", "2"], ["物业费收缴率", "87.2%"]],
+    panels: [{ title: "社区运营概览", subtitle: "房屋、业主、工单、费用、车位和访客数据联动", type: "chart" }, { title: "报修工单状态机", subtitle: "从提交、派单、处理、完成到业主评价", type: "table" }],
+    columns: ["工单", "位置", "类型", "状态"], rows: [["BX202609300001", "春晖苑 1201", "水电", "待受理"], ["BX202609290002", "春晖苑 0802", "家电", "处理中"], ["BX202609260003", "朗月苑 1503", "门窗", "已完成"]]
+  },
   {
     slug: "hr-management",
     title: "企业人事管理系统",

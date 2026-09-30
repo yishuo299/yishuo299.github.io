@@ -1,0 +1,1 @@
+import{o as t,c as a,a as c,i as s,x as r}from"./index-Cbt4MJg0.js";const o={class:"page-title"},i={key:0,class:"page-desc"},p={__name:"PageHeader",props:{title:{type:String,required:!0},desc:{type:String,default:""}},setup(e){return(n,d)=>(t(),a("div",null,[c("h2",o,s(e.title),1),e.desc?(t(),a("p",i,s(e.desc),1)):r("",!0)]))}};export{p as _};

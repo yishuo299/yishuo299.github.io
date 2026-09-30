@@ -1,6 +1,24 @@
 [
   {
     "name": "Spring Boot",
+    "title": "酒店客房预订管理系统 · 工程复现版",
+    "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现酒店预订、入住、消费、结算和房态运营闭环。",
+    "detail": "项目围绕房型定价、日期区间冲突、房态日历、入住换房、动态房价和退房账单展开，并提供三角色权限和经营统计。",
+    "tags": ["Spring Boot", "Vue"],
+    "articleUrl": "/projects/hotel-booking-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/hotel-booking"
+  },
+  {
+    "name": "Django",
+    "title": "社区物业管理与报修系统 · 工程复现版",
+    "description": "基于 Django、MySQL 与 Vue 3，实现房产、业主、报修、收费、停车、公告和访客管理。",
+    "detail": "项目以社区物业日常运营为主线，覆盖三类角色、报修状态机、物业费批量生成与分次缴费、车位绑定和访客出入闭环。",
+    "tags": ["Python", "Django", "Vue"],
+    "articleUrl": "/projects/property-management-reproduction/",
+    "projectUrl": "https://github.com/yishuo299/property-management"
+  },
+  {
+    "name": "Spring Boot",
     "title": "企业人事管理系统 · 工程复现版",
     "description": "基于 Spring Boot、MyBatis-Plus、MySQL 与 Vue 3，实现组织架构、员工档案、考勤、请假、薪资、招聘和统计分析。",
     "detail": "项目围绕企业人事全流程建立业务闭环，覆盖四类角色、部门数据范围、员工生命周期、考勤申诉、两级请假审批、七级累进个税及招聘录用。文章按工程复现顺序说明数据模型、权限边界、核心算法、关键代码与运行验证。",

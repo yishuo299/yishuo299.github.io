@@ -51,6 +51,22 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
   let nativeCleanup: () => void = () => {};
 
   const roleConfigs = {
+    "hotel-booking": {
+      mode: "hash",
+      roles: {
+        admin: { hash: "/dashboard", local: { hotel_token: "demo-token", hotel_user: { id: 1, username: "admin", realName: "系统管理员", role: "ADMIN", guestId: null } } },
+        frontdesk: { hash: "/booking", local: { hotel_token: "demo-token", hotel_user: { id: 2, username: "front01", realName: "前台王秀兰", role: "FRONTDESK", guestId: null } } },
+        guest: { hash: "/browse", local: { hotel_token: "demo-token", hotel_user: { id: 10, username: "guest01", realName: "客人张伟", role: "GUEST", guestId: 1 } } },
+      },
+    },
+    "property-management": {
+      mode: "hash",
+      roles: {
+        admin: { hash: "/dashboard", local: { token: "demo-token", userInfo: { id: 1, username: "admin", realName: "系统管理员", role: "ADMIN" } } },
+        staff: { hash: "/my-orders", local: { token: "demo-token", userInfo: { id: 2, username: "staff01", realName: "维修员王师傅", role: "STAFF" } } },
+        owner: { hash: "/my-repairs", local: { token: "demo-token", userInfo: { id: 10, username: "owner01", realName: "业主张伟", role: "OWNER", ownerId: 1 } } },
+      },
+    },
     "campus-marketplace": {
       mode: "hash",
       roles: {
@@ -177,7 +193,7 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
       if (!roleConfig) return;
       buttons.forEach((item) => item.classList.toggle("active", item === button));
       if (current) current.textContent = button.textContent ?? "";
-      ["token", "userInfo", "user", "rolePermissionMap", "roleEdits", "pf_token", "pf_user", "hr_token", "hr_user"].forEach((name) => {
+      ["token", "userInfo", "user", "rolePermissionMap", "roleEdits", "pf_token", "pf_user", "hr_token", "hr_user", "hotel_token", "hotel_user"].forEach((name) => {
         window.localStorage.removeItem(name);
         window.sessionStorage.removeItem(name);
       });
