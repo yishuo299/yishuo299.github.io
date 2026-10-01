@@ -15,6 +15,7 @@ export interface Props {
 
 const { title = SITE_TITLE, description = SITE_DESCRIPTION, image, ogType = "website", sideBarActiveItemID } = Astro.props;
 const isHome = sideBarActiveItemID === "home";
+const staticBackground = /^\/(projects|experience)(\/|$)/.test(Astro.url.pathname);
 const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android"];
 ---
 
@@ -24,7 +25,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
     <BaseHead title={title} description={description} image={image} ogType={ogType} />
     {TRANSITION_API && <ViewTransitions />}
   </head>
-  <body class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
+  <body data-static-background={staticBackground ? "true" : undefined} class:list={[isHome ? "home-page" : "inner-page", { "archive-loading-active": isHome }]}>
     <div class="scene galactic-scene" id="scene" aria-hidden="true" style="--sky-top:#020208;--sky-mid:#030513;--sky-bottom:#05081c;--stars-opacity:.8">
       <canvas class="galactic-background" id="galacticBackground"></canvas>
       <div class="cursor-aura" id="cursorAura"></div>
@@ -88,6 +89,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         initializedScene = nextScene;
         document.body.classList.remove("modal-open", "cosmic-transitioning", "motion-warmup", "heavy-warmup");
         const controller = new AbortController();
+        const staticBackground = document.body.dataset.staticBackground === "true";
         const timers: number[] = [];
         const intervals: number[] = [];
         let motionFrame = 0;
@@ -310,7 +312,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           }
         };
         const tickMotion = (now: number) => {
-          if (cancelled) return;
+          if (cancelled || staticBackground) return;
           if (document.querySelector("[data-native-root]") && burstPoints.length === 0) {
             motionFrame = 0;
             return;
@@ -324,6 +326,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         window.addEventListener("resize", resizeMotionSurface, { signal: controller.signal, passive: true });
         window.addEventListener("pointermove", (event) => { pointerX = event.clientX; pointerY = event.clientY; pointerAwake = true; }, { signal: controller.signal, passive: true });
         window.addEventListener("archive:burst", (event) => {
+          if (staticBackground) return;
           const detail = (event as CustomEvent<{ x?: number; y?: number; color?: string }>).detail ?? {};
           emitBurst(detail.x ?? viewportWidth * 0.5, detail.y ?? viewportHeight * 0.5, detail.color);
           if (!motionFrame && !reduceMotion) motionFrame = window.requestAnimationFrame(tickMotion);
@@ -378,11 +381,12 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
           holoAvatar.classList.remove("is-active");
         }, { signal: controller.signal });
         document.addEventListener("visibilitychange", () => {
-          if (reduceMotion) return;
+          if (reduceMotion || staticBackground) return;
           window.cancelAnimationFrame(motionFrame);
           if (!document.hidden) { lastFrameAt = performance.now(); motionFrame = window.requestAnimationFrame(tickMotion); }
         }, { signal: controller.signal });
-        if (reduceMotion) drawMotionSurface(0, 0, false);
+        if (staticBackground) { /* The galaxy canvas provides the still background. */ }
+        else if (reduceMotion) drawMotionSurface(0, 0, false);
         else motionFrame = window.requestAnimationFrame(tickMotion);
 
         const hexToRgb = (hex: string) => { const value = hex.replace("#", ""); return { r: Number.parseInt(value.slice(0, 2), 16), g: Number.parseInt(value.slice(2, 4), 16), b: Number.parseInt(value.slice(4, 6), 16) }; };

@@ -666,6 +666,23 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
 
   build();
   resize();
+  if (document.body.dataset.staticBackground === "true") {
+    // Keep the same universe, but never start its animation or pointer handlers.
+    const snapshotTime = performance.now();
+    paint(snapshotTime, 0);
+    const redrawStill = () => {
+      resize();
+      paint(snapshotTime, 0);
+    };
+    window.addEventListener("resize", redrawStill, { passive: true });
+    return {
+      setTime(_minutes: number) {},
+      destroy() {
+        destroyed = true;
+        window.removeEventListener("resize", redrawStill);
+      },
+    };
+  }
   window.addEventListener("resize", resize, { passive: true });
   window.addEventListener("pointermove", onPointerMove, { passive: true });
   window.addEventListener("pointerdown", onPointerDown, { passive: true });

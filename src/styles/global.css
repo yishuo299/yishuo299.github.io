@@ -1,3 +1,16 @@
+body[data-static-background="true"] .scene,
+body[data-static-background="true"] .scene *,
+body[data-static-background="true"] .scene::before,
+body[data-static-background="true"] .scene::after,
+body[data-static-background="true"] .scene *::before,
+body[data-static-background="true"] .scene *::after {
+  animation-play-state: paused !important;
+}
+body[data-static-background="true"] .ambient-particles,
+body[data-static-background="true"] .cursor-aura {
+  display: none;
+}
+
 :root {
   --bg: #05070b;
   --ink: #f7f9fc;
