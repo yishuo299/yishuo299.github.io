@@ -79,9 +79,13 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
       import { createGalacticBackground } from "../scripts/galacticBackground";
 
       let archiveCleanup: () => void = () => {};
+      let initializedScene: HTMLElement | null = null;
 
       const initArchive = () => {
+        const nextScene = document.getElementById("scene");
+        if (nextScene && initializedScene === nextScene) return;
         archiveCleanup();
+        initializedScene = nextScene;
         document.body.classList.remove("modal-open", "cosmic-transitioning", "motion-warmup", "heavy-warmup");
         const controller = new AbortController();
         const timers: number[] = [];
@@ -307,6 +311,10 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         };
         const tickMotion = (now: number) => {
           if (cancelled) return;
+          if (document.querySelector("[data-native-root]") && burstPoints.length === 0) {
+            motionFrame = 0;
+            return;
+          }
           const dt = Math.min((now - lastFrameAt) / 1000, 1 / 30);
           lastFrameAt = now;
           drawMotionSurface(now, dt, true);
@@ -318,6 +326,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         window.addEventListener("archive:burst", (event) => {
           const detail = (event as CustomEvent<{ x?: number; y?: number; color?: string }>).detail ?? {};
           emitBurst(detail.x ?? viewportWidth * 0.5, detail.y ?? viewportHeight * 0.5, detail.color);
+          if (!motionFrame && !reduceMotion) motionFrame = window.requestAnimationFrame(tickMotion);
         }, { signal: controller.signal });
         const syncHoloAvatarImmediately = () => {
           rotateX = targetRotateX;
@@ -642,6 +651,7 @@ const loaderTechs = ["Python", "STM32", "Django", "Vue", "Spring Boot", "Android
         window.addEventListener("pageshow", closeGlobalBookLoader, { signal: controller.signal });
         archiveCleanup = () => { cancelled = true; controller.abort(); galacticBackground.destroy(); window.clearTimeout(globalArticleTimer); window.cancelAnimationFrame(sliderFrame); window.cancelAnimationFrame(motionFrame); window.cancelAnimationFrame(welcomeFrame); timers.forEach(window.clearTimeout); intervals.forEach(window.clearInterval); unlockPage(); };
       };
+      document.addEventListener("astro:before-swap", () => { archiveCleanup(); initializedScene = null; });
       document.addEventListener("astro:page-load", initArchive);
       if (document.readyState === "complete") initArchive();
     </script>

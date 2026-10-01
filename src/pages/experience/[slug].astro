@@ -40,7 +40,7 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
         title={`${experience.title} 原项目体验`}
         class="native-frame"
         data-native-frame
-        src={nativeSrc}
+        src="about:blank"
         loading="eager"
       ></iframe>
     </div>
@@ -49,6 +49,7 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
 
 <script>
   let nativeCleanup: () => void = () => {};
+  let initializedRoot: HTMLElement | null = null;
 
   const roleConfigs = {
     "hotel-booking": {
@@ -165,7 +166,7 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
   };
 
   const srcForRole = (base: string, config: any, roleConfig: any, key: string) => {
-    const stamp = `mockRole=${encodeURIComponent(key)}&mockTick=${Date.now()}`;
+    const stamp = `mockRole=${encodeURIComponent(key)}`;
     if (config.mode === "hash") return `${base}?${stamp}#${roleConfig.hash}`;
     if (config.mode === "static") return `${base}${roleConfig.query ?? ""}`;
     if (config.mode === "history-session" || config.mode === "history-local") {
@@ -175,22 +176,26 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
   };
 
   const initNativeExperience = () => {
+    const root = document.querySelector<HTMLElement>("[data-native-root]");
+    if (root && initializedRoot === root) return;
     nativeCleanup();
     const controller = new AbortController();
-    const root = document.querySelector<HTMLElement>("[data-native-root]");
     const frame = root?.querySelector<HTMLIFrameElement>("[data-native-frame]");
     if (!root || !frame) return;
+    initializedRoot = root;
 
     const slug = root.dataset.slug ?? "";
     const base = root.dataset.nativeSrc ?? "";
     const config = (roleConfigs as any)[slug];
     const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-native-role]"));
     const current = root.querySelector<HTMLElement>("[data-native-current]");
+    let activeKey = "";
 
     const activate = (button: HTMLButtonElement) => {
       const key = button.dataset.nativeRole ?? "";
       const roleConfig = config?.roles?.[key];
-      if (!roleConfig) return;
+      if (!roleConfig || key === activeKey) return;
+      activeKey = key;
       buttons.forEach((item) => item.classList.toggle("active", item === button));
       if (current) current.textContent = button.textContent ?? "";
       ["token", "userInfo", "user", "rolePermissionMap", "roleEdits", "pf_token", "pf_user", "hr_token", "hr_user", "hotel_token", "hotel_user"].forEach((name) => {
@@ -209,9 +214,10 @@ const nativeSrc = `/experience-native/${experience.slug}/`;
     const active = buttons.find((button) => button.classList.contains("active")) ?? buttons[0];
     if (active) activate(active);
 
-    nativeCleanup = () => controller.abort();
+    nativeCleanup = () => { controller.abort(); initializedRoot = null; };
   };
 
+  document.addEventListener("astro:before-swap", () => nativeCleanup());
   document.addEventListener("astro:page-load", initNativeExperience);
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initNativeExperience, { once: true });

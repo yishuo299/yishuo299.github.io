@@ -66,6 +66,7 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
   const compact = window.matchMedia("(max-width: 700px)").matches;
   const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
   const lowPower = compact || navigator.hardwareConcurrency <= 4 || memory <= 4;
+  const experiencePage = !!document.querySelector("[data-native-root]");
   const quality = reducedMotion ? 0.28 : lowPower ? 0.52 : 1;
   const pointer = { x: -1000, y: -1000, active: false };
   const far: Star[] = [];
@@ -610,14 +611,15 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
 
   const tick = (now: number) => {
     if (destroyed) return;
-    const targetInterval = document.body.classList.contains("modal-open") || document.body.classList.contains("cosmic-transitioning") ? 80 : lowPower ? 42 : 33;
+    const busy = document.body.classList.contains("modal-open") || document.body.classList.contains("cosmic-transitioning") || document.body.classList.contains("archive-loading-active");
+    const targetInterval = experiencePage ? 100 : busy ? 80 : lowPower ? 42 : 33;
     if (!document.hidden && (now - lastPaint >= targetInterval || reducedMotion && lastPaint === 0)) {
       const delta = Math.min((now - lastFrame) / 1000, 0.08);
       lastFrame = now;
       lastPaint = now;
       paint(now, delta);
     }
-    if (!reducedMotion) frame = window.requestAnimationFrame(tick);
+    if (!reducedMotion && !document.hidden) frame = window.requestAnimationFrame(tick);
   };
 
   const onPointerMove = (event: PointerEvent) => { pointer.x = event.clientX; pointer.y = event.clientY; pointer.active = true; };
@@ -654,9 +656,11 @@ export const createGalacticBackground = (canvas: HTMLCanvasElement) => {
   };
   const onPointerCancel = () => { press.active = false; };
   const onVisibility = () => {
+    window.cancelAnimationFrame(frame);
     if (!document.hidden) {
       lastFrame = performance.now();
       if (reducedMotion) paint(lastFrame, 0);
+      else frame = window.requestAnimationFrame(tick);
     }
   };
 
