@@ -1,0 +1,5 @@
+interface:
+  display_name: "博客项目完整制作"
+  short_description: "从源码完成工程文章、技术栈卡片、主页小星球与独立项目体验"
+  default_prompt: "使用 $blog-project-workflow 解读我提供的项目，完成博客文章、项目卡片、技术栈、主页小星球和离线项目体验，并按要求整理脱敏源码与 GitHub 说明。"
+
